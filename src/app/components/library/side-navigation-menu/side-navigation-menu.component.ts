@@ -45,10 +45,27 @@ export class SideNavigationMenuComponent
   userType:any
 
   items = [
+    // {
+    //   text: 'Dashboard',
+    //   icon: 'chart',
+    //   path: '/dashboard',
+    // },
+
     {
-      text: 'Dashboard',
-      icon: 'chart',
+      text: 'settings',
+      icon: 'preferences',
       path: '/dashboard',
+      items: [
+        {
+          text: 'Basic Settings',
+          // path: '/user',
+        },
+        {
+          text: 'User',
+          path: '/user',
+        },
+
+      ]
     },
 
     {
@@ -57,8 +74,8 @@ export class SideNavigationMenuComponent
       path: '',
       items: [
         {
-          text: 'User',
-          path: '/user',
+          text: 'Hospital',
+          path: '/hospital',
         },
        
       ],
@@ -119,27 +136,27 @@ export class SideNavigationMenuComponent
     });
     this.refreshMenu();
     // Hide "Reseller" menu if user type is 3
-    if (userType === '3') {
-      this.items = this.items.map((menu) => ({
-        ...menu,
-        items:
-          menu.items?.filter(
-            (submenu) => submenu.text !== 'Reseller' && submenu.text !== 'User'
-          ) || [],
-      }));
-    } else if (userType === '4') {
-      this.items = this.items.map((menu) => ({
-        ...menu,
-        items:
-          menu.items?.filter(
-            (submenu) =>
-              submenu.text !== 'Customer' &&
-              submenu.text !== 'Reseller' &&
-              submenu.text !== 'User' 
-              // submenu.text !== 'Sales'
-          ) || [],
-      }));
-    }
+    // if (userType === '3') {
+    //   this.items = this.items.map((menu) => ({
+    //     ...menu,
+    //     items:
+    //       menu.items?.filter(
+    //         (submenu) => submenu.text !== 'Reseller' && submenu.text !== 'User'
+    //       ) || [],
+    //   }));
+    // } else if (userType === '4') {
+    //   this.items = this.items.map((menu) => ({
+    //     ...menu,
+    //     items:
+    //       menu.items?.filter(
+    //         (submenu) =>
+    //           submenu.text !== 'Customer' &&
+    //           submenu.text !== 'Reseller' &&
+    //           submenu.text !== 'User' 
+    //           // submenu.text !== 'Sales'
+    //       ) || [],
+    //   }));
+    // }
     // Load the navigation data from localStorage
     this.navigation = JSON.parse(localStorage.getItem('sidemenuItems') || '[]');
 

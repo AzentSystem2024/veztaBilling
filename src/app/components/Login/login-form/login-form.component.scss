@@ -1,17 +1,24 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .login-page {
-  background-image: url("/assets/Images/login.png");
+  background-image: url("/assets/Images/cover.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   height: 100vh;
   width: 100vw;
-
   display: flex;
   justify-content: center;
   align-items: center;
 
+  // Nested correctly
   .login-box {
-    background-color: rgba(255, 255, 255, 0.9); // Slight transparency
+    background-color: rgba(255, 255, 255, 0.9);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -31,6 +38,7 @@
     text-align: center;
   }
 }
+
 
 ::ng-deep .dx-button {
   // background-color: #1890ff !important;

@@ -25,6 +25,7 @@ import { LoginFormModule } from './components/Login/login-form/login-form.compon
 import { UserListComponent, UserListModule } from './pages/MASTER PAGES/userFiles/user-list/user-list.component';
 import { UserAddComponent, UserAddModule } from './pages/MASTER PAGES/userFiles/user-add/user-add.component';
 import { UserEditComponent } from './pages/MASTER PAGES/userFiles/user-edit/user-edit.component';
+import { InvoiceListComponent, InvoiceListModule } from './pages/MASTER PAGES/invoiceFiles/invoice-list/invoice-list.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { UserEditComponent } from './pages/MASTER PAGES/userFiles/user-edit/user
     DashboardModule,
     LoginFormModule,
     UserListModule,
-    UserAddModule
+    UserAddModule,
+    InvoiceListModule
   ],
   providers: [
     AuthService,
