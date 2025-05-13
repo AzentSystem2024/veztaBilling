@@ -1,0 +1,44 @@
+<app-header
+  class="layout-header"
+  [menuToggleEnabled]="true"
+  (menuToggle)="menuOpened = !menuOpened"
+  [title]="appInfo.title"
+></app-header>
+
+<dx-drawer
+  class="layout-body"
+  position="before"
+  [closeOnOutsideClick]="shaderEnabled"
+  [openedStateMode]="menuMode"
+  [revealMode]="menuRevealMode"
+  [minSize]="minMenuSize"
+  [shading]="shaderEnabled"
+  [(opened)]="menuOpened"
+>
+  <side-navigation-menu
+    [compactMode]="menuOpened"
+    [selectedItem]="selectedRoute"
+    class="dx-swatch-additional"
+    *dxTemplate="let dataMenu of 'panel'"
+    (selectedItemChanged)="navigationChanged($event)"
+    (openMenu)="navigationClick()"
+  >
+  </side-navigation-menu>
+  <!-- Content Area -->
+  <div class="content">
+    <dx-sortable
+      class="custom-tab"
+      filter=".dx-tab"
+      [data]="tabs"
+      itemOrientation="horizontal"
+      dragDirection="horizontal"
+      (onDragStart)="onTabDragStart($event)"
+      (onReorder)="onTabDrop($event)"
+    >
+      
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    </dx-sortable>
+  </div>
+</dx-drawer>

@@ -1,0 +1,17 @@
+<ng-content></ng-content>
+
+<div class="menu-container theme-dependent">
+  <dx-tree-view
+    [items]="items"
+    keyExpr="path"
+    selectionMode="single"
+    [focusStateEnabled]="true"
+    expandEvent="click"
+    [searchEnabled]="true"
+    searchMode="contains"
+    (onItemClick)="onItemClick($event)"
+    width="100%"
+  >
+  </dx-tree-view>
+</div>
+<ng-content select="app-footer"></ng-content>

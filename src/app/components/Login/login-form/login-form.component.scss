@@ -1,0 +1,109 @@
+.login-page {
+  background-image: url("/assets/Images/login.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100vw;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .login-box {
+    background-color: rgba(255, 255, 255, 0.9); // Slight transparency
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .login-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+
+  .reset-link {
+    margin-top: 1rem;
+    text-align: center;
+  }
+}
+
+::ng-deep .dx-button {
+  // background-color: #1890ff !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 0;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: #1677cc !important;
+  }
+}
+::ng-deep .dx-texteditor {
+  background-color: #f9f9f9 !important;
+  border-radius: 6px !important;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #333 !important;
+}
+
+::ng-deep .dx-texteditor-input {
+  color: #000 !important;
+}
+
+.password-toggle-button .dx-icon {
+  font-size: 18px;
+  color: #999;
+}
+
+.password-toggle-button .dx-icon:hover {
+  // color: #1890ff;
+}
+
+::ng-deep .dx-invalid-message {
+  color: red !important; /* Change text color to red */
+  // background-color: #ffcccc !important; /* Light red background */
+  // border: 1px solid red !important; /* Red border */
+  // font-weight: bold;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ensures full height */
+    padding: 0 10px; /* Adds padding to prevent cutoff */
+  }
+
+  .login-box {
+    width: 100% !important; /* Ensure it takes the full width */
+    max-width: 350px; /* Restrict max width to keep it centered */
+    padding: 20px;
+    background: #fff; /* Keep background intact */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  .dx-form {
+    width: 100%;
+  }
+
+  .dx-textbox,
+  .dx-button {
+    width: 100% !important;
+  }
+
+  .reset-link {
+    text-align: center;
+    margin-top: 10px;
+  }
+}
