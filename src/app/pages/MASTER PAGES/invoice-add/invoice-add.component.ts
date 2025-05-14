@@ -12,9 +12,17 @@ import { UserAddComponent } from '../userFiles/user-add/user-add.component';
   styleUrls: ['./invoice-add.component.scss']
 })
 export class InvoiceAddComponent {
+  @ViewChild('itemsGridRef') itemsGridRef: any;
   @ViewChild('departmentBoxRef', { static: false }) departmentBoxRef!: DxSelectBoxComponent;
+    @ViewChild('patientBoxRef', { static: false }) patientBoxRef!: DxTextBoxComponent;
+    @ViewChild('mobileBoxRef', { static: false }) mobileBoxRef!: DxTextBoxComponent;
 @ViewChild('billNoBoxRef', { static: false }) billNoBoxRef!: DxTextBoxComponent;
 @ViewChild('dateBoxRef', { static: false }) dateBoxRef!: DxDateBoxComponent;
+@ViewChild('wardBoxRef', { static: false }) wardBoxRef!: DxTextBoxComponent;
+@ViewChild('unitBoxRef', { static: false }) unitBoxRef!: DxTextBoxComponent;
+@ViewChild('uhidBoxRef', { static: false }) uhidBoxRef!: DxTextBoxComponent;
+@ViewChild('ageBoxRef', { static: false }) ageBoxRef!: DxTextBoxComponent;
+@ViewChild('sexBoxRef', { static: false }) sexBoxRef!: DxSelectBoxComponent;
  @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
   readonly allowedPageSizes: any = [5, 10, 'all'];
@@ -51,7 +59,11 @@ itemCodeOptions = [
   { id: 'ITM002', name: 'Item 002' },
   { id: 'ITM003', name: 'Item 003' }
 ];
-
+sexOptions = [
+  {id: 1, name: 'Male'},
+  {id:2, name: 'Female'},
+  {id:3, name: 'Other'}
+]
   constructor(){
     
   }
@@ -69,11 +81,31 @@ itemCodeOptions = [
 onKeyDownHandler(event: any, nextField: string): void {
   if (event.event.key === 'Enter') {
     const nextComponent = (this as any)[nextField];
+
     if (nextComponent?.instance?.focus) {
-      nextComponent.instance.focus(); // ✅ Correct: DevExtreme components use `.instance.focus()`
+      nextComponent.instance.focus(); // Focus the next field
+
+      // If it's a select box, open the dropdown
+      if (nextComponent.instance.open) {
+        // Give it a slight delay to allow focus to finish first
+        setTimeout(() => {
+          nextComponent.instance.open();
+        }, 50);
+      }
     }
   }
 }
+
+onSexKeyDown(event: any): void {
+  if (event.event.key === 'Enter') {
+    // Focus on the grid and start editing the ITEM_CODE cell in the first row
+    setTimeout(() => {
+      this.itemsGridRef?.instance?.focus();
+      this.itemsGridRef?.instance?.editCell(0, 'ITEM_CODE');
+    }, 50);
+  }
+}
+
 
 
   
