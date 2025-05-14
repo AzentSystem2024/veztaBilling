@@ -89,6 +89,10 @@ export class SideNavigationMenuComponent
           text: 'Invoice',
           path: '/invoice',
         },
+        {
+          text: 'Invoice Entry',
+          path: '/invoice-entry',
+        },
       ],
     },
   ];

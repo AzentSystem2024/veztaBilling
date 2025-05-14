@@ -72,20 +72,12 @@
           ></dx-button>
         </dxi-item>
       </dxo-toolbar>
+
+        <dxi-column dataField="Department" caption="Department"></dxi-column>
+  <dxi-column dataField="UHID" caption="UHID"></dxi-column>
+  <dxi-column dataField="patientName" caption="Patient Name"></dxi-column>
 </dx-data-grid>
     </div>
 </div>
 
 
-<dx-popup
-  [(visible)]="addInvoicePopupOpened"
-  [width]="'60vw'"
-  [height]="'80vh'"
-  title="User"
-  (onHiding)="handleClose()"
->
-  <app-user-add
-    *ngIf="addInvoicePopupOpened"
-    (popupClosed)="handleClose()"
-  ></app-user-add>
-</dx-popup>

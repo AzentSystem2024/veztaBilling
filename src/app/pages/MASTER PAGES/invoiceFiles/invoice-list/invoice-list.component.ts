@@ -4,6 +4,7 @@ import { DxDataGridModule, DxButtonModule, DxDropDownButtonModule, DxSelectBoxMo
 import { FormPopupModule } from 'src/app/components';
 import { UserAddModule } from '../../userFiles/user-add/user-add.component';
 import { UserListComponent } from '../../userFiles/user-list/user-list.component';
+import { InvoiceAddModule } from '../../invoice-add/invoice-add.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -22,7 +23,14 @@ export class InvoiceListComponent {
   GridSource: any;
   isLoading: boolean = false;
   filterRowVisible: boolean = false;
-  invoices: any;
+  // component.ts
+invoices = [
+  { Department: 'Cardiology', UHID: 'UH12345', patientName: 'John Doe' },
+  { Department: 'Neurology', UHID: 'UH12346', patientName: 'Jane Smith' },
+  { Department: 'Orthopedics', UHID: 'UH12347', patientName: 'Alice Johnson' },
+  { Department: 'Pediatrics', UHID: 'UH12348', patientName: 'Bob Brown' }
+];
+
   addInvoicePopupOpened: boolean = false;
 
   constructor() {}
@@ -56,6 +64,7 @@ export class InvoiceListComponent {
     DxCheckBoxModule,
     DxPopupModule,
     UserAddModule,
+    InvoiceAddModule
   ],
   providers: [],
   exports: [InvoiceListComponent],
