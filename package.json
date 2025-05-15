@@ -2,9 +2,9 @@
   "name": "angular-app",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build --base-href=./",
+     "start": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng serve",
+  "build": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build",
+
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

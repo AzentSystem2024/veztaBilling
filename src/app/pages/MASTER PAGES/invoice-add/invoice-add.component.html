@@ -1,0 +1,211 @@
+<div class="salary-grid-wrapper" style="padding: 0 10px">
+  <div class="grid-container">
+    <dx-data-grid
+      #itemsGridRef
+      [dataSource]="invoice"
+      [showBorders]="true"
+      [columnAutoWidth]="false"
+      [wordWrapEnabled]="false"
+      [rowAlternationEnabled]="true"
+      [headerFilter]="{ visible: true }"
+      [allowColumnReordering]="true"
+      [showColumnHeaders]="true"
+      [columnAutoWidth]="true"
+      [allowColumnResizing]="true"
+      [height]="'70vh'"
+      [columnResizingMode]="'nextColumn'"
+      [headerFilter]="{ visible: true }"
+      [scrolling]="{ mode: 'virtual' }"
+      rowAlternationInterval="2"
+      [selection]="{ mode: 'single' }"
+      [editing]="{ mode: 'cell', allowUpdating: true }"
+    >
+      <dxo-load-panel [showPane]="false"></dxo-load-panel>
+      <dxo-scrolling mode="standard"></dxo-scrolling>
+      <dxo-filter-builder [allowHierarchicalFields]="true">
+      </dxo-filter-builder>
+      <dxo-toolbar>
+        <dxi-item location="before" locateInMenu="auto">
+          <div
+            class="stacked-toolbar-group"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <!-- Date Field -->
+            <dx-text-box
+              label="Date"
+              labelMode="floating"
+              [width]="200"
+              [readOnly]="true"
+            ></dx-text-box>
+
+            <!-- Ward and Unit Row (Each half width of Date) -->
+            <div style="display: flex; gap: 10px">
+              <!-- Ward -->
+              <dx-text-box
+                #wardBoxRef
+                label="Ward"
+                labelMode="floating"
+                [width]="100"
+                (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
+              ></dx-text-box>
+
+              <!-- Unit -->
+              <dx-text-box
+                #unitBoxRef
+                label="Unit"
+                labelMode="floating"
+                [width]="100"
+                (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
+              ></dx-text-box>
+            </div>
+          </div>
+        </dxi-item>
+
+        <dxi-item location="before" locateInMenu="auto">
+          <div
+            class="stacked-toolbar-group"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <!-- Bill No. -->
+            <dx-text-box
+              #billNoBoxRef
+              label="Bill No."
+              labelMode="floating"
+              [width]="300"
+              (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
+            ></dx-text-box>
+
+            <!-- Row: Mobile, Ward, Unit + UHID -->
+            <div style="display: flex; gap: 3px; align-items: flex-start">
+              <!-- Group: Mobile, Ward, Unit -->
+              <div style="display: flex; gap: 5px; width: 300px">
+                <dx-text-box
+                  #patientBoxRef
+                  label="Patient Name"
+                  labelMode="floating"
+                  [width]="300"
+                  (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
+                ></dx-text-box>
+              </div>
+
+              <!-- UHID Field -->
+              <dx-text-box
+                #mobileBoxRef
+                label="Mobile No."
+                labelMode="floating"
+                [width]="200"
+                (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
+              ></dx-text-box>
+            </div>
+          </div>
+        </dxi-item>
+
+        <dxi-item location="after" locateInMenu="auto">
+          <div class="stacked-toolbar-group"></div>
+        </dxi-item>
+        <dxi-item location="after" locateInMenu="auto">
+          <div
+            class="stacked-toolbar-group"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <!-- Date Box -->
+            <dx-text-box
+              #uhidBoxRef
+              label="UHID"
+              labelMode="floating"
+              [width]="200"
+              (onKeyDown)="onKeyDownHandler($event, 'ageBoxRef')"
+            ></dx-text-box>
+
+            <!-- Ward and Unit below, with gap -->
+            <div style="display: flex; gap: 3px">
+              <dx-text-box
+                #ageBoxRef
+                label="Age"
+                labelMode="floating"
+                [width]="100"
+                (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
+              ></dx-text-box>
+
+              <dx-select-box
+                #sexBoxRef
+                label="Sex"
+                labelMode="floating"
+                [width]="100"
+                [dataSource]="sexOptions"
+                displayExpr="name"
+                valueExpr="id"
+                (onKeyDown)="onSexKeyDown($event)"
+              ></dx-select-box>
+            </div>
+          </div>
+        </dxi-item>
+      </dxo-toolbar>
+      <dxi-column dataField="ITEM_CODE" caption="Item Code">
+        <dxo-lookup
+          [dataSource]="itemCodeOptions"
+          displayExpr="name"
+          valueExpr="id"
+        ></dxo-lookup>
+      </dxi-column>
+
+      <dxi-column caption="Item Description"></dxi-column>
+      <dxi-column
+        caption="Quantity"
+        dataType="number"
+        [format]="{ type: 'fixedPoint', precision: 2 }"
+        [editorOptions]="{ format: '#,##0.00' }"
+      ></dxi-column>
+      <dxi-column
+        caption="UOM"
+        [format]="{ type: 'fixedPoint', precision: 2 }"
+        dataType="number"
+        [editorOptions]="{ format: '#,##0.00' }"
+      ></dxi-column>
+      <dxi-column
+        caption="Unit Price"
+        [format]="{ type: 'fixedPoint', precision: 2 }"
+        dataType="number"
+        [editorOptions]="{ format: '#,##0.00' }"
+      ></dxi-column>
+      <dxi-column
+        caption="Total"
+        [format]="{ type: 'fixedPoint', precision: 2 }"
+        dataType="number"
+        [editorOptions]="{ format: '#,##0.00' }"
+      ></dxi-column>
+      <dxo-summary>
+        <dxi-total-item
+          summaryType="sum"
+          [valueFormat]="customFormat"
+          displayFormat="Grand Total: {0}"
+          showInColumn="GROSS"
+        >
+        </dxi-total-item>
+
+        <dxi-total-item
+          summaryType="sum"
+          [valueFormat]="customFormat"
+          displayFormat="{0}"
+          showInColumn="DEDUCT"
+        >
+        </dxi-total-item>
+      </dxo-summary>
+    </dx-data-grid>
+<div style="display: flex; justify-content: flex-end; margin-top: 10px; padding-right: 10px; align-items: center;">
+  <label style="margin-right: 8px; font-weight: 500;">Total:</label>
+  <dx-text-box
+    [width]="200"
+    [readOnly]="true"
+  ></dx-text-box>
+</div>
+
+
+
+    <div
+      style="display: flex; align-items: center; gap: 20px; margin-top: 10px"
+    >
+      <div style="flex: 1"></div>
+    </div>
+  </div>
+</div>

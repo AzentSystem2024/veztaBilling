@@ -25,10 +25,15 @@ import { LoginFormModule } from './components/Login/login-form/login-form.compon
 import { UserListComponent, UserListModule } from './pages/MASTER PAGES/userFiles/user-list/user-list.component';
 
 import { InvoiceListComponent, InvoiceListModule } from './pages/MASTER PAGES/invoiceFiles/invoice-list/invoice-list.component';
+
 import { HospitalListComponent } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
 import { HospitalListModule } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
 
 ;
+
+import { InvoiceAddComponent, InvoiceAddModule } from './pages/MASTER PAGES/invoice-add/invoice-add.component';
+import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/department.component';
+
 
 
 @NgModule({
@@ -46,10 +51,12 @@ import { HospitalListModule } from './pages/MASTER PAGES/hospitalFiles/hospital-
     DashboardModule,
     LoginFormModule,
     UserListModule,
-    InvoiceListModule,
     HospitalListModule,
-    
-    
+
+    InvoiceListModule,
+    InvoiceAddModule,
+    DepartmentModule
+
   ],
   providers: [
     AuthService,

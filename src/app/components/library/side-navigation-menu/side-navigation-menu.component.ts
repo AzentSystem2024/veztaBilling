@@ -77,6 +77,10 @@ export class SideNavigationMenuComponent
           text: 'Hospital',
           path: '/hospital',
         },
+         {
+          text: 'Department',
+          path: '/department',
+        },
        
       ],
     },
@@ -88,6 +92,10 @@ export class SideNavigationMenuComponent
         {
           text: 'Invoice',
           path: '/invoice',
+        },
+        {
+          text: 'Invoice Entry',
+          path: '/invoice-entry',
         },
       ],
     },
