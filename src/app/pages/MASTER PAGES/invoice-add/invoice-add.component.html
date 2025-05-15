@@ -1,3 +1,8 @@
+<div class="invoice-wrapper"     style="height: 95vh; 
+            display: flex; 
+            flex-direction: column; 
+
+            box-sizing: border-box;">
 <div class="salary-grid-wrapper" style="padding: 0 10px">
   <div class="grid-container">
     <dx-data-grid
@@ -28,18 +33,18 @@
         <dxi-item location="before" locateInMenu="auto">
           <div
             class="stacked-toolbar-group"
-            style="display: flex; flex-direction: column; gap: 10px"
+            style="display: flex; flex-direction: column; gap: 5px"
           >
             <!-- Date Field -->
             <dx-text-box
-              label="Date"
+              label="Date & Time"
               labelMode="floating"
               [width]="200"
               [readOnly]="true"
             ></dx-text-box>
 
             <!-- Ward and Unit Row (Each half width of Date) -->
-            <div style="display: flex; gap: 10px">
+            <div style="display: flex; gap: 5px">
               <!-- Ward -->
               <dx-text-box
                 #wardBoxRef
@@ -64,7 +69,7 @@
         <dxi-item location="before" locateInMenu="auto">
           <div
             class="stacked-toolbar-group"
-            style="display: flex; flex-direction: column; gap: 10px"
+            style="display: flex; flex-direction: column; gap: 5px"
           >
             <!-- Bill No. -->
             <dx-text-box
@@ -76,7 +81,7 @@
             ></dx-text-box>
 
             <!-- Row: Mobile, Ward, Unit + UHID -->
-            <div style="display: flex; gap: 3px; align-items: flex-start">
+            <div style="display: flex; gap: 5px; align-items: flex-start">
               <!-- Group: Mobile, Ward, Unit -->
               <div style="display: flex; gap: 5px; width: 300px">
                 <dx-text-box
@@ -106,7 +111,7 @@
         <dxi-item location="after" locateInMenu="auto">
           <div
             class="stacked-toolbar-group"
-            style="display: flex; flex-direction: column; gap: 10px"
+            style="display: flex; flex-direction: column; gap: 5px"
           >
             <!-- Date Box -->
             <dx-text-box
@@ -149,26 +154,30 @@
         ></dxo-lookup>
       </dxi-column>
 
-      <dxi-column caption="Item Description"></dxi-column>
+      <dxi-column dataField="DESCRIPTION" caption="Item Description"></dxi-column>
       <dxi-column
+      dataField="QUANTITY"
         caption="Quantity"
         dataType="number"
         [format]="{ type: 'fixedPoint', precision: 2 }"
         [editorOptions]="{ format: '#,##0.00' }"
       ></dxi-column>
       <dxi-column
+      dataField="UOM"
         caption="UOM"
         [format]="{ type: 'fixedPoint', precision: 2 }"
         dataType="number"
         [editorOptions]="{ format: '#,##0.00' }"
       ></dxi-column>
       <dxi-column
+      dataField="UNIT_PRICE"
         caption="Unit Price"
         [format]="{ type: 'fixedPoint', precision: 2 }"
         dataType="number"
         [editorOptions]="{ format: '#,##0.00' }"
       ></dxi-column>
       <dxi-column
+      dataField="TOTAL"
         caption="Total"
         [format]="{ type: 'fixedPoint', precision: 2 }"
         dataType="number"
@@ -178,8 +187,8 @@
         <dxi-total-item
           summaryType="sum"
           [valueFormat]="customFormat"
-          displayFormat="Grand Total: {0}"
-          showInColumn="GROSS"
+          displayFormat="Gross Amount: {0}"
+          showInColumn="TOTAL"
         >
         </dxi-total-item>
 
@@ -191,21 +200,105 @@
         >
         </dxi-total-item>
       </dxo-summary>
-    </dx-data-grid>
-<div style="display: flex; justify-content: flex-end; margin-top: 10px; padding-right: 10px; align-items: center;">
-  <label style="margin-right: 8px; font-weight: 500;">Total:</label>
-  <dx-text-box
-    [width]="200"
-    [readOnly]="true"
-  ></dx-text-box>
+</dx-data-grid>
+
+<div style="display: flex; flex-direction: column; gap: 5px; margin-top: 5px;">
+
+  <!-- Row 1: Schema + Schema % | Scheme Amount + Net Amount -->
+  <div style="display: flex; justify-content: space-between; gap: 10px;">
+    <!-- Left -->
+    <div style="display: flex; gap: 5px;">
+      <dx-text-box label="Schema" labelMode="floating" [width]="200"></dx-text-box>
+      <dx-text-box label="Schema%" labelMode="floating" [width]="100"></dx-text-box>
+    </div>
+    <!-- Right -->
+    <div style="display: flex; gap: 5px;">
+      <dx-text-box
+        [readOnly]="true"
+        label="Scheme Amount"
+        labelMode="floating"
+        [width]="200"
+      ></dx-text-box>
+<dx-number-box
+  label="Net Amount"
+  labelMode="floating"
+  [width]="200"
+  [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+  [inputAttr]="{ style: 'font-weight: bold; font-size: 18px; text-align: right;' }"
+></dx-number-box>
+
+    </div>
+  </div>
+
+  <!-- Row 2: Payment Options + Insurance | Buttons -->
+  <div style="display: flex; justify-content: space-between; gap: 10px; align-items: flex-end;">
+    <!-- Left side: payment + insurance -->
+    <div style="display: flex; gap: 10px;">
+      <dx-select-box
+        label="Payment Options"
+        labelMode="floating"
+        [dataSource]="paymentModes"
+        displayExpr="name"
+        valueExpr="id"
+        [width]="200"
+        [(value)]="selectedPaymentModeId"
+      ></dx-select-box>
+
+      <dx-select-box
+        *ngIf="selectedPaymentModeId === creditModeId"
+        label="Insurance"
+        labelMode="floating"
+        [dataSource]="insuranceOptions"
+        displayExpr="name"
+        valueExpr="id"
+        [width]="200"
+      ></dx-select-box>
+    </div>
+
+    <!-- Right side: Buttons -->
+    <div style="display: flex; gap: 10px;">
+      <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
+      <dx-button text="Cancel" stylingMode="outlined" type="normal"></dx-button>
+      <dx-button text="Save" stylingMode="contained" type="default"></dx-button>
+    </div>
+  </div>
+
 </div>
 
 
 
-    <div
-      style="display: flex; align-items: center; gap: 20px; margin-top: 10px"
-    >
-      <div style="flex: 1"></div>
-    </div>
+
+
   </div>
+</div>
+<!-- <div class="form-popup-buttons-container">
+  <div class="popup-footer">
+        <dx-button
+      text="Print"
+      stylingMode="outlined"
+      type="default"
+ 
+    ></dx-button>
+    <dx-button
+      text="Cancel"
+      stylingMode="outlined"
+      type="normal"
+ 
+    ></dx-button>
+    <dx-button
+      text="Save"
+      stylingMode="contained"
+
+      type="default"
+    ></dx-button>
+  </div>
+</div> -->
+<!-- <div style="width: 100%; display: flex; justify-content: flex-end; padding: 12px;">
+  <dx-button
+    text="Save"
+    type="default"
+    stylingMode="contained"
+  ></dx-button>
+</div> -->
+
 </div>
