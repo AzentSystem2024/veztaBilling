@@ -21,7 +21,7 @@ const defaultPath = '/';
 //=============================Base url==============================
 import { environment } from 'src/environments/environment';
 
-const BaseURL = environment.ZATKA_API_BASE_URL;
+const BaseURL = environment.VEZTA_BILLING_API_BASE_URL;
 
 //==================================Default USer Name and details=======================
 export const defaultUser: IUser = {

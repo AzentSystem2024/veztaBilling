@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-const BASE_URL = environment.ZATKA_API_BASE_URL;
+const BASE_URL = environment.VEZTA_BILLING_API_BASE_URL;
 
 const Token = JSON.parse(localStorage.getItem('Token'));
 

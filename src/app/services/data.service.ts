@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { formatDate } from '@angular/common';
 
-const BASE_URL = environment.ZATKA_API_BASE_URL;
+const BASE_URL = environment.VEZTA_BILLING_API_BASE_URL;
 
 const Token = JSON.parse(localStorage.getItem('Token'));
 
@@ -387,6 +387,36 @@ public getDropdownData(type: any): Observable<any> {
   );
 }
 
+//HOSPITAL
+
+// get_HospitalData_List() {
+//   const getEndpoint = BASE_URL+'/hospital/list';
+//   return this.http.post(getEndpoint, {});
+// }
+
+// Insert_HospitalData_Api(ID:any, hospital:any, IS_INACTIVE:any) {
+//   const getEndpoint = BASE_URL+'hospital/save';
+//   const reqBody={
+//    "ID": ID,
+//    "HOSPITAL_NAME": hospital,
+//    "IS_INACTIVE":IS_INACTIVE
+// }
+
+//   return this.http.post(getEndpoint, reqBody);
+// }
+
+// Update_HospitalData_Api(ID:any, Hospital:any, IS_INACTIVE:any){
+// const getEndpoint = BASE_URL+'hospital/update';
+//   const reqBody={
+
+// "ID":ID,
+// "HOSPITAL": Hospital,
+// "IS_INACTIVE": IS_INACTIVE
+
+// };
+
+//   return this.http.post(getEndpoint, reqBody);
+// }
 
 }
 

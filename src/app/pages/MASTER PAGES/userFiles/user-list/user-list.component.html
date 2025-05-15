@@ -1,91 +1,363 @@
 <div class="view-wrapper list-page">
-    <div class="grid-container">
-        <dx-data-grid
-      #dataGrid
-      noDataText="No data available"
-      [width]="'100%'"
-      [height]="'85vh'"
-      [loadPanel]="{
-        enabled: true,
-        text: 'Loading...',
-        showIndicator: true,
-        showPane: true
-      }"
-      class="grid theme-dependent"
-      [dataSource]="userList"
-      [showBorders]="true"
-      [columnAutoWidth]="false"
-      [wordWrapEnabled]="false"
-      [rowAlternationEnabled]="true"
-      [headerFilter]="{ visible: true }"
-      [allowColumnReordering]="true"
-      [filterRow]="{ visible: true, applyFilter: 'auto' }"
-      [showColumnHeaders]="true"
-      [columnAutoWidth]="true"
-      [allowColumnResizing]="true"
-      [columnResizingMode]="'nextColumn'"
-      [headerFilter]="{ visible: true }"
-      [scrolling]="{ mode: 'standard' }"
-      rowAlternationInterval="2"
-      [selection]="{ mode: 'single' }"
-      focusStateEnabled="false"
+  <dx-data-grid
+    #gridRef
+    id="dataGrid"
+    #dataGrid
+    [dataSource]="dataSource"
+    [width]="'100%'"
+    [height]="'90vh'"
+    [showBorders]="true"
+    [showColumnLines]="true"
+    [rowAlternationEnabled]="true"
+    [columnAutoWidth]="true"
+    (onEditingStart)="onEditingStart($event)"
+    
+  
+    [elementAttr]="{ class: 'custom-popup' }"
+    [pager]="{
+      showInfo: true,
+      infoText: 'Page {0} of {1}',
+      showNavigationButtons: true
+    }"
+  >
+    <dxo-scrolling mode="standard"></dxo-scrolling>
+    <!-- export -->
+    <dxo-export
+      [enabled]="true"
+      [formats]="['xlsx', 'pdf']"
     >
-<dxo-editing
-        mode="popup"
-        [allowUpdating]="true"
-        [allowDeleting]="true"
-      ></dxo-editing>
-      <dxo-paging [pageSize]="10"></dxo-paging>
-      <dxo-pager
-        [visible]="true"
-        [allowedPageSizes]="allowedPageSizes"
-        [displayMode]="displayMode"
-        [showPageSizeSelector]="showPageSizeSelector"
-        [showInfo]="true"
-        [showNavigationButtons]="true"
-      ></dxo-pager>
-      <dxo-load-panel [showPane]="false"></dxo-load-panel>
-      <dxo-scrolling mode="standard"></dxo-scrolling>
-      <dxo-search-panel
-        [visible]="true"
-        [highlightCaseSensitive]="false"
-      ></dxo-search-panel>
-      <dxo-export
-        [enabled]="true"
-        [allowExportSelectedData]="true"
-        [formats]="['xlsx', 'pdf']"
+    </dxo-export>
+
+    <dxo-search-panel
+      [visible]="true"
+      [highlightCaseSensitive]="true"
+    ></dxo-search-panel>
+
+    <dxo-paging></dxo-paging>
+    <dxo-pager
+      [visible]="true"
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[10, 20, 30, 40]"
+    ></dxo-pager>
+
+    <dxo-header-filter [visible]="true">
+      <dxo-search [enabled]="true"></dxo-search>
+    </dxo-header-filter>
+
+    <dxo-editing
+      mode="popup"
+      [allowUpdating]="true"
+      [allowDeleting]="true"
+      [allowAdding]="true"
+      [useIcons]="true"
+    >
+      <dxo-popup
+        title="Employee Info"
+        [showTitle]="true"
+        [width]="800"
+        [height]="700"
+        [showCloseButton]="true"
       >
-      </dxo-export>
-      <dxo-toolbar>
-        <dxi-item location="before">
-          <div class="grid-header">User</div>
-        </dxi-item>
-       
-        <dxi-item location="after" locateInMenu="auto"> </dxi-item>
-        <dxi-item location="after" locateInMenu="auto">
-          <dx-button
-            icon="plus"
-            type="default"
-            hint="Add User"
-            stylingMode="contained"
-            (onClick)="addUser()"
-          ></dx-button>
-        </dxi-item>
-      </dxo-toolbar>
-</dx-data-grid>
-    </div>
+      </dxo-popup>
+    </dxo-editing>
+
+    <dxo-toolbar>
+      <dxi-item
+        location="before"
+        text="Users"
+      ></dxi-item>
+
+      <dxi-item location="after" locateInMenu="auto">
+        <dx-button
+          icon="plus"
+          type="default"
+          stylingMode="contained"
+          (onClick)="openPopup()"
+        ></dx-button>
+      </dxi-item>
+
+      <!-- Enable export options -->
+      <dxi-item name="exportButton"> </dxi-item>
+    </dxo-toolbar>
+ 
+    <dxi-column
+      dataField="SlNo"
+      [width]="80"
+      caption="Sl.No"
+      [allowEditing]="false"
+      alignment="left"
+    >
+      
+    </dxi-column>
+    <dxi-column dataField="USER_NAME" caption="User Name"></dxi-column>
+    <dxi-column dataField="LOGIN_NAME" caption="Login Name"></dxi-column>
+    <dxi-column
+      dataField="IS_INACTIVE"
+      caption="Status"
+      [calculateCellValue]="formatStatus"
+      [cellTemplate]="statusCellTemplate"
+    ></dxi-column>
+  </dx-data-grid>
 </div>
 
-
+<!-- ======================Add User=================== -->
 <dx-popup
-  [(visible)]="addUserPopupOpened"
-  [width]="'60vw'"
-  [height]="'80vh'"
-  title="User"
-  (onHiding)="handleClose()"
+  [(visible)]="addPopup"
+  [width]="600"
+  height="600"
+  title="New User"
+  [shading]="false"
+  [showCloseButton]="true"
+  
 >
-  <app-user-add
-    *ngIf="addUserPopupOpened"
-    (popupClosed)="handleClose()"
-  ></app-user-add>
+  <!-- INPUT FIELD -->
+  <dx-form [formGroup]="formsource">
+    <dxi-item [label]="{ text: 'UserName', showColon: false }">
+      <input
+        type="text"
+        formControlName="USER_NAME"
+        class="form-control mb-2"
+        label="UserName"
+    /></dxi-item>
+    <dxi-item [label]="{ text: 'LoginName', showColon: false }">
+      <input
+        type="text"
+        formControlName="LOGIN_NAME"
+        class="form-control mb-2"
+      />
+    </dxi-item>
+
+
+    <dxi-item [label]="{ text: 'Password', showColon: false }">
+      <dx-text-box
+        formControlName="PASSWORD"
+        class="form-control mb-2"
+        [height]="35"
+        [inputAttr]="{ autocomplete: 'new-password' }"
+        [mode]="passwordMode"
+        [buttons]="[
+        {
+          name: 'togglePassword',
+          location: 'after',
+          options: {
+            icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
+            stylingMode: 'text',
+            onClick: togglePasswordVisibility
+          }
+        }
+      ]">
+        
+      </dx-text-box>
+      <dx-validator>
+        <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+      </dx-validator>
+    </dxi-item>
+    <dxi-item [label]="{ text: 'Confirm Password', showColon: false }">
+      <dx-text-box
+        formControlName="C_PASSWORD"
+        class="form-control mb-2"
+        [height]="35"
+        [mode]="confirmPasswordMode"
+        >
+      <dx-validator>
+        <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
+        <dxi-validation-rule 
+          type="compare"
+          [comparisonTarget]="passwordComparison"
+          message="Password and Confirm Password do not match"
+          [validationCallback]="checkPasswords"></dxi-validation-rule>
+      </dx-validator>
+      </dx-text-box>
+    </dxi-item>
+    
+
+    <!-- RADIO BUTTON ROLES -->
+    <dxi-item [label]="{ text: 'UserType',showColon:false}">
+      <dx-radio-group
+        [items]="UserType"
+        class="mt-2"
+        alignment="center"
+        [(value)]="selectedUserType"
+      >
+      </dx-radio-group
+    ></dxi-item>
+
+    <!-- DROPDOWN HOSPITAL -->
+
+    <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) -->
+    <dxi-item>
+      <dx-tag-box
+        [showClearButton]="true"
+        [visible]="selectedUserType === 'Hospital User'"
+        [items]="hospitals"
+        valueExpr="ID"
+        [(value)]="selectedHospitalId"
+        displayExpr="HOSPITAL"
+        label="Select Hospital"
+        labelMode="floating"
+        labelLocation="left"
+        [showSelectionControls]="true"
+        applyValueMode="instantly"
+        [multiline]="false"
+        [searchEnabled]="true"
+      >
+      </dx-tag-box>
+    </dxi-item>
+
+    <!-- BUTTONS -->
+    <dxi-item class="d-flex justify-content-end mt-3">
+      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
+        Cancel
+      </button>
+      <dx-button
+        [width]="60"
+        text="Save"
+        class="me-1"
+        type="default"
+        stylingMode="contained"
+        (onClick)="addData()"
+      ></dx-button>
+    </dxi-item>
+  </dx-form>
+</dx-popup>
+
+<!-- ===================Update User========== -->
+<dx-popup
+  [title]="'Edit User'"
+  [(visible)]="editPopup"
+  [width]="600"
+  height="600"
+  [closeOnOutsideClick]="false"
+  [showCloseButton]="true"
+  [shading]="false"
+  (onHidden)="closePop()"
+  
+>
+  <!-- INPUT FIELD -->
+  <dx-form [formGroup]="formsource">
+    <dxi-item [label]="{ text: 'UserName', showColon: false }">
+      <dx-text-box formControlName="USER_NAME" class="mb-2"></dx-text-box
+    ></dxi-item>
+    <dxi-item [label]="{ text: 'LoginName', showColon: false }">
+      <dx-text-box formControlName="LOGIN_NAME" class="mb-2"></dx-text-box
+    ></dxi-item>
+
+    <dxi-item
+      [label]="{ text: 'Password', showColon: false }"
+      [editorOptions]="{ mode: 'password' }"
+    >
+    <dx-text-box
+        formControlName="PASSWORD"
+        class="form-control mb-2"
+        [height]="35"
+        [inputAttr]="{ autocomplete: 'new-password' }"
+        [mode]="passwordMode"
+        [buttons]="[
+        {
+          name: 'togglePassword',
+          location: 'after',
+          options: {
+            icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
+            stylingMode: 'text',
+            onClick: togglePasswordVisibility
+          }
+        }
+      ]">
+        
+      </dx-text-box>
+      <dx-validator>
+        <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+      </dx-validator>
+    </dxi-item>
+
+    <dxi-item
+      [label]="{ text: 'Confirm Password', showColon: false }"
+      [editorOptions]="{ mode: 'password' }"
+    >
+    
+      <dx-text-box
+        [mode]="confirmPasswordMode"
+        formControlName="C_PASSWORD"
+        class="form-control mb-2"
+        [height]="35"
+      >
+      <dx-validator>
+        <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
+        <dxi-validation-rule 
+          type="compare"
+          [comparisonTarget]="passwordComparison"
+          message="Password and Confirm Password do not match">
+        </dxi-validation-rule>
+      </dx-validator>
+    </dx-text-box>
+    </dxi-item>
+
+   <!-- ACTIVE CHECKBOX -->
+    <!-- <dxi-item
+      dataField="IS_INACTIVE"
+      [label]="{ text: 'Inactive', showColon: false }"
+    >
+      <dx-check-box
+        formControlName="IS_INACTIVE"
+        class="mt-2"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checkboxadd"
+      ></dx-check-box>
+    </dxi-item> -->
+<dxi-item>
+<label for="checboxadd" class="me-5" >Inactive</label>
+      <dx-check-box
+        class="mt-2"
+        formControlName="IS_INACTIVE"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      </dxi-item>
+
+    <!-- RADIO BUTTON ROLES -->
+    <dxi-item [label]="{ text: 'UserType',showColon:false }">
+      <dx-radio-group
+        [items]="UserType"
+        class="mt-2"
+        alignment="center"
+        [(value)]="selectedUserType"
+      >
+      </dx-radio-group
+    ></dxi-item>
+
+    <!-- DROPDOWN HOSPITAL -->
+    <dxi-item>
+      <dx-tag-box
+        [visible]="selectedUserType === 'Hospital User'"
+        dataField="Hospital"
+        [items]="hospitals"
+        valueExpr="ID"
+        [(value)]="selectedHospitalId"
+        displayExpr="HOSPITAL"
+        label="Select Hospital"
+        labelMode="floating"
+        labelLocation="left"
+        [showSelectionControls]="true"
+        applyValueMode="instantly"
+        [multiline]="false"
+        [searchEnabled]="true"
+      >
+      </dx-tag-box>
+    </dxi-item>
+
+    <!-- BUTTONS -->
+    <dxi-item class="d-flex justify-content-end mt-3">
+      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
+        Cancel
+      </button>
+      <dx-button
+        [width]="60"
+        text="Save"
+        class="me-1"
+        type="default"
+        stylingMode="contained"
+        (onClick)="editData()"
+      ></dx-button>
+    </dxi-item>
+  </dx-form>
 </dx-popup>
