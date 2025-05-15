@@ -11,16 +11,11 @@ import { EditingStartEvent } from 'devextreme/ui/data_grid';
   styleUrls: ['./hospital-list.component.scss']
 })
 export class HospitalListComponent {
+selectedData: any;
 onEditingStart(event : any) {
    event.cancel=true;
     this.editHospitalData=event.data;
     this.editPopup=true;
-}
-addData() {
-
-}
-editData() {
-
 }
   
 @ViewChild(DxDataGridComponent, { static: true })
@@ -43,7 +38,26 @@ formsource:FormGroup;
 //store value for edit 
 editHospitalData:any;
 
-dataSource: any[]=[{}];
+dataSource: any[]=[{
+  ID: 1,
+  HOSPITAL: 'Hospital A',
+  IS_INACTIVE: false,
+},
+{
+  ID: 2,
+  HOSPITAL: 'Hospital B',
+  IS_INACTIVE: true,
+},
+{
+  ID: 3,
+  HOSPITAL: 'Hospital C',
+  IS_INACTIVE: false,
+},
+{
+  ID: 4,
+  HOSPITAL: 'Hospital D',
+  IS_INACTIVE: true,
+}];
 dataservice: any;
 
 updatedHospitalData:any;
@@ -62,7 +76,7 @@ constructor(private fb:FormBuilder){
   Inactive:[false,[Validators.required]]
 
  })
-
+  //  this.get_Hospital_List()
 }
 
 statusCellTemplate = (cellElement: any, cellInfo: any) => {
@@ -134,7 +148,24 @@ getSerialNumber=(rowIndex: number)=> {
   return rowIndex + 1;
 }
 
+// get_Hospital_List(){
+// this.dataservice.get_HospitalData_List().subscribe((response:any)=>{
+//   if(response){
+//     this.dataSource = response.Data.map((item:any, index:any) => ({
+//       ...item,
+//       "SlNo": index + 1, // Assign serial number
+//     }));
+//     // console.log(response.data);
+//   }
+// })
+// }
 
+addData() {
+
+}
+editData() {
+
+}
 
 }
 
