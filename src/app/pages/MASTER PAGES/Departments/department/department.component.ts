@@ -1,5 +1,5 @@
 import { Component, NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { DxSelectBoxModule, DxTextAreaModule, DxDateBoxModule, DxFormModule, DxTextBoxModule, DxCheckBoxModule, DxRadioGroupModule, DxFileUploaderModule, DxDataGridModule, DxButtonModule, DxValidatorModule, DxProgressBarModule, DxPopupModule, DxDropDownBoxModule, DxToolbarModule, DxTabPanelModule, DxTabsModule, DxNumberBoxModule, DxDataGridComponent, DxSelectBoxComponent, DxTextBoxComponent, DxDateBoxComponent } from 'devextreme-angular';
@@ -16,14 +16,27 @@ import { FormTextboxModule } from 'src/app/components';
 })
 export class DepartmentComponent {
 
-  formsource: any;
+formsource: FormGroup;
 isAddPop: boolean=false
 isEditPop: boolean=false
 updatedDepartmentData: any=[];
 
-
-
-
+constructor(private fb:FormBuilder){
+this.formsource=this.fb.group({
+  ID: [null],
+  DepartmentName: [''],
+  Hospital: [''],
+  Status: [false],
+})
+  
+}
+hospitals: any = [
+  { id: 1, name: 'City Hospital' },
+  { id: 2, name: 'County Hospital' },
+  { id: 3, name: 'State Hospital' },
+  { id: 4, name: 'General Hospital' },
+]
+//=========================onEditingStart=========================
 
 onEditingStart(event:any) {
 
@@ -32,15 +45,22 @@ onEditingStart(event:any) {
   console.log(event);
   
   this.isEditPop = true;
+ 
+   
+  
+  this.updatedDepartmentData = event.data;
+  console.log(this.updatedDepartmentData);
+  
 
 }
 onExporting($event: ExportingEvent) {
-throw new Error('Method not implemented.');
+
 }
-delete_Department_Data($event: RowRemovingEvent) {
-throw new Error('Method not implemented.');
+delete_Department_Data(event:any) {
+
 }
-changeHospitals($event) {
+changeHospitals(event:any) {
+
 }
 
 
@@ -48,25 +68,21 @@ openPopup() {
 this.isAddPop = true;
 }
 
-
-addData() {
-throw new Error('Method not implemented.');
-}
  departments: any=[{
   DepartmentID: 1,
   DepartmentName: "Cardiology",
   Hospital: "City Hospital",
-  Status: "Active",
+  Status: false,
  },
  {
   DepartmentID: 2,
   DepartmentName: "Neurology",
   Hospital: "City Hospital",
-  IS_INACTIVE: "Inactive",
+  Status: true,
  },
 ]
 formatStatus(data: any) {
-    return data.IS_INACTIVE ? 'Inactive' : 'Active';
+    return data.Status ? 'Inactive' : 'Active';
   }
 statusCellTemplate = (cellElement: any, cellInfo: any) => {
     const status = cellInfo.value; // Get the value from calculateCellValue
@@ -94,6 +110,14 @@ statusCellTemplate = (cellElement: any, cellInfo: any) => {
 closePopup() {
 this.isAddPop = false;
 this.isEditPop = false;
+}
+//===========================Add Department Data=========================
+
+
+addData() {
+console.log(this.formsource.value);
+this.isAddPop = false;
+
 }
 //===========================Update Department Data=========================
 update_Department_Data(){
