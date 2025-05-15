@@ -16,6 +16,7 @@ import { DashboardComponent } from './pages/HOME/dashboard/dashboard.component';
 import { LoginFormComponent } from './components/Login/login-form/login-form.component';
 import { UserListComponent } from './pages/MASTER PAGES/userFiles/user-list/user-list.component';
 import { InvoiceListComponent } from './pages/MASTER PAGES/invoiceFiles/invoice-list/invoice-list.component';
+import { HospitalListComponent } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
 const routes: Routes = [
   {
     path: '',
@@ -62,6 +63,12 @@ const routes: Routes = [
         component: InvoiceListComponent,
         canActivate: [AuthGuardService],
       },
+      {
+        path : 'hospital',
+        component : HospitalListComponent,
+        canActivate: [AuthGuardService],
+      },
+
      
       {
         path: '**',

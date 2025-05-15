@@ -23,13 +23,16 @@ import { CustomReuseStrategy } from './custom-reuse-strategy';
 import { DashboardModule } from './pages/HOME/dashboard/dashboard.component';
 import { LoginFormModule } from './components/Login/login-form/login-form.component';
 import { UserListComponent, UserListModule } from './pages/MASTER PAGES/userFiles/user-list/user-list.component';
-import { UserAddComponent, UserAddModule } from './pages/MASTER PAGES/userFiles/user-add/user-add.component';
-import { UserEditComponent } from './pages/MASTER PAGES/userFiles/user-edit/user-edit.component';
+
 import { InvoiceListComponent, InvoiceListModule } from './pages/MASTER PAGES/invoiceFiles/invoice-list/invoice-list.component';
+import { HospitalListComponent } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
+import { HospitalListModule } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
+
+;
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent,],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -43,8 +46,10 @@ import { InvoiceListComponent, InvoiceListModule } from './pages/MASTER PAGES/in
     DashboardModule,
     LoginFormModule,
     UserListModule,
-    UserAddModule,
-    InvoiceListModule
+    InvoiceListModule,
+    HospitalListModule,
+    
+    
   ],
   providers: [
     AuthService,

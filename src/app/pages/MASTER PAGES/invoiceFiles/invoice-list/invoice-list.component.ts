@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, ViewChild } from '@angular/core';
 import { DxDataGridModule, DxButtonModule, DxDropDownButtonModule, DxSelectBoxModule, DxTextBoxModule, DxLookupModule, DxCheckBoxModule, DxPopupModule, DxDataGridComponent } from 'devextreme-angular';
 import { FormPopupModule } from 'src/app/components';
-import { UserAddModule } from '../../userFiles/user-add/user-add.component';
-import { UserListComponent } from '../../userFiles/user-list/user-list.component';
+import { UserListComponent, UserListModule } from '../../userFiles/user-list/user-list.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -55,7 +54,7 @@ export class InvoiceListComponent {
     DxTextBoxModule,
     DxCheckBoxModule,
     DxPopupModule,
-    UserAddModule,
+    UserListModule,
   ],
   providers: [],
   exports: [InvoiceListComponent],
