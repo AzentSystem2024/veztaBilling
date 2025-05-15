@@ -148,6 +148,43 @@ export class InvoiceAddComponent {
       }, 50);
     }
   }
+
+printInvoice(): void {
+  const printContents = document.getElementById('invoiceToPrint')?.innerHTML;
+  if (!printContents) return;
+
+  const popupWindow = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+  if (popupWindow) {
+    popupWindow.document.open();
+    popupWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice Print</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .dx-datagrid, .dx-textbox, .dx-selectbox {
+              font-size: 14px;
+            }
+            .dx-datagrid {
+              border: 1px solid #ccc;
+              width: 100%;
+            }
+            .invoice-wrapper {
+              display: block;
+              width: 100%;
+            }
+          </style>
+        </head>
+        <body onload="window.print(); window.close();">
+          ${printContents}
+        </body>
+      </html>
+    `);
+    popupWindow.document.close();
+  }
+}
+
+
 }
 
 @NgModule({
