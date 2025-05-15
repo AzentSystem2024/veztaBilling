@@ -77,6 +77,10 @@ export class SideNavigationMenuComponent
           text: 'Hospital',
           path: '/hospital',
         },
+         {
+          text: 'Department',
+          path: '/department',
+        },
        
       ],
     },
