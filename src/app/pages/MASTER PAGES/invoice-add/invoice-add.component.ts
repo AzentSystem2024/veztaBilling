@@ -1,6 +1,7 @@
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
   NgModule,
   ViewChild,
 } from '@angular/core';
@@ -29,6 +30,7 @@ import {
   DxSelectBoxComponent,
   DxTextBoxComponent,
   DxDateBoxComponent,
+  DxButtonComponent,
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -37,7 +39,9 @@ import {
   DxiItemModule,
   DxiGroupModule,
 } from 'devextreme-angular/ui/nested';
+import notify from 'devextreme/ui/notify';
 import { FormTextboxModule } from 'src/app/components';
+import { DataService } from 'src/app/services';
 // import { UserAddComponent } from '../userFiles/user-add/user-add.component';
 
 @Component({
@@ -46,6 +50,7 @@ import { FormTextboxModule } from 'src/app/components';
   styleUrls: ['./invoice-add.component.scss'],
 })
 export class InvoiceAddComponent {
+  
   @ViewChild('itemsGridRef') itemsGridRef: any;
   @ViewChild('departmentBoxRef', { static: false })
   departmentBoxRef!: DxSelectBoxComponent;
@@ -61,6 +66,12 @@ export class InvoiceAddComponent {
   @ViewChild('uhidBoxRef', { static: false }) uhidBoxRef!: DxTextBoxComponent;
   @ViewChild('ageBoxRef', { static: false }) ageBoxRef!: DxTextBoxComponent;
   @ViewChild('sexBoxRef', { static: false }) sexBoxRef!: DxSelectBoxComponent;
+  @ViewChild('schemaSelect') schemaSelect!: DxSelectBoxComponent;
+  @ViewChild('paymentModeSelect') paymentModeSelect!: DxSelectBoxComponent;
+  @ViewChild('insuranceSelect') insuranceSelect!: DxSelectBoxComponent;
+@ViewChild('saveButton', { read: ElementRef }) saveButtonElementRef!: ElementRef;
+@ViewChild('saveButton') saveButton!: DxButtonComponent;
+
   @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
   readonly allowedPageSizes: any = [5, 10, 'all'];
@@ -73,45 +84,275 @@ export class InvoiceAddComponent {
   departments: any;
   selectedPaymentModeId: any = null;
   creditModeId = 2; // or the actual ID value for credit mode
-  insuranceOptions = [
-    { id: 1, name: 'Insurance A' },
-    { id: 2, name: 'Insurance B' },
-    // your insurance options here
-  ];
+  insuranceOptions: any;
 
-  invoice = [
-    {
-      ITEM_CODE: 'ITM001',
-      DESCRIPTION: '',
-      QUANTITY: '',
-      UOM: '',
-      UNIT_PRICE: '',
-      TOTAL: ''
-    },
-  ];
-
-  paymentModes = [
-    { id: 1, name: 'Cash' },
-    { id: 2, name: 'Credit' },
-  ];
-  schemaOptions = [
-    { id: 1, name: 'Schema A' },
-    { id: 2, name: 'Schema B' },
-    { id: 3, name: 'Schema C' },
-  ];
-  itemCodeOptions = [
-    { id: 'ITM001', name: 'Item 001' },
-    { id: 'ITM002', name: 'Item 002' },
-    { id: 'ITM003', name: 'Item 003' },
-  ];
+  paymentModes: any;
+  schemaOptions: any;
+  items: any;
   sexOptions = [
     { id: 1, name: 'Male' },
     { id: 2, name: 'Female' },
     { id: 3, name: 'Other' },
   ];
-  constructor() {}
+  mobileNumber: string = '+91-';
+  mobileValid: boolean = true;
+  Department: any = {
+    DEPARTMENT_ID: 1,
+  };
+  formattedInvoiceDate: string = '';
+  invoiceFormData: any = {
+    INVOICE_NO: '',
+    INVOICE_DATE: new Date(),
+    DEPARTMENT_ID: '1',
+    USER_ID: '1',
+    UHID: '',
+    PATIENT_NAME: '',
+    PATIENT_AGE: '',
+    PATIENT_SEX: 'MALE',
+    PATIENT_MOBILE: '+91-',
+    WARD: '',
+    UNIT: '',
+    GROSS_AMOUNT: '',
+    SCHEMA_ID: '',
+    SCHEMA_PERCENT: '',
+    SCHEMA_AMOUNT: '',
+    NET_AMOUNT: '',
+    PAYMENT_MODE: '',
+    INSURANCE_ID: '',
+    INVOICE_ENTRY: [
+      {
+        ITEM_ID: '',
+        // DESCRIPTION: '',
+        QUANTITY: '',
+        UNIT_PRICE: '',
+        AMOUNT: '',
+      },
+    ],
+  };
+  billNo: any;
+  itemData: { ITEM_ID: number; DEPARTMENT_ID: number };
+  selectedItem: any;
+schemaPercent: string = '';
 
-  ngOnInit() {}
+
+  constructor(private dataService: DataService) {}
+
+  ngOnInit() {
+    this.getInvoiceNo();
+    this.invoiceFormData.INVOICE_DATE = new Date();
+    this.formattedInvoiceDate = this.getFormattedDateTime(
+      this.invoiceFormData.INVOICE_DATE
+    );
+    this.getSchema();
+    this.getPaymentMode();
+    this.getInsuranceOptions();
+    this.getItems();
+  }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.wardBoxRef?.instance?.focus();
+    }, 0);
+      if (this.schemaSelect && this.schemaSelect.instance) {
+    this.schemaSelect.instance.on('keyDown', (e: any) => {
+      if (e.event.key === 'Enter') {
+        // Focus and open payment mode select
+        setTimeout(() => {
+          this.paymentModeSelect.instance.focus();
+          this.paymentModeSelect.instance.open();
+        }, 50);
+      }
+    });
+      this.paymentModeSelect?.instance?.on('keyDown', (e: any) => {
+    if (e.event.key === 'Enter') {
+      setTimeout(() => {
+        if (this.selectedPaymentModeId === this.creditModeId) {
+          // Focus insurance select if Credit
+          this.insuranceSelect?.instance?.focus();
+          this.insuranceSelect?.instance?.open();
+        } else {
+          this.saveButton?.instance?.focus();
+
+          // Listen for Enter key on save button
+         const saveBtnElement = this.saveButtonElementRef?.nativeElement;
+
+          if (saveBtnElement) {
+  saveBtnElement.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.save();
+    }
+  });
+}
+
+        }
+      }, 50);
+    }
+  });
+  }
+  }
+  getSchema() {
+    this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
+      this.schemaOptions = data;
+      console.log(this.schemaOptions, 'SCHEMAOPTIONS');
+    });
+  }
+
+  onGridContentReady(e: any) {
+  // Get the summary total for the AMOUNT column
+  const summary = e.component.getTotalSummaryValue('AMOUNT');
+  this.invoiceFormData.GROSS_AMOUNT = summary?.toFixed(2) ?? '0.00';
+  
+}
+
+onSchemaChanged(e: any) {
+  const selectedId = e.value;
+  if (selectedId === 1) {
+    this.invoiceFormData.SCHEMA_PERCENT = '10';
+  } else {
+    this.invoiceFormData.SCHEMA_PERCENT = '25';
+  }
+  this.calculateSchemaAmount();
+}
+
+updateNetAmount() {
+  const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
+  console.log(gross,"GROSSSSSSSS")
+ 
+  const schema = Number(this.invoiceFormData.SCHEMA_AMOUNT) || 0;
+   console.log(schema,"SCHEMAAAAAAAAA")
+  this.invoiceFormData.NET_AMOUNT = +(gross - schema).toFixed(2);
+  console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
+}
+
+
+calculateSchemaAmount() {
+  const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
+  const percent = Number(this.invoiceFormData.SCHEMA_PERCENT) || 0;
+console.log(this.invoiceFormData.AMOUNT,"====================")
+  console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
+
+  this.invoiceFormData.SCHEMA_AMOUNT = (gross * percent / 100).toFixed(2);
+  this.updateNetAmount();
+}
+
+
+
+
+  getPaymentMode() {
+    this.dataService.getDropdownData('PAYMENT_MODE').subscribe((data) => {
+      this.paymentModes = data;
+      console.log(this.paymentModes, 'PAYMENTMODES');
+    });
+  }
+
+  getInsuranceOptions() {
+    this.dataService.getDropdownData('INSURANCE').subscribe((data) => {
+      this.insuranceOptions = data;
+      console.log(this.insuranceOptions, 'SALARYHEAD');
+    });
+  }
+
+  getItems() {
+    this.dataService.getDropdownData('ITEMS').subscribe((data) => {
+      this.items = data;
+      console.log(this.items, 'ITEMS');
+    });
+  }
+
+  getSelectedItemsData(rowIndex: number) {
+    this.itemData = {
+      ITEM_ID: this.selectedItem.ID,
+      DEPARTMENT_ID: 1,
+    };
+    this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
+      if (response?.data?.length) {
+        const item = response.data[0];
+
+        // Update the grid row values
+        this.itemsGridRef?.instance?.cellValue(
+          rowIndex,
+          'ITEM_ID',
+          item.ITEM_ID
+        );
+        this.itemsGridRef?.instance?.cellValue(
+          rowIndex,
+          'ITEM_NAME',
+          item.ITEM_NAME
+        );
+        this.itemsGridRef?.instance?.cellValue(rowIndex, 'PRICE', item.PRICE);
+        this.itemsGridRef?.instance?.cellValue(
+          rowIndex,
+          'IS_FIXED',
+          item.IS_FIXED
+        );
+              setTimeout(() => {
+        this.itemsGridRef?.instance?.focus(
+          this.itemsGridRef?.instance?.getCellElement(rowIndex, 'QUANTITY')
+        );
+      }, 0);
+      }
+    });
+  }
+
+  
+
+calculateAmount = (rowData: any) => {
+  const price = parseFloat(rowData.PRICE || 0);
+  const quantity = parseFloat(rowData.QUANTITY || 0);
+  return price * quantity;
+};
+
+onCalculateCustomSummary(e: any) {
+  console.log('onCalculateCustomSummary called', e);
+  if (e.summaryProcess === "start") {
+    e.totalValue = 0;
+  }
+  if (e.summaryProcess === "calculate") {
+    e.totalValue += e.value;
+  }
+  if (e.summaryProcess === "finalize") {
+    // finalize if needed
+  }
+}
+
+
+
+
+  onCellChanged(e: any) {
+    if (e.column.dataField === 'ITEM_ID') {
+      const selectedItem = this.items.find((item) => item.ID === e.value);
+      if (selectedItem) {
+        e.component.cellValue(
+          e.rowIndex,
+          'DESCRIPTION',
+          selectedItem.DESCRIPTION
+        );
+      }
+    }
+  }
+
+  getFormattedDateTime(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // convert 0 to 12
+    const hourStr = String(hours).padStart(2, '0');
+
+    return `${day}-${month}-${year} ${hourStr}:${minutes} ${ampm}`;
+  }
+
+  getInvoiceNo() {
+    const department = this.Department;
+    this.dataService.getInvoiceNo(department).subscribe((response: any) => {
+      this.billNo = response.data;
+      this.invoiceFormData.INVOICE_NO = this.billNo;
+      console.log(this.billNo, 'Invoice no.');
+    });
+  }
 
   customFormat(value: number): string {
     return new Intl.NumberFormat('en-US', {
@@ -119,6 +360,29 @@ export class InvoiceAddComponent {
       maximumFractionDigits: 2,
       minimumFractionDigits: 2,
     }).format(value);
+  }
+
+  validateMobileNumber(value: string): void {
+    const regex = /^\+91-\d{10}$/;
+    this.mobileValid = regex.test(value);
+  }
+
+  onMobileInput(event: any): void {
+    let input = event.event.target.value;
+
+    // Ensure +91- is always prefixed
+    if (!input.startsWith('+91-')) {
+      input = '+91-' + input.replace(/[^0-9]/g, '').slice(0, 10); // allow only digits
+    }
+
+    // Extract the digits after +91-
+    const digits = input
+      .replace('+91-', '')
+      .replace(/[^0-9]/g, '')
+      .slice(0, 10);
+    this.mobileNumber = '+91-' + digits;
+
+    this.validateMobileNumber(this.mobileNumber);
   }
 
   onKeyDownHandler(event: any, nextField: string): void {
@@ -149,42 +413,266 @@ export class InvoiceAddComponent {
     }
   }
 
-printInvoice(): void {
-  const printContents = document.getElementById('invoiceToPrint')?.innerHTML;
-  if (!printContents) return;
+  onEditorPreparing(e: any): void {
+    if (e.parentType === 'dataRow') {
+      const rowIndex = e.row.rowIndex;
 
-  const popupWindow = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-  if (popupWindow) {
-    popupWindow.document.open();
-    popupWindow.document.write(`
-      <html>
-        <head>
-          <title>Invoice Print</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            .dx-datagrid, .dx-textbox, .dx-selectbox {
-              font-size: 14px;
+      // ITEM_ID
+      if (e.dataField === 'ITEM_ID') {
+        let enterPressedOnce = false;
+
+        e.editorOptions.onKeyDown = (event: any) => {
+          const key = event.event.key;
+
+          if (key === 'Enter') {
+            event.event.preventDefault();
+
+            const editorInstance = event.component;
+
+            if (!enterPressedOnce) {
+              enterPressedOnce = true;
+
+              setTimeout(() => {
+                if (editorInstance?.open) {
+                  editorInstance.open();
+                }
+              }, 50);
+            } else {
+              setTimeout(() => {
+                this.itemsGridRef?.instance?.editCell(rowIndex, 'QUANTITY');
+              }, 50);
+
+              enterPressedOnce = false;
             }
-            .dx-datagrid {
-              border: 1px solid #ccc;
-              width: 100%;
-            }
-            .invoice-wrapper {
-              display: block;
-              width: 100%;
-            }
-          </style>
-        </head>
-        <body onload="window.print(); window.close();">
-          ${printContents}
-        </body>
-      </html>
-    `);
-    popupWindow.document.close();
+          }
+        };
+        
+
+        // <-- ADD onValueChanged here -->
+        e.editorOptions.onValueChanged = (args: any) => {
+          console.log('api called++++++++++++++');
+          const selectedId = args.value;
+          this.selectedItem = this.items.find(
+            (item: any) => item.ID === selectedId
+          );
+          console.log('Selected item:', this.selectedItem);
+
+          if (this.selectedItem) {
+            this.getSelectedItemsData(rowIndex);
+          } else {
+            e.component.cellValue(rowIndex, 'DESCRIPTION', '');
+          }
+        };
+      }
+
+if (e.dataField === 'QUANTITY') {
+  e.editorOptions.onKeyDown = (event: any) => {
+    const key = event.event.key;
+
+    if (key === 'Enter') {
+      event.event.preventDefault();
+
+      setTimeout(() => {
+        const grid = this.itemsGridRef?.instance;
+
+        // Ensure QUANTITY is not empty before adding a new row
+        const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
+        const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
+
+        if (itemIdValue && quantityValue != null && quantityValue !== '') {
+          // Optional: commit any changes
+          grid.saveEditData();
+
+          // Add a new row
+          // grid.addRow();
+
+           const maxRows = this.items.length;
+           console.log(maxRows,"MAXROWS")
+            const currentRows = grid.getVisibleRows().length;
+          // Focus new row (optional)
+         if (currentRows < maxRows) {
+            grid.addRow();
+
+            // Focus first cell of new row after adding
+            const newRowIndex = grid.getVisibleRows().length - 1;
+            setTimeout(() => {
+              grid.editCell(newRowIndex, 'ITEM_ID');
+            }, 50);
+          } else {
+            // Optional: show some notification about max rows reached
+            console.warn('Maximum row limit reached');
+            this.schemaSelect.instance.focus();
+            this.schemaSelect.instance.open(); 
+          }
+        }
+      }, 50);
+    }
+  };
+}
+
+     
+
+      // UNIT_PRICE
+      // if (e.dataField === 'UNIT_PRICE') {
+      //   e.editorOptions.onKeyDown = (event: any) => {
+      //     const key = event.event.key;
+
+      //     if (key === 'Enter') {
+      //       event.event.preventDefault();
+
+      //       setTimeout(() => {
+      //         this.itemsGridRef?.instance?.editCell(rowIndex, 'AMOUNT');
+      //       }, 50);
+      //     }
+      //   };
+      // }
+
+      // AMOUNT
+      // if (e.dataField === 'AMOUNT') {
+      //   e.editorOptions.onKeyDown = (event: any) => {
+      //     const key = event.event.key;
+
+      //     if (key === 'Enter') {
+      //       event.event.preventDefault();
+
+      //       setTimeout(() => {
+      //         const grid = this.itemsGridRef?.instance;
+      //         const rowCount = grid?.getVisibleRows()?.length || 0;
+
+      //         if (rowIndex + 1 < rowCount) {
+      //           // Move to next row, first editable cell
+      //           grid?.editCell(rowIndex + 1, 'ITEM_ID');
+      //         } else {
+      //           // Optionally add a new row or stay put
+      //           // grid?.addRow();
+      //         }
+      //       }, 50);
+      //     }
+      //   };
+      // }
+    }
   }
+
+
+  convertNumbersToStrings(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(item => this.convertNumbersToStrings(item));
+  } else if (obj !== null && typeof obj === 'object') {
+    const result: any = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const value = obj[key];
+        if (typeof value === 'number') {
+          result[key] = value.toString();
+        } else {
+          result[key] = this.convertNumbersToStrings(value);
+        }
+      }
+    }
+    return result;
+  }
+  return obj;
 }
 
 
+save() {
+  console.log("SAVE TRIGGERED");
+
+  // Clone the data to avoid mutating the original form
+  const clonedData = { ...this.invoiceFormData };
+
+  // Clean and transform INVOICE_ENTRY
+  clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || []).map(entry => ({
+    ITEM_ID: entry.ITEM_ID,
+    QUANTITY: entry.QUANTITY,
+    UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
+    AMOUNT: entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE)
+      ? (+entry.QUANTITY * +entry.PRICE).toFixed(2)
+      : '0.00',
+  }));
+
+  // Format the date
+
+clonedData.INVOICE_DATE = new Date().toISOString();
+
+  // Convert numbers to strings
+  const dataToSave = this.convertNumbersToStrings(clonedData);
+
+  // Save to backend
+  this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
+    console.log(response, 'SAVE');
+  if (response.flag == "1") {
+    notify(
+      {
+        message: 'Invoice Entered Successfully',
+        position: { at: 'top center', my: 'top center' },
+      },
+      'success'
+    );
+
+  } else {
+    notify(
+      {
+        message: 'Invoice Not Generated',
+        position: { at: 'top right', my: 'top right' },
+      },
+      'error'
+    );
+  }
+    // Reset form
+    this.invoiceFormData = {
+      INVOICE_DATE: new Date(),
+    };
+    this.getInvoiceNo();
+
+    // Focus on ward field
+    setTimeout(() => {
+      this.wardBoxRef?.instance?.focus();
+    }, 0);
+  });
+}
+
+
+
+  printInvoice() {
+    const printContents = document.getElementById('invoiceToPrint')?.innerHTML;
+
+    if (printContents) {
+      const popupWin = window.open('', '_blank', 'width=800,height=900');
+      if (popupWin) {
+        popupWin.document.open();
+        popupWin.document.write(`
+        <html>
+          <head>
+            <title>Print Invoice</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              th, td {
+                border: 1px solid black;
+                padding: 5px;
+                text-align: left;
+              }
+              .dx-datagrid {
+                font-size: 12px;
+              }
+            </style>
+          </head>
+          <body onload="window.print(); window.close();">
+            ${printContents}
+          </body>
+        </html>
+      `);
+        popupWin.document.close();
+      }
+    }
+  }
 }
 
 @NgModule({

@@ -89,6 +89,7 @@ passwordMode = 'password';
 
   // Navigate to dashboard
   await this.router.navigate(['/dashboard']);
+  window.location.reload();
   this.loading = false;
 }
 

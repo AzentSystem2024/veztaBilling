@@ -1,4 +1,5 @@
-<div id="invoiceToPrint"
+<div
+  id="invoiceToPrint"
   class="invoice-wrapper"
   style="
     height: 95vh;
@@ -12,7 +13,7 @@
     <div class="grid-container">
       <dx-data-grid
         #itemsGridRef
-        [dataSource]="invoice"
+        [dataSource]="invoiceFormData.INVOICE_ENTRY"
         [showBorders]="true"
         [columnAutoWidth]="false"
         [wordWrapEnabled]="false"
@@ -29,6 +30,10 @@
         rowAlternationInterval="2"
         [selection]="{ mode: 'single' }"
         [editing]="{ mode: 'cell', allowUpdating: true }"
+        (onEditorPreparing)="onEditorPreparing($event)"
+        (onCellValueChanged)="onCellChanged($event)"
+        (onContentReady)="onGridContentReady($event)"
+        [editing]="{ mode: 'row', allowAdding: true, allowUpdating: true }"
       >
         <dxo-load-panel [showPane]="false"></dxo-load-panel>
         <dxo-scrolling mode="standard"></dxo-scrolling>
@@ -38,14 +43,14 @@
           <dxi-item location="before" locateInMenu="auto">
             <div
               class="stacked-toolbar-group"
-              style="display: flex; flex-direction: column; gap: 2px;
-               margin-top: 5px"
+              style="display: flex; flex-direction: column; gap: 2px"
             >
               <!-- Date Field -->
               <dx-text-box
                 label="Date & Time"
                 labelMode="floating"
-                [width]="200"
+                [value]="formattedInvoiceDate"
+                [width]="205"
                 [readOnly]="true"
               ></dx-text-box>
 
@@ -56,6 +61,7 @@
                   #wardBoxRef
                   label="Ward"
                   labelMode="floating"
+                  [(value)]="invoiceFormData.WARD"
                   [width]="100"
                   (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
                 ></dx-text-box>
@@ -65,6 +71,7 @@
                   #unitBoxRef
                   label="Unit"
                   labelMode="floating"
+                  [(value)]="invoiceFormData.UNIT"
                   [width]="100"
                   (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
                 ></dx-text-box>
@@ -82,7 +89,9 @@
                 #billNoBoxRef
                 label="Bill No."
                 labelMode="floating"
+                [(value)]="invoiceFormData.INVOICE_NO"
                 [width]="300"
+                [readOnly]="true"
                 (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
               ></dx-text-box>
 
@@ -94,6 +103,7 @@
                     #patientBoxRef
                     label="Patient Name"
                     labelMode="floating"
+                    [(value)]="invoiceFormData.PATIENT_NAME"
                     [width]="300"
                     (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
                   ></dx-text-box>
@@ -105,6 +115,16 @@
                   label="Mobile No."
                   labelMode="floating"
                   [width]="200"
+                  [(value)]="invoiceFormData.PATIENT_MOBILE"
+                  (onInput)="onMobileInput($event)"
+                  (onInput)="validateMobileNumber($event.event.target.value)"
+                  [isValid]="mobileValid"
+                  [validationMessageMode]="'always'"
+                  [validationError]="
+                    !mobileValid
+                      ? { message: 'Enter a valid number' }
+                      : null
+                  "
                   (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
                 ></dx-text-box>
               </div>
@@ -117,23 +137,25 @@
           <dxi-item location="after" locateInMenu="auto">
             <div
               class="stacked-toolbar-group"
-              style="display: flex; flex-direction: column; gap: 5px"
+              style="display: flex; flex-direction: column; gap: 2px"
             >
               <!-- Date Box -->
               <dx-text-box
                 #uhidBoxRef
                 label="UHID"
                 labelMode="floating"
-                [width]="200"
+                [(value)]="invoiceFormData.UHID"
+                [width]="205"
                 (onKeyDown)="onKeyDownHandler($event, 'ageBoxRef')"
               ></dx-text-box>
 
               <!-- Ward and Unit below, with gap -->
-              <div style="display: flex; gap: 3px">
+              <div style="display: flex; gap: 5px">
                 <dx-text-box
                   #ageBoxRef
                   label="Age"
                   labelMode="floating"
+                  [(value)]="invoiceFormData.PATIENT_AGE"
                   [width]="100"
                   (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
                 ></dx-text-box>
@@ -142,6 +164,7 @@
                   #sexBoxRef
                   label="Sex"
                   labelMode="floating"
+          
                   [width]="100"
                   [dataSource]="sexOptions"
                   displayExpr="name"
@@ -152,16 +175,16 @@
             </div>
           </dxi-item>
         </dxo-toolbar>
-        <dxi-column dataField="ITEM_CODE" caption="Item Code">
+        <dxi-column dataField="ITEM_ID" caption="Item Code">
           <dxo-lookup
-            [dataSource]="itemCodeOptions"
-            displayExpr="name"
-            valueExpr="id"
+            [dataSource]="items"
+            displayExpr="DESCRIPTION"
+            valueExpr="ID"
           ></dxo-lookup>
         </dxi-column>
 
         <dxi-column
-          dataField="DESCRIPTION"
+          dataField="ITEM_NAME"
           caption="Item Description"
         ></dxi-column>
         <dxi-column
@@ -171,43 +194,34 @@
           [format]="{ type: 'fixedPoint', precision: 2 }"
           [editorOptions]="{ format: '#,##0.00' }"
         ></dxi-column>
-        <!-- <dxi-column
-          dataField="UOM"
-          caption="UOM"
-          [format]="{ type: 'fixedPoint', precision: 2 }"
-          dataType="number"
-          [editorOptions]="{ format: '#,##0.00' }"
-        ></dxi-column> -->
+       
         <dxi-column
-          dataField="UNIT_PRICE"
+          dataField="PRICE"
           caption="Unit Price"
           [format]="{ type: 'fixedPoint', precision: 2 }"
           dataType="number"
           [editorOptions]="{ format: '#,##0.00' }"
         ></dxi-column>
         <dxi-column
-          dataField="TOTAL"
+          dataField="AMOUNT"
           caption="Total"
           [format]="{ type: 'fixedPoint', precision: 2 }"
           dataType="number"
           [editorOptions]="{ format: '#,##0.00' }"
+          [calculateCellValue]="calculateAmount"
         ></dxi-column>
         <dxo-summary>
           <dxi-total-item
+          name="AMOUNT" 
+          column="AMOUNT"
             summaryType="sum"
             [valueFormat]="customFormat"
             displayFormat="Gross Amount: {0}"
-            showInColumn="TOTAL"
+            showInColumn="AMOUNT"
           >
           </dxi-total-item>
 
-          <dxi-total-item
-            summaryType="sum"
-            [valueFormat]="customFormat"
-            displayFormat="{0}"
-            showInColumn="DEDUCT"
-          >
-          </dxi-total-item>
+        
         </dxo-summary>
       </dx-data-grid>
 
@@ -219,17 +233,21 @@
           <!-- Left -->
           <div style="display: flex; gap: 5px">
             <dx-select-box
+            #schemaSelect
               label="Schema"
               labelMode="floating"
               [dataSource]="schemaOptions"
-              displayExpr="name"
-              valueExpr="id"
+              displayExpr="DESCRIPTION"
+              [(value)]="invoiceFormData.SCHEMA_ID"
+              valueExpr="ID"
               [width]="200"
+              (onValueChanged)="onSchemaChanged($event)"
             ></dx-select-box>
             <dx-text-box
               label="Schema%"
               labelMode="floating"
               [width]="100"
+              [(value)]="invoiceFormData.SCHEMA_PERCENT"
             ></dx-text-box>
           </div>
           <!-- Right -->
@@ -238,11 +256,13 @@
               [readOnly]="true"
               label="Schema Amount"
               labelMode="floating"
+              [(value)]="invoiceFormData.SCHEMA_AMOUNT"
               [width]="200"
             ></dx-text-box>
             <dx-number-box
               label="Net Amount"
               labelMode="floating"
+              [(value)]="invoiceFormData.NET_AMOUNT"
               [width]="200"
               [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
               [inputAttr]="{
@@ -264,22 +284,26 @@
           <!-- Left side: payment + insurance -->
           <div style="display: flex; gap: 10px">
             <dx-select-box
+            #paymentModeSelect
               label="Payment Options"
               labelMode="floating"
               [dataSource]="paymentModes"
-              displayExpr="name"
-              valueExpr="id"
+              displayExpr="DESCRIPTION"
+              valueExpr="ID"
+              [(value)]="invoiceFormData.PAYMENT_MODE"
               [width]="200"
               [(value)]="selectedPaymentModeId"
             ></dx-select-box>
 
             <dx-select-box
               *ngIf="selectedPaymentModeId === creditModeId"
+              #insuranceSelect
               label="Insurance"
               labelMode="floating"
               [dataSource]="insuranceOptions"
-              displayExpr="name"
-              valueExpr="id"
+              displayExpr="DESCRIPTION"
+              valueExpr="ID"
+              [(value)]="invoiceFormData.INSURANCE_ID"
               [width]="200"
             ></dx-select-box>
           </div>
@@ -292,17 +316,16 @@
               stylingMode="outlined"
               type="normal"
             ></dx-button>
-           <dx-button
-  text="Save"
-  stylingMode="contained"
-  type="default"
-  (onClick)="printInvoice()"
-></dx-button>
-
+            <dx-button
+       
+              text="Save"
+              stylingMode="contained"
+              type="default"
+              (onClick)="save()"
+            ></dx-button>
           </div>
         </div>
       </div>
     </div>
   </div>
- 
 </div>
