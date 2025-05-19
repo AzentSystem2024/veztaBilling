@@ -377,6 +377,29 @@ export class DataService {
     const reqBodyData = { name: type };
     return this.http.post(`${BASE_URL}/dropdown/`, reqBodyData);
   }
+  
+  getInvoiceNo(data: any): Observable<any> {
+    // const data = { "DEPARTMENT_ID":1}
+    return this.http.post(`${BASE_URL}invoice/BillNo`, data);
+  }
+
+  saveInvoiceData(data: any): Observable<any> {
+    return this.http.post(`${BASE_URL}invoice/insert`, data);
+  }
+
+  getItemsData(data: any): Observable<any> {
+  return this.http.post(`${BASE_URL}invoice/getitemsData`, data);
+}
+p
+  //dropdown
+
+public getDrodownData(type: any): Observable<any> {
+  const reqBodyData = { name: type };
+  return this.http.post(
+    `${BASE_URL}dropdown/`,
+    reqBodyData
+  );
+}
 
   //HOSPITAL
 
