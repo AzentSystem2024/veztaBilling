@@ -1,6 +1,6 @@
 <dx-data-grid
   id="gridContainer"
-  [dataSource]="departments"
+  [dataSource]="items_source"
   [remoteOperations]="true"
   [allowColumnReordering]="true"
   [rowAlternationEnabled]="true"
@@ -9,15 +9,16 @@
   (onEditingStart)="onEditingStart($event)"
   [width]="'100%'"
   [height]="'90vh'"
-  (onRowRemoving)="delete_Department_Data($event)"
+  (onRowRemoving)="delete_Items_Data($event)"
   (onExporting)="onExporting($event)"
   id="dataGrid"
   [pager]="{
     showInfo: true,
     infoText: 'Page {0} of {1}',
     showNavigationButtons: true
-  }"
->
+  }">
+
+  
   <dxo-scrolling mode="virtual"></dxo-scrolling>
   <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
 
@@ -60,22 +61,25 @@
     [allowEditing]="false"
     alignment="left">
   </dxi-column> -->
-  <dxi-column
-    dataField="DEPARTMENT"
+    <dxi-column
+    dataField="ITEM_CODE"
     alignment="left"
-    caption="Department"
+    caption="Item Code"
   ></dxi-column>
   <dxi-column
-    dataField="HOSPITAL_ID"
+    dataField="ITEM_NAME"
     alignment="left"
-    caption="Hospital"
+    caption="Item Name"
+  ></dxi-column>
+  <dxi-column
+    dataField="ITEM_PRICE"
+    alignment="left"
+    caption="price"
   ></dxi-column>
   <dxi-column
     dataField="IS_INACTIVE"
     alignment="left"
     caption="Status"
-    [calculateCellValue]="formatStatus"
-    [cellTemplate]="statusCellTemplate"
   ></dxi-column>
   <dxi-column type="buttons" [width]="110">
     <dxi-button name="edit"></dxi-button>
@@ -92,59 +96,103 @@
     [showPageSizeSelector]="true"
     [allowedPageSizes]="[10, 25, 50, 100]"
   ></dxo-pager>
-</dx-data-grid>
-
-<!-- =========== Add the Department================ -->
-<dx-popup
-  [title]="'Department'"
+  </dx-data-grid>
+  <!-- //=======================Add items====================== --><dx-popup
+  [title]="'Item'"
   [(visible)]="isAddPop"
-  [width]="400"
-  [height]="300"
+  [width]="560"
+  [height]="460"
   [shading]="false"
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
-    <div style="display: flex; align-items: center; gap: 20px">
-      <label>Department</label>
+    
+    <!-- Code -->
+    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+      <label style="width: 100px;">Code</label>
       <dx-text-box
         type="text"
-        name="Department"
+        name="Code"
+        width="150px"
         class="form-control"
-        formControlName="DepartmentName"
+        formControlName="code"
       ></dx-text-box>
     </div>
 
-    <div class="d-flex">
-      <label style="margin-top: 17px">Hospital</label>
+    <!-- Item Name -->
+    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+      <label style="width: 120px;">Item Name</label>
+      <dx-text-box
+        type="text"
+        name="Item Name"
+        width="100%"
+        class="form-control"
+        formControlName="item_name"
+      ></dx-text-box>
+    </div>
 
- <dx-select-box
-  formControlName="Hospital"
-  style="flex: 1; margin-left: 44px; margin-top: 17px"
-  [searchEnabled]="true"
-  displayExpr="name"
-  valueExpr="id"
-  (onValueChanged)="changeHospitals($event)"
-></dx-select-box>
+    <!-- Department -->
+    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+      <label style="width: 120px;">Department</label>
+      <dx-tag-box
+        [showClearButton]="true"
+        [items]="department_list"
+        valueExpr="ID"
+        displayExpr="DESCRIPTION"
+        [showSelectionControls]="true"
+        applyValueMode="instantly"
+        [multiline]="false"
+        [searchEnabled]="true"
+        formControlName="department_id"
+        width="100%"
+      >
+      </dx-tag-box>
+    </div>
+
+    <!-- Price -->
+    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+      <label style="width: 120px;">Price</label>
+ <dx-radio-group
+  [items]="select_option"
+  [valueExpr]="'value'"
+  [displayExpr]="'text'"
+  layout="horizontal"
+  formControlName="is_fixed"
+></dx-radio-group>
+<dx-number-box
+  valueChangeEvent="input"
+  [inputAttr]="{ style: 'text-align: right;' }"
+  style="margin-left: 10px; width: 100px;"
+  formControlName="price"
+>
+</dx-number-box>
+
+<div *ngIf="formsource.get('price')?.errors?.priceInvalid && formsource.get('price')?.touched" class="text-danger">
+  Price must be greater than 0 when Fixed is selected
+</div>
+
+
 
     </div>
 
-    <label for="checboxadd" class="me-5">Inactive </label>
-    <dx-check-box
-      class="mt-4"
-      formControlName="Status"
-      [elementAttr]="{ 'aria-label': 'Unchecked' }"
-      id="checboxadd"
-    ></dx-check-box>
+    <!-- Inactive Checkbox -->
+    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+      <label style="width: 120px;">Inactive</label>
+      <dx-check-box
+        formControlName="status"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+    </div>
+
+    <!-- Action Buttons -->
     <div class="d-flex justify-content-end mt-4">
-      <!-- Cancel Button -->
       <button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
       >
         Cancel
       </button>
-
-      <!-- Save Button -->
       <dx-button
         text="Save"
         class="equal-button"
@@ -156,45 +204,36 @@
   </form>
 </dx-popup>
 
-<!-- // =========== Edit the Department================ -->
+<!-- // =========== Edit the Items================ -->
 
 <dx-popup
-  [title]="' Department'"
+  [title]="' Item'"
   [(visible)]="isEditPop"
   [width]="400"
   [height]="300"
   [shading]="false"
   (onHiding)="closePopup()"
 >
-  <form [formGroup]="formsource">
+  <form >
     <div style="display: flex; align-items: center; gap: 20px">
       <label>Department</label>
       <dx-text-box
         type="text"
         name="Department"
         class="form-control"
-        [(value)]="department_Value"
+    
       ></dx-text-box>
     </div>
 
     <div class="d-flex">
       <label style="margin-top: 17px">Hospital</label>
 
-   <dx-select-box
-  [(value)]="updatedDepartmentData.Hospital"
-  displayExpr="name"
-  valueExpr="id"
-  style="flex: 1; margin-left: 44px; margin-top: 17px"
-  [searchEnabled]="true"
-  (onValueChanged)="changeHospitals($event)"
-></dx-select-box>
-
     </div>
 
     <label for="checboxadd" class="me-5">Inactive </label>
     <dx-check-box
       class="mt-4"
-      [(value)]="status_value"
+   
       [elementAttr]="{ 'aria-label': 'Unchecked' }"
       id="checboxadd"
     ></dx-check-box>
@@ -213,7 +252,7 @@
         class="equal-button"
         type="default"
         stylingMode="contained"
-        (onClick)="update_Department_Data()"
+        (onClick)="update_item_Data()"
       ></dx-button>
     </div>
   </form>
