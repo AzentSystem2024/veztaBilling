@@ -150,10 +150,71 @@ async onSubmit(event: Event) {
 
   // Navigate to dashboard
   await this.router.navigate(['/dashboard']);
-  this.loading = false;
+  window.location.reload();
+  this.loading = false;
 }
 
+
+  // async onSubmit(event: Event) {
+  //   event.preventDefault(); // Prevent default form submission
+
+  //   if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
+  //     alert('Please enter login name and password');
+  //     return;
+  //   }
+
+  //   this.loading = true;
+
+  //   this.authService.logIn(this.formData.LOGIN_NAME, this.formData.PASSWORD)
+  //     .subscribe(
+  //       (response) => {
+  //         console.log(response,"RESPONSEINLOGIN")
+  //         this.loading = false;
+  //         if (response.flag === 1) {
+  //           // console.log('Login Successful:', response);
+  //           const userData = response.data[0];
+  //           localStorage.setItem('userData', JSON.stringify(userData)); // Store full user data
+  //           // console.log('Stored userData:', userData);
+  //           localStorage.setItem('USER_TYPE', userData.USER_TYPE.toString()); 
+  //           // console.log(userData,"USERDATA")
+  //           if (userData.USER_TYPE === 3) {
+  //             localStorage.setItem('RESELLER_ID', userData.RESELLER_ID.toString());
+  //           }
+  //           if(userData.USER_TYPE === 4){
+  //             localStorage.setItem('CUST_ID', userData.CUST_ID.toString())
+  //             // console.log(userData.CUST_ID,"CUSTIDDDDDDDDDD")
+  //           }
   
+  //           if (userData) {
+  //             // console.log('User Type:', userData.USER_TYPE); 
+  //           } else {
+  //             console.warn('No user data found in response');
+  //           }
+  //           localStorage.setItem('userData', JSON.stringify(response.data[0])); // Save user data
+  //           this.router.navigate(['/dashboard']).then(() => {
+  //             // window.location.reload(); // Full reload
+  //           });
+  //           // this.router.navigate(['/dashboard']); // Redirect after login
+  //         } else {
+  //           // alert(response.message); // Show error message
+  //           notify({
+  //             message: response.message,
+  //             type: 'error',
+  //             position: {
+  //               my: 'top right',
+  //               at: 'top right',
+  //               of: window,
+  //             },
+  //           });
+  //         }
+  //       },
+  //       (error) => {
+  //         this.loading = false;
+  //         console.error('Login Failed:', error);
+  //         alert('Login failed. Please check your credentials.');
+  //       }
+  //     );
+  // }
 
 }
 @NgModule({

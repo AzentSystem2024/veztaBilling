@@ -121,8 +121,6 @@
   formControlName="Hospital"
   style="flex: 1; margin-left: 44px; margin-top: 17px"
   [searchEnabled]="true"
-  [items]="hospitals"
-   [(value)]="hospitals.id"
   displayExpr="name"
   valueExpr="id"
   (onValueChanged)="changeHospitals($event)"
@@ -184,7 +182,6 @@
 
    <dx-select-box
   [(value)]="updatedDepartmentData.Hospital"
-  [items]="hospitals"
   displayExpr="name"
   valueExpr="id"
   style="flex: 1; margin-left: 44px; margin-top: 17px"

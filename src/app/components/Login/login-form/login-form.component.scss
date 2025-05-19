@@ -6,9 +6,10 @@ html, body {
 }
 
 .login-page {
-  background-image: url("/assets/Images/cover.png");
-  background-size: cover;
-  background-position: center;
+  // background-image: url("/assets/Images/cover.png");
+    background-image:url("/assets/Images/cover.png"), url("/assets/Images/login.png"), ;
+  background-size: 68%, cover;
+  background-position: center -40px , center;
   background-repeat: no-repeat;
   height: 100vh;
   width: 100vw;
@@ -18,7 +19,8 @@ html, body {
 
   // Nested correctly
   .login-box {
-    background-color: rgba(255, 255, 255, 0.9);
+    // background-color: rgba(255, 255, 255, 0.9);
+    // background-color: var(--base-bg);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -31,6 +33,7 @@ html, body {
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
+    color: black;
   }
 
   .reset-link {
