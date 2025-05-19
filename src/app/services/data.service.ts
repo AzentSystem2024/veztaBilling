@@ -67,26 +67,26 @@ export class DataService {
 
 
 
-  //Invoice - Sales
-  getInvoiceList(
-    orgId: string,
-    dateFrom: string,
-    dateTo: string
-  ): Observable<any> {
-    const payload = {
-      OrgID: orgId,
-      DateFrom: dateFrom,
-      DateTo: dateTo,
-    };
+  // //Invoice - Sales
+  // getInvoiceList(
+  //   orgId: string,
+  //   dateFrom: string,
+  //   dateTo: string
+  // ): Observable<any> {
+  //   const payload = {
+  //     OrgID: orgId,
+  //     DateFrom: dateFrom,
+  //     DateTo: dateTo,
+  //   };
 
-    return this.http.post(`${BASE_URL}/organization/invoices`, payload);
-  }
+  //   return this.http.post(`${BASE_URL}/organization/invoices`, payload);
+  // }
 
   //dropdown
 
   public getDropdownData(type: any): Observable<any> {
     const reqBodyData = { name: type };
-    return this.http.post(`${BASE_URL}/dropdown/`, reqBodyData);
+    return this.http.post(`${BASE_URL}dropdown/`, reqBodyData);
   }
   
   getInvoiceNo(data: any): Observable<any> {
@@ -101,7 +101,13 @@ export class DataService {
   getItemsData(data: any): Observable<any> {
   return this.http.post(`${BASE_URL}invoice/getitemsData`, data);
 }
-p
+
+//SCHEMA-LIST
+
+getSchema(): Observable<any> {
+  return this.http.post(`${BASE_URL}Schema/list`, {});
+}
+
   //dropdown
 
 public getDrodownData(type: any): Observable<any> {

@@ -1,395 +1,423 @@
-<div
-  id="invoiceToPrint"
-  class="invoice-wrapper"
-  style="
-    height: 95vh;
-    display: flex;
-    flex-direction: column;
-
-    box-sizing: border-box;
-  "
->
-  <div class="salary-grid-wrapper" style="padding: 0 10px">
-    <div class="grid-container">
-      <dx-data-grid
-        #itemsGridRef
-        [dataSource]="invoiceFormData.INVOICE_ENTRY"
-        [showBorders]="true"
-        [columnAutoWidth]="false"
-        [wordWrapEnabled]="false"
-        [rowAlternationEnabled]="true"
-        [headerFilter]="{ visible: true }"
-        [allowColumnReordering]="true"
-        [showColumnHeaders]="true"
-        [columnAutoWidth]="true"
-        [allowColumnResizing]="true"
-        [height]="'70vh'"
-        [columnResizingMode]="'nextColumn'"
-        [headerFilter]="{ visible: true }"
-        [scrolling]="{ mode: 'virtual' }"
-        rowAlternationInterval="2"
-        [selection]="{ mode: 'single' }"
-        [editing]="{ mode: 'cell', allowUpdating: true }"
-        (onEditorPreparing)="onEditorPreparing($event)"
-        (onCellValueChanged)="onCellChanged($event)"
-        (onContentReady)="onGridContentReady($event)"
-        [editing]="{ mode: 'row', allowAdding: true, allowUpdating: true }"
-      >
-        <dxo-load-panel [showPane]="false"></dxo-load-panel>
-        <dxo-scrolling mode="standard"></dxo-scrolling>
-        <dxo-filter-builder [allowHierarchicalFields]="true">
-        </dxo-filter-builder>
-        <dxo-toolbar>
-          <dxi-item location="before" locateInMenu="auto">
-            <div
-              class="stacked-toolbar-group"
-              style="display: flex; flex-direction: column; gap: 2px"
-            >
-              <!-- Date Field -->
-              <dx-text-box
-                label="Date & Time"
-                labelMode="floating"
-                [value]="formattedInvoiceDate"
-                [width]="205"
-                [readOnly]="true"
-              ></dx-text-box>
-
-              <!-- Ward and Unit Row (Each half width of Date) -->
-              <div style="display: flex; gap: 5px">
-                <!-- Ward -->
-                <dx-text-box
-                  #wardBoxRef
-                  label="Ward"
-                  labelMode="floating"
-                  [(value)]="invoiceFormData.WARD"
-                  [width]="100"
-                  (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
-                ></dx-text-box>
-
-                <!-- Unit -->
-                <dx-text-box
-                  #unitBoxRef
-                  label="Unit"
-                  labelMode="floating"
-                  [(value)]="invoiceFormData.UNIT"
-                  [width]="100"
-                  (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                ></dx-text-box>
-              </div>
-            </div>
-          </dxi-item>
-
-          <dxi-item location="before" locateInMenu="auto">
+<dx-validation-group #invoiceFormGroup>
   <div
-    class="stacked-toolbar-group"
-    style="display: flex; flex-direction: column; gap: 5px"
+    id="invoiceToPrint"
+    class="invoice-wrapper"
+    style="
+      height: 95vh;
+      display: flex;
+      flex-direction: column;
+
+      box-sizing: border-box;
+    "
   >
-    <!-- Row: Bill No. and Department -->
-    <div style="display: flex; gap: 10px">
-      <!-- Bill No. -->
-      <dx-text-box
-        #billNoBoxRef
-        label="Bill No."
-        labelMode="floating"
-        [(value)]="invoiceFormData.INVOICE_NO"
-        [width]="300"
-        [readOnly]="true"
-        (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
-      ></dx-text-box>
+    <div class="salary-grid-wrapper" style="padding: 0 10px">
+      <div class="grid-container">
+        <dx-data-grid
+          #itemsGridRef
+          [dataSource]="invoiceFormData.INVOICE_ENTRY"
+          [showBorders]="true"
+          [columnAutoWidth]="false"
+          [wordWrapEnabled]="false"
+          [rowAlternationEnabled]="true"
+          [headerFilter]="{ visible: true }"
+          [allowColumnReordering]="true"
+          [showColumnHeaders]="true"
+          [columnAutoWidth]="true"
+          [allowColumnResizing]="true"
+          [height]="'70vh'"
+          [columnResizingMode]="'nextColumn'"
+          [headerFilter]="{ visible: true }"
+          [scrolling]="{ mode: 'virtual' }"
+          rowAlternationInterval="2"
+          [selection]="{ mode: 'single' }"
+          [editing]="{ mode: 'cell', allowUpdating: true }"
+          (onEditorPreparing)="onEditorPreparing($event)"
+          (onCellValueChanged)="onCellChanged($event)"
+          (onContentReady)="onGridContentReady($event)"
+          [editing]="{ mode: 'row', allowUpdating: true, allowDeleting: true, allowAdding: true, useIcons: true }"
+           (onRowRemoving)="onRowRemoving($event)"
+           (onKeyDown)="handleGridKeyDown($event)"
+        >
+          <!-- <dxo-editing mode="row" [allowAdding]="true" [allowDeleting]="true"></dxo-editing> -->
+          <dxo-load-panel [showPane]="false"></dxo-load-panel>
+          <dxo-scrolling mode="standard"></dxo-scrolling>
+          <dxo-filter-builder [allowHierarchicalFields]="true">
+          </dxo-filter-builder>
+          <dxo-toolbar>
+            <dxi-item location="before" locateInMenu="auto">
+              <div
+                class="stacked-toolbar-group"
+                style="display: flex; flex-direction: column; gap: 2px"
+              >
+                <!-- Date Field -->
+                <dx-text-box
+                  label="Date & Time"
+                  labelMode="floating"
+                  [value]="formattedInvoiceDate"
+                  [width]="205"
+                  [readOnly]="true"
+                ></dx-text-box>
 
-      <!-- ✅ Department Field -->
-      <dx-text-box
-        #departmentBoxRef
-        label="Department"
-        labelMode="floating"
-        [(value)]="invoiceFormData.DEPARTMENT"
-        [width]="200"
-        (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-      ></dx-text-box>
-    </div>
-
-    <!-- Row: Patient Name and Mobile No. -->
-    <div style="display: flex; gap: 5px; align-items: flex-start">
-      <!-- Patient Name -->
-      <div style="display: flex; gap: 5px; width: 300px">
-        <dx-text-box
-          #patientBoxRef
-          label="Patient Name"
-          labelMode="floating"
-          [(value)]="invoiceFormData.PATIENT_NAME"
-          [width]="300"
-          (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
-        ></dx-text-box>
-      </div>
-
-      <!-- Mobile No. -->
-      <dx-text-box
-        #mobileBoxRef
-        label="Mobile No."
-        labelMode="floating"
-        [width]="200"
-        [(value)]="invoiceFormData.PATIENT_MOBILE"
-        (onInput)="onMobileInput($event)"
-        (onInput)="validateMobileNumber($event.event.target.value)"
-        [isValid]="mobileValid"
-        [validationMessageMode]="'always'"
-        [validationError]="
-          !mobileValid ? { message: 'Enter a valid number' } : null
-        "
-        (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
-      ></dx-text-box>
-    </div>
-  </div>
-</dxi-item>
-
-
-          <!-- <dxi-item location="before" locateInMenu="auto">
-            <div
-              class="stacked-toolbar-group"
-              style="display: flex; flex-direction: column; gap: 5px"
-            >
-            
-              <dx-text-box
-                #billNoBoxRef
-                label="Bill No."
-                labelMode="floating"
-                [(value)]="invoiceFormData.INVOICE_NO"
-                [width]="300"
-                [readOnly]="true"
-                (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
-              ></dx-text-box>
-
-      
-              <div style="display: flex; gap: 5px; align-items: flex-start">
-           
-                <div style="display: flex; gap: 5px; width: 300px">
+                <!-- Ward and Unit Row (Each half width of Date) -->
+                <div style="display: flex; gap: 5px">
+                  <!-- Ward -->
                   <dx-text-box
-                    #patientBoxRef
-                    label="Patient Name"
+                    #wardBoxRef
+                    label="Ward"
                     labelMode="floating"
-                    [(value)]="invoiceFormData.PATIENT_NAME"
+                    [(value)]="invoiceFormData.WARD"
+                    [width]="100"
+                    (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
+                  ></dx-text-box>
+
+                  <!-- Unit -->
+                  <dx-text-box
+                    #unitBoxRef
+                    label="Unit"
+                    labelMode="floating"
+                    [(value)]="invoiceFormData.UNIT"
+                    [width]="100"
+                    (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
+                  ></dx-text-box>
+                </div>
+              </div>
+            </dxi-item>
+
+            <dxi-item location="before" locateInMenu="auto">
+              <div
+                class="stacked-toolbar-group"
+                style="display: flex; flex-direction: column; gap: 5px"
+              >
+                <!-- Row: Bill No. and Department -->
+                <div style="display: flex; gap: 5px">
+                  <!-- Bill No. -->
+                  <dx-text-box
+                    #billNoBoxRef
+                    label="Bill No."
+                    labelMode="floating"
+                    [(value)]="invoiceFormData.INVOICE_NO"
                     [width]="300"
-                    (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
+                    [readOnly]="true"
+                    (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
+                  ></dx-text-box>
+
+                  <!-- ✅ Department Field -->
+                  <dx-text-box
+                    #departmentBoxRef
+                    label="Department"
+                    labelMode="floating"
+                    [(value)]="invoiceFormData.DEPARTMENT"
+                    [width]="200"
+                    (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
                   ></dx-text-box>
                 </div>
 
-          
-                <dx-text-box
-                  #mobileBoxRef
-                  label="Mobile No."
-                  labelMode="floating"
-                  [width]="200"
-                  [(value)]="invoiceFormData.PATIENT_MOBILE"
-                  (onInput)="onMobileInput($event)"
-                  (onInput)="validateMobileNumber($event.event.target.value)"
-                  [isValid]="mobileValid"
-                  [validationMessageMode]="'always'"
-                  [validationError]="
-                    !mobileValid
-                      ? { message: 'Enter a valid number' }
-                      : null
-                  "
-                  (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
-                ></dx-text-box>
+                <!-- Row: Patient Name and Mobile No. -->
+                <div style="display: flex; gap: 5px; align-items: flex-start">
+                  <!-- Patient Name -->
+                  <div style="display: flex; gap: 5px; width: 300px">
+                    <dx-text-box
+                      #patientBoxRef
+                      label="Patient Name"
+                      labelMode="floating"
+                      [(value)]="invoiceFormData.PATIENT_NAME"
+                      [width]="300"
+                      (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
+                    >
+                      <dx-validator>
+                        <dxi-validation-rule
+                          type="required"
+                          message="Patient Name is required"
+                        ></dxi-validation-rule>
+                      </dx-validator>
+                    </dx-text-box>
+                  </div>
+
+                  <!-- Mobile No. -->
+                  <dx-text-box
+                    #mobileBoxRef
+                    label="Mobile No."
+                    labelMode="floating"
+                    [width]="200"
+                    [(value)]="invoiceFormData.PATIENT_MOBILE"
+                    (onInput)="onMobileInput($event)"
+                    (onInput)="validateMobileNumber($event.event.target.value)"
+                    [isValid]="mobileValid"
+                    [validationMessageMode]="'always'"
+                    [validationError]="
+                      !mobileValid ? { message: 'Enter a valid number' } : null
+                    "
+                    (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
+                  >
+                    <dx-validator>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Mobile No. is required"
+                      ></dxi-validation-rule>
+                    </dx-validator>
+                  </dx-text-box>
+                </div>
               </div>
-            </div>
-          </dxi-item> -->
+            </dxi-item>
 
-          <dxi-item location="after" locateInMenu="auto">
-            <div class="stacked-toolbar-group"></div>
-          </dxi-item>
-          <dxi-item location="after" locateInMenu="auto">
-            <div
-              class="stacked-toolbar-group"
-              style="display: flex; flex-direction: column; gap: 2px"
-            >
-              <!-- Date Box -->
-              <dx-text-box
-                #uhidBoxRef
-                label="UHID"
-                labelMode="floating"
-                [(value)]="invoiceFormData.UHID"
-                [width]="205"
-                (onKeyDown)="onKeyDownHandler($event, 'ageBoxRef')"
-              ></dx-text-box>
-
-              <!-- Ward and Unit below, with gap -->
-              <div style="display: flex; gap: 5px">
+            <dxi-item location="after" locateInMenu="auto">
+              <div class="stacked-toolbar-group"></div>
+            </dxi-item>
+            <dxi-item location="after" locateInMenu="auto">
+              <div
+                class="stacked-toolbar-group"
+                style="display: flex; flex-direction: column; gap: 2px"
+              >
+                <!-- Date Box -->
                 <dx-text-box
-                  #ageBoxRef
-                  label="Age"
+                  #uhidBoxRef
+                  label="UHID"
                   labelMode="floating"
-                  [(value)]="invoiceFormData.PATIENT_AGE"
-                  [width]="100"
-                  (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
-                ></dx-text-box>
+                  [(value)]="invoiceFormData.UHID"
+                  [width]="205"
+                  (onKeyDown)="onKeyDownHandler($event, 'ageBoxRef')"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="UHID is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-text-box>
 
-                <dx-select-box
-                  #sexBoxRef
-                  label="Sex"
-                  labelMode="floating"
-          
-                  [width]="100"
-                  [dataSource]="sexOptions"
-                  displayExpr="name"
-                  valueExpr="id"
-                  (onKeyDown)="onSexKeyDown($event)"
-                ></dx-select-box>
+                <!-- Ward and Unit below, with gap -->
+                <div style="display: flex; gap: 5px">
+                  <dx-text-box
+                    #ageBoxRef
+                    label="Age"
+                    labelMode="floating"
+                    [(value)]="invoiceFormData.PATIENT_AGE"
+                    [width]="100"
+                    (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
+                  >
+                    <dx-validator>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Age is required"
+                      ></dxi-validation-rule>
+                    </dx-validator>
+                  </dx-text-box>
+
+                  <dx-select-box
+                    #sexBoxRef
+                    label="Sex"
+                    labelMode="floating"
+                    [(value)]="invoiceFormData.PATIENT_SEX"
+                    [width]="100"
+                    [dataSource]="sexOptions"
+                    displayExpr="name"
+                    valueExpr="id"
+                    (onKeyDown)="onSexKeyDown($event)"
+                  >
+                    <dx-validator>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Sex is required"
+                      ></dxi-validation-rule>
+                    </dx-validator>
+                  </dx-select-box>
+                </div>
               </div>
-            </div>
-          </dxi-item>
-        </dxo-toolbar>
-        <dxi-column dataField="ITEM_ID" caption="Item Code">
-          <dxo-lookup
-            [dataSource]="items"
-            displayExpr="DESCRIPTION"
-            valueExpr="ID"
-          ></dxo-lookup>
-        </dxi-column>
-
-        <dxi-column
-          dataField="ITEM_NAME"
-          caption="Item Description"
-        ></dxi-column>
-        <dxi-column
-          dataField="QUANTITY"
-          caption="Quantity"
-          dataType="number"
-          [format]="{ type: 'fixedPoint', precision: 2 }"
-          [editorOptions]="{ format: '#,##0.00' }"
-        ></dxi-column>
-       
-        <dxi-column
-          dataField="PRICE"
-          caption="Unit Price"
-          [format]="{ type: 'fixedPoint', precision: 2 }"
-          dataType="number"
-          [editorOptions]="{ format: '#,##0.00' }"
-        ></dxi-column>
-        <dxi-column
-          dataField="AMOUNT"
-          caption="Total"
-          [format]="{ type: 'fixedPoint', precision: 2 }"
-          dataType="number"
-          [editorOptions]="{ format: '#,##0.00' }"
-          [calculateCellValue]="calculateAmount"
-        ></dxi-column>
-        <dxo-summary>
-          <dxi-total-item
-          name="AMOUNT" 
-          column="AMOUNT"
-            summaryType="sum"
-            [valueFormat]="customFormat"
-            displayFormat="Gross Amount: {0}"
-            showInColumn="AMOUNT"
-          >
-          </dxi-total-item>
-
-        
-        </dxo-summary>
-      </dx-data-grid>
-
-      <div
-        style="display: flex; flex-direction: column; gap: 5px; margin-top: 5px"
-      >
-        <!-- Row 1: Schema + Schema % | Scheme Amount + Net Amount -->
-        <div style="display: flex; justify-content: space-between; gap: 10px">
-          <!-- Left -->
-          <div style="display: flex; gap: 5px">
-            <dx-select-box
-            #schemaSelect
-              label="Schema"
-              labelMode="floating"
-              [dataSource]="schemaOptions"
+            </dxi-item>
+          </dxo-toolbar>
+          <dxi-column dataField="ITEM_ID" caption="Item Code">
+            <dxo-lookup
+              [dataSource]="items"
               displayExpr="DESCRIPTION"
-              [(value)]="invoiceFormData.SCHEMA_ID"
               valueExpr="ID"
-              [width]="200"
-              (onValueChanged)="onSchemaChanged($event)"
-            ></dx-select-box>
-            <dx-text-box
-              label="Schema%"
-              labelMode="floating"
-              [width]="100"
-              [(value)]="invoiceFormData.SCHEMA_PERCENT"
-            ></dx-text-box>
-          </div>
-          <!-- Right -->
-          <div style="display: flex; gap: 5px">
-            <dx-text-box
-              [readOnly]="true"
-              label="Schema Amount"
-              labelMode="floating"
-              [(value)]="invoiceFormData.SCHEMA_AMOUNT"
-              [width]="200"
-            ></dx-text-box>
-            <dx-number-box
-              label="Net Amount"
-              labelMode="floating"
-              [(value)]="invoiceFormData.NET_AMOUNT"
-              [width]="200"
-              [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
-              [inputAttr]="{
-                style: 'font-weight: bold; font-size: 18px; text-align: right;'
-              }"
-            ></dx-number-box>
-          </div>
-        </div>
+            ></dxo-lookup>
+          </dxi-column>
 
-        <!-- Row 2: Payment Options + Insurance | Buttons -->
+          <dxi-column
+            dataField="ITEM_NAME"
+            caption="Item Description"
+          ></dxi-column>
+          <dxi-column
+            dataField="QUANTITY"
+            caption="Quantity"
+            dataType="number"
+            [format]="{ type: 'fixedPoint', precision: 2 }"
+            [editorOptions]="{ format: '#,##0.00' }"
+          ></dxi-column>
+
+          <dxi-column
+            dataField="PRICE"
+            caption="Unit Price"
+            [format]="{ type: 'fixedPoint', precision: 2 }"
+            dataType="number"
+            [editorOptions]="{ format: '#,##0.00' }"
+          ></dxi-column>
+          <dxi-column
+            dataField="AMOUNT"
+            caption="Total"
+            [format]="{ type: 'fixedPoint', precision: 2 }"
+            dataType="number"
+            [editorOptions]="{ format: '#,##0.00' }"
+            [calculateCellValue]="calculateAmount"
+          ></dxi-column>
+  <dxi-column type="buttons">
+    <dxi-button name="edit"></dxi-button>
+    <dxi-button name="delete"></dxi-button>
+  </dxi-column>
+          <dxo-summary>
+            <dxi-total-item
+              name="AMOUNT"
+              column="AMOUNT"
+              summaryType="sum"
+              [valueFormat]="customFormat"
+              displayFormat="Gross Amount: {0}"
+              showInColumn="AMOUNT"
+            >
+            </dxi-total-item>
+          </dxo-summary>
+        </dx-data-grid>
+
         <div
           style="
             display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            align-items: flex-end;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 5px;
           "
         >
-          <!-- Left side: payment + insurance -->
-          <div style="display: flex; gap: 10px">
-            <dx-select-box
-            #paymentModeSelect
-              label="Payment Options"
-              labelMode="floating"
-              [dataSource]="paymentModes"
-              displayExpr="DESCRIPTION"
-              valueExpr="ID"
-              [(value)]="invoiceFormData.PAYMENT_MODE"
-              [width]="200"
-              [(value)]="selectedPaymentModeId"
-            ></dx-select-box>
-
-            <dx-select-box
-              *ngIf="selectedPaymentModeId === creditModeId"
-              #insuranceSelect
-              label="Insurance"
-              labelMode="floating"
-              [dataSource]="insuranceOptions"
-              displayExpr="DESCRIPTION"
-              valueExpr="ID"
-              [(value)]="invoiceFormData.INSURANCE_ID"
-              [width]="200"
-            ></dx-select-box>
+          <!-- Row 1: Schema + Schema % | Scheme Amount + Net Amount -->
+          <div style="display: flex; justify-content: space-between; gap: 10px">
+            <!-- Left -->
+            <div style="display: flex; gap: 5px">
+              <dx-select-box
+                #schemaSelect
+                label="Schema"
+                labelMode="floating"
+                [dataSource]="schemaOptions"
+                displayExpr="SCHEMA_NAME"
+                [(value)]="invoiceFormData.SCHEMA_ID"
+                valueExpr="ID"
+                [width]="200"
+                (onValueChanged)="onSchemaChanged($event)"
+              ></dx-select-box>
+              <dx-text-box
+                label="Schema%"
+                labelMode="floating"
+                [width]="100"
+                [(value)]="invoiceFormData.SCHEMA_PERCENT"
+              ></dx-text-box>
+            </div>
+            <!-- Right -->
+            <div style="display: flex; gap: 5px">
+              <dx-text-box
+                [readOnly]="true"
+                label="Schema Amount"
+                labelMode="floating"
+                [(value)]="invoiceFormData.SCHEMA_AMOUNT"
+                [width]="200"
+              ></dx-text-box>
+              <dx-number-box
+                label="Net Amount"
+                labelMode="floating"
+                [(value)]="invoiceFormData.NET_AMOUNT"
+                [width]="200"
+                [format]="{
+                  type: 'fixedPoint',
+                  precision: 2,
+                  useGrouping: true
+                }"
+                [inputAttr]="{
+                  style:
+                    'font-weight: bold; font-size: 18px; text-align: right;'
+                }"
+              ></dx-number-box>
+            </div>
           </div>
 
-          <!-- Right side: Buttons -->
-          <div style="display: flex; gap: 10px">
-            <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
-            <dx-button
-              text="Cancel"
-              stylingMode="outlined"
-              type="normal"
-            ></dx-button>
-            <dx-button
-       
-              text="Save"
-              stylingMode="contained"
-              type="default"
-              (onClick)="save()"
-            ></dx-button>
+          <!-- Row 2: Payment Options + Insurance | Buttons -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              gap: 10px;
+              align-items: flex-end;
+            "
+          >
+            <!-- Left side: payment + insurance -->
+            <div style="display: flex; gap: 10px">
+              <dx-select-box
+                #paymentModeSelect
+                label="Payment Options"
+                labelMode="floating"
+                [dataSource]="paymentModes"
+                displayExpr="DESCRIPTION"
+                valueExpr="ID"
+                [(value)]="invoiceFormData.PAYMENT_MODE"
+                [width]="200"
+                [(value)]="selectedPaymentModeId"
+                (onValueChanged)="onPaymentModeChange($event)"
+              >
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="Please select payment mode"
+                  ></dxi-validation-rule>
+                </dx-validator>
+              </dx-select-box>
+
+              <dx-select-box
+                *ngIf="selectedPaymentModeId === creditModeId"
+                #insuranceSelect
+                label="Insurance"
+                labelMode="floating"
+                [dataSource]="insuranceOptions"
+                displayExpr="DESCRIPTION"
+                valueExpr="ID"
+                [(value)]="invoiceFormData.INSURANCE_ID"
+                [width]="200"
+              ></dx-select-box>
+            </div>
+
+            <!-- Right side: Buttons -->
+            <div style="display: flex; gap: 10px">
+              <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
+              <dx-button
+                text="Cancel"
+                stylingMode="outlined"
+                type="normal"
+                (onClick)="cancel()"
+              ></dx-button>
+              <dx-button
+              #saveButton
+                text="Save"
+                stylingMode="contained"
+                type="default"
+                (onClick)="showConfirm()"
+              ></dx-button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</dx-validation-group>
+
+
+
+<dx-popup
+  [(visible)]="confirmVisible"
+  [showTitle]="true"
+  [title]="'Confirm Save'"
+  [width]="350"
+  [height]="200"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="false"
+>
+  <p style="padding: 20px; text-align:center;">
+    Are you sure want to save invoice?
+  </p>
+  <div style="text-align: center;">
+    <dx-button text="Yes" stylingMode="contained" type="default" (onClick)="onConfirm(true)"></dx-button>
+    <dx-button text="No" stylingMode="contained" type="normal" (onClick)="onConfirm(false)" style="margin-left: 10px;"></dx-button>
+  </div>
+</dx-popup>
