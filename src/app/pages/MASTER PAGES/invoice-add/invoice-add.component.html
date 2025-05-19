@@ -80,11 +80,75 @@
           </dxi-item>
 
           <dxi-item location="before" locateInMenu="auto">
+  <div
+    class="stacked-toolbar-group"
+    style="display: flex; flex-direction: column; gap: 5px"
+  >
+    <!-- Row: Bill No. and Department -->
+    <div style="display: flex; gap: 10px">
+      <!-- Bill No. -->
+      <dx-text-box
+        #billNoBoxRef
+        label="Bill No."
+        labelMode="floating"
+        [(value)]="invoiceFormData.INVOICE_NO"
+        [width]="300"
+        [readOnly]="true"
+        (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
+      ></dx-text-box>
+
+      <!-- ✅ Department Field -->
+      <dx-text-box
+        #departmentBoxRef
+        label="Department"
+        labelMode="floating"
+        [(value)]="invoiceFormData.DEPARTMENT"
+        [width]="200"
+        (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
+      ></dx-text-box>
+    </div>
+
+    <!-- Row: Patient Name and Mobile No. -->
+    <div style="display: flex; gap: 5px; align-items: flex-start">
+      <!-- Patient Name -->
+      <div style="display: flex; gap: 5px; width: 300px">
+        <dx-text-box
+          #patientBoxRef
+          label="Patient Name"
+          labelMode="floating"
+          [(value)]="invoiceFormData.PATIENT_NAME"
+          [width]="300"
+          (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
+        ></dx-text-box>
+      </div>
+
+      <!-- Mobile No. -->
+      <dx-text-box
+        #mobileBoxRef
+        label="Mobile No."
+        labelMode="floating"
+        [width]="200"
+        [(value)]="invoiceFormData.PATIENT_MOBILE"
+        (onInput)="onMobileInput($event)"
+        (onInput)="validateMobileNumber($event.event.target.value)"
+        [isValid]="mobileValid"
+        [validationMessageMode]="'always'"
+        [validationError]="
+          !mobileValid ? { message: 'Enter a valid number' } : null
+        "
+        (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
+      ></dx-text-box>
+    </div>
+  </div>
+</dxi-item>
+
+
+          <!-- <dxi-item location="before" locateInMenu="auto">
             <div
               class="stacked-toolbar-group"
               style="display: flex; flex-direction: column; gap: 5px"
             >
-              <!-- Bill No. -->
+            
               <dx-text-box
                 #billNoBoxRef
                 label="Bill No."
@@ -95,9 +159,9 @@
                 (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
               ></dx-text-box>
 
-              <!-- Row: Mobile, Ward, Unit + UHID -->
+      
               <div style="display: flex; gap: 5px; align-items: flex-start">
-                <!-- Group: Mobile, Ward, Unit -->
+           
                 <div style="display: flex; gap: 5px; width: 300px">
                   <dx-text-box
                     #patientBoxRef
@@ -109,7 +173,7 @@
                   ></dx-text-box>
                 </div>
 
-                <!-- UHID Field -->
+          
                 <dx-text-box
                   #mobileBoxRef
                   label="Mobile No."
@@ -129,7 +193,7 @@
                 ></dx-text-box>
               </div>
             </div>
-          </dxi-item>
+          </dxi-item> -->
 
           <dxi-item location="after" locateInMenu="auto">
             <div class="stacked-toolbar-group"></div>

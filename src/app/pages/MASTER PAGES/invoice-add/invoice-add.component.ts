@@ -470,7 +470,7 @@ if (e.dataField === 'QUANTITY') {
     const key = event.event.key;
 
     if (key === 'Enter') {
-      event.event.preventDefault();
+      // event.event.preventDefault();
 
       setTimeout(() => {
         const grid = this.itemsGridRef?.instance;
@@ -488,22 +488,26 @@ if (e.dataField === 'QUANTITY') {
 
            const maxRows = this.items.length;
            console.log(maxRows,"MAXROWS")
-            const currentRows = grid.getVisibleRows().length;
+           console.log(this.items,"ITEMSSSSSS")
+           
+            // const currentRows = grid.getVisibleRows().length;
+            let currentRows = grid.option('dataSource')?.length ?? 0;
+            console.log(currentRows,"currentrow")
           // Focus new row (optional)
-         if (currentRows < maxRows) {
-            grid.addRow();
-
-            // Focus first cell of new row after adding
-            const newRowIndex = grid.getVisibleRows().length - 1;
-            setTimeout(() => {
-              grid.editCell(newRowIndex, 'ITEM_ID');
-            }, 50);
-          } else {
-            // Optional: show some notification about max rows reached
-            console.warn('Maximum row limit reached');
-            this.schemaSelect.instance.focus();
-            this.schemaSelect.instance.open(); 
-          }
+          if (currentRows <  maxRows) {
+              grid.addRow();
+              // currentRows++;
+              // Focus first cell of new row after adding
+              // const newRowIndex = grid.getVisibleRows().length;
+              // setTimeout(() => {
+              //   grid.editCell(newRowIndex, 'ITEM_ID');
+              // }, 50);
+            } else {
+              // Optional: show some notification about max rows reached
+              console.warn('Maximum row limit reached');
+              this.schemaSelect.instance.focus();
+              this.schemaSelect.instance.open(); 
+            }
         }
       }, 50);
     }
