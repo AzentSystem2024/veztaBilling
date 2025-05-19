@@ -151,14 +151,14 @@
 
               <!-- Ward and Unit below, with gap -->
               <div style="display: flex; gap: 5px">
-                <dx-text-box
+                <dx-number-box
                   #ageBoxRef
                   label="Age"
                   labelMode="floating"
                   [(value)]="invoiceFormData.PATIENT_AGE"
                   [width]="100"
                   (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
-                ></dx-text-box>
+                ></dx-number-box>
 
                 <dx-select-box
                   #sexBoxRef

@@ -90,11 +90,11 @@ export class SideNavigationMenuComponent
       path: '',
       items: [
         {
-          text: 'Invoice',
+          text: 'Invoices',
           path: '/invoice',
         },
         {
-          text: 'Invoice Entry',
+          text: 'Invoice',
           path: '/invoice-entry',
         },
       ],
