@@ -58,6 +58,8 @@ passwordMode = 'password';
     debugger;
     this.passwordMode = this.passwordMode === 'text' ? 'password' : 'text';
   }
+  // async onSubmit(event: Event) {
+  //   event.preventDefault(); // Prevent default form submission
 
   // async onSubmit(event: Event) {
   //   event.preventDefault(); // Prevent default form submission
@@ -120,8 +122,11 @@ passwordMode = 'password';
   //     );
   // }
 
-async onSubmit(event: Event) {
+// async onSubmit(event: Event) {
+
+ async onSubmit(event: Event) {
   event.preventDefault(); // Prevent default form submission
+
 
   if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
     alert('Please enter login name and password');
@@ -215,6 +220,7 @@ async onSubmit(event: Event) {
   //       }
   //     );
   // }
+ 
 
 }
 @NgModule({
@@ -230,3 +236,5 @@ async onSubmit(event: Event) {
   exports: [LoginFormComponent],
 })
 export class LoginFormModule {}
+
+

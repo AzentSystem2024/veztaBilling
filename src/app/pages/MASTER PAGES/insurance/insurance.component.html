@@ -68,7 +68,7 @@
       
         <dxi-item
         location="before"
-        text="Hospitals"
+        text="Insurance"
       ></dxi-item>
     
         <dxi-item location="after" locateInMenu="auto">
@@ -94,16 +94,17 @@
     
 
     <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
-    <dxi-column dataField="HOSPITAL_NAME"  caption="Hospital" alignment="left"></dxi-column>
-    <dxi-column dataField="IS_INACTIVE" caption="status"  [calculateCellValue]="formatStatus" [cellTemplate]="statusCellTemplate"></dxi-column>
+    <dxi-column dataField="INSURANCE_NAME"  caption="Insurance" ></dxi-column>
+    <dxi-column dataField="IS_INACTIVE" caption="Status"  [calculateCellValue]="formatStatus" [cellTemplate]="statusCellTemplate"></dxi-column>
     </dx-data-grid>
     </div>
-    
-    <dx-popup
+
+  <!-- ADD DATA -->
+      <dx-popup
     [(visible)]="addPopup"
     [width]="400"
     [height]="250"
-    title="New Hospital"
+    title="Insurance"
     [shading]="false"
     [showCloseButton]="true"
     [width]="PopupWidth"
@@ -111,7 +112,7 @@
     <form [formGroup]="formsource" class="mt-3">
       
       
-      <input formControlName="Hospital" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+      <input formControlName="Insurance" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
     
      <dxi-item
      dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
@@ -131,10 +132,11 @@
     </form>
      
     </dx-popup>
-    
-    <!-- Edit hospital -->
-   <dx-popup
-        [title]="'Edit Hospital'"
+
+
+    <!-- EDIT DATA -->
+    <dx-popup
+        [title]="'Edit Insurance'"
         [(visible)]="editPopup"
         [width]="400"
         [height]="250"
@@ -145,7 +147,7 @@
       >
         <form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input [(value)]="Hospital_Value" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+            <input [(value)]="Insurance_Value" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
           </dxi-item>
       
           <dxi-item>

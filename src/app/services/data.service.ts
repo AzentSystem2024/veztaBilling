@@ -11,6 +11,9 @@ const Token = JSON.parse(localStorage.getItem('Token'));
 
 @Injectable()
 export class DataService {
+  exportDataGrid(event: any, fileName: string) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private http: HttpClient, private router: Router) {}
 
   //=================DAte format changing to needed format========
@@ -474,5 +477,43 @@ public getDrodownData(type: any): Observable<any> {
 
     return this.http.post(`${BASE_URL}dropdown`, reqBody);
   }
+//HOSPITAL
+get_HospitalData_List(){
+  return this.http.post( `${BASE_URL}hospital/list`,{} );
+}
+
+Insert_HospitalData_Api( hospital:any, IS_INACTIVE:any) {
+  const getEndpoint = BASE_URL+'hospital/insert';
+  const reqBody={
+   
+   "HOSPITAL_NAME": hospital,
+   "IS_INACTIVE":IS_INACTIVE
+}
+
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Update_HospitalData_Api(ID:any, Hospital:any, IS_INACTIVE:any){
+const getEndpoint = BASE_URL+'hospital/update';
+  const reqBody={
+
+"ID":ID,
+"HOSPITAL_NAME": Hospital,
+"IS_INACTIVE": IS_INACTIVE
+
+};
+
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Select_HospitalData_Api(ID:any){
+  const getEndpoint = BASE_URL+`hospital/select/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
+
+Delete_Hospital_Api(ID:any){
+  const getEndpoint = BASE_URL+`hospital/delete/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
 
 }
