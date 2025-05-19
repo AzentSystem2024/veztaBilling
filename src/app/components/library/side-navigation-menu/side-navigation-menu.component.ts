@@ -21,6 +21,7 @@ import { DxTabPanelModule } from 'devextreme-angular';
 import * as events from 'devextreme/events';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuService } from 'src/app/services/menu.service';
+import * as path from 'path';
 
 @Component({
   selector: 'side-navigation-menu',
@@ -81,6 +82,14 @@ export class SideNavigationMenuComponent
           text: 'Department',
           path: '/department',
         },
+        {
+          text:'Insurance',
+          path:'/insurance',
+        },
+        {
+          text: 'Schema',
+          path: '/schema',
+        }
        
       ],
     },

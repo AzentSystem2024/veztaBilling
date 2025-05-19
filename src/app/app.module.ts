@@ -33,6 +33,8 @@ import { HospitalListModule } from './pages/MASTER PAGES/hospitalFiles/hospital-
 
 import { InvoiceAddComponent, InvoiceAddModule } from './pages/MASTER PAGES/invoice-add/invoice-add.component';
 import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/department.component';
+import { InsuranceComponent, InsuranceModule } from './pages/MASTER PAGES/insurance/insurance.component';
+import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schema.component';
 
 
 
@@ -52,10 +54,11 @@ import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/de
     LoginFormModule,
     UserListModule,
     HospitalListModule,
-
     InvoiceListModule,
     InvoiceAddModule,
-    DepartmentModule
+    DepartmentModule,
+    InsuranceModule,
+    SchemaModule,
 
   ],
   providers: [

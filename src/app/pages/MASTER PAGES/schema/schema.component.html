@@ -7,7 +7,7 @@
         [height]="'90vh'"
         [dataSource]="dataSource"
         [showBorders]="true"
-        [showColumnLines]="false"
+        [showColumnLines]="true"
         (onEditingStart)="onEditingStart($event)"
         [rowAlternationEnabled]="true"
         [columnAutoWidth]="true"
@@ -68,7 +68,7 @@
       
         <dxi-item
         location="before"
-        text="Hospitals"
+        text="Schema"
       ></dxi-item>
     
         <dxi-item location="after" locateInMenu="auto">
@@ -94,16 +94,18 @@
     
 
     <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
-    <dxi-column dataField="HOSPITAL_NAME"  caption="Hospital" alignment="left"></dxi-column>
-    <dxi-column dataField="IS_INACTIVE" caption="status"  [calculateCellValue]="formatStatus" [cellTemplate]="statusCellTemplate"></dxi-column>
+    <dxi-column dataField="SCHEMA"  caption="Schema" ></dxi-column>
+    <dxi-column dataField="PERCENTAGE" caption="Percentage" alignment="left"></dxi-column>
     </dx-data-grid>
     </div>
-    
-    <dx-popup
+
+
+     <!-- ADD DATA -->
+      <dx-popup
     [(visible)]="addPopup"
     [width]="400"
     [height]="250"
-    title="New Hospital"
+    title="Schema"
     [shading]="false"
     [showCloseButton]="true"
     [width]="PopupWidth"
@@ -111,9 +113,14 @@
     <form [formGroup]="formsource" class="mt-3">
       
       
-      <input formControlName="Hospital" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+      <input formControlName="Schema" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
+        <input formControlName="Percentage" label="Percentage" class=" form-control mt-3" type="text"  placeholder="Percentage" >
     
-     <dxi-item
+    <!-- <div *ngIf="form.get('Percentage')?.invalid && form.get('Percentage')?.touched" class="text-danger mt-1">
+  Please enter a valid percentage (e.g. 12%).
+</div>
+     -->
+     <!-- <dxi-item
      dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
           <dx-check-box
           text="Inactive"
@@ -122,7 +129,7 @@
             [elementAttr]="{ 'aria-label': 'Unchecked' }"
             class="mt-3"
           ></dx-check-box>
-        </dxi-item>
+        </dxi-item> -->
 
           <div class="d-flex justify-content-end mt-2">
             <button class="me-1 btn  text-dark border border-1" (click)='closePop()'>Cancel</button>
@@ -131,10 +138,11 @@
     </form>
      
     </dx-popup>
-    
-    <!-- Edit hospital -->
-   <dx-popup
-        [title]="'Edit Hospital'"
+
+
+     <!-- EDIT DATA -->
+    <dx-popup
+        [title]="'Edit Schema'"
         [(visible)]="editPopup"
         [width]="400"
         [height]="250"
@@ -145,10 +153,13 @@
       >
         <form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input [(value)]="Hospital_Value" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+            <input [(value)]="Schema_Value" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
           </dxi-item>
+
+          <dxi-item >
+            <input [(value)]="Percentage_Value" label="Percentage" class="form-control mt-3" type="text" placeholder="Percentage"></dxi-item>
       
-          <dxi-item>
+          <!-- <dxi-item>
           <dx-check-box
           text="Inactive"
             [value]="false"
@@ -156,7 +167,7 @@
             class="mt-3"
             [(value)]="Status"
           ></dx-check-box>
-        </dxi-item>
+        </dxi-item> -->
     
           <dxi-item class="d-flex justify-content-end mt-3">
             <button class="me-1 btn  text-dark border border-1" (click)="closePop()">
@@ -166,4 +177,3 @@
           </dxi-item>
         </form>
       </dx-popup>
-    
