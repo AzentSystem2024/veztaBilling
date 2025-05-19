@@ -19,6 +19,7 @@ import { InvoiceListComponent } from './pages/MASTER PAGES/invoiceFiles/invoice-
 import { HospitalListComponent } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
 import { InvoiceAddComponent } from './pages/MASTER PAGES/invoice-add/invoice-add.component';
 import { DepartmentComponent } from './pages/MASTER PAGES/Departments/department/department.component';
+import { ItemComponent } from './pages/MASTER PAGES/Items/item/item.component';
 const routes: Routes = [
   {
     path: '',
@@ -74,6 +75,11 @@ const routes: Routes = [
         {
         path: 'department',
         component: DepartmentComponent,
+        canActivate: [AuthGuardService],
+      },
+         {
+        path: 'item',
+        component: ItemComponent,
         canActivate: [AuthGuardService],
       },
       {

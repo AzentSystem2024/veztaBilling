@@ -81,6 +81,10 @@ export class SideNavigationMenuComponent
           text: 'Department',
           path: '/department',
         },
+           {
+          text: 'Item',
+          path: '/item',
+        },
        
       ],
     },
