@@ -61,24 +61,32 @@
                 <!-- Ward and Unit Row (Each half width of Date) -->
                 <div style="display: flex; gap: 5px">
                   <!-- Ward -->
-                  <dx-text-box
+                  <dx-autocomplete
                     #wardBoxRef
+                    [dataSource]="wardOptions"
+                    [minSearchLength]="0"
+                    [searchExpr]="'NAME'"
+                    [valueExpr]="'NAME'"
                     label="Ward"
                     labelMode="floating"
                     [(value)]="invoiceFormData.WARD"
                     [width]="100"
                     (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
-                  ></dx-text-box>
+                  ></dx-autocomplete>
 
                   <!-- Unit -->
-                  <dx-text-box
+                  <dx-autocomplete
                     #unitBoxRef
+                    [dataSource]="unitOptions"
+                    [minSearchLength]="0"
+                    [searchExpr]="'NAME'"
+                    [valueExpr]="'NAME'"
                     label="Unit"
                     labelMode="floating"
                     [(value)]="invoiceFormData.UNIT"
                     [width]="100"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                  ></dx-text-box>
+                  ></dx-autocomplete>
                 </div>
               </div>
             </dxi-item>
@@ -108,6 +116,7 @@
                     labelMode="floating"
                     [(value)]="invoiceFormData.DEPARTMENT"
                     [width]="200"
+                    [readOnly]="true"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
                   ></dx-text-box>
                 </div>
@@ -142,6 +151,7 @@
                     [(value)]="invoiceFormData.PATIENT_MOBILE"
                     (onInput)="onMobileInput($event)"
                     (onInput)="validateMobileNumber($event.event.target.value)"
+                    (onBlur)="validateMobileNumber(invoiceFormData.PATIENT_MOBILE)"
                     [isValid]="mobileValid"
                     [validationMessageMode]="'always'"
                     [validationError]="
@@ -166,7 +176,7 @@
             <dxi-item location="after" locateInMenu="auto">
               <div
                 class="stacked-toolbar-group"
-                style="display: flex; flex-direction: column; gap: 2px"
+                style="display: flex; flex-direction: column; gap: 5px"
               >
                 <!-- Date Box -->
                 <dx-text-box
@@ -200,6 +210,11 @@
                         type="required"
                         message="Age is required"
                       ></dxi-validation-rule>
+                      <dxi-validation-rule
+      type="custom"
+      [validationCallback]="ageNotZero"
+      message="Age cannot be zero"
+    ></dxi-validation-rule>
                     </dx-validator>
                   </dx-text-box>
 
@@ -271,6 +286,7 @@
               summaryType="sum"
               [valueFormat]="customFormat"
               displayFormat="Gross Amount: {0}"
+              alignment="right"
               showInColumn="AMOUNT"
             >
             </dxi-total-item>
@@ -409,15 +425,29 @@
   [showTitle]="true"
   [title]="'Confirm Save'"
   [width]="350"
-  [height]="200"
+  [height]="180"
   [dragEnabled]="false"
   [closeOnOutsideClick]="false"
+  (onShown)="focusYesButton()"
 >
-  <p style="padding: 20px; text-align:center;">
+  <p style="padding: 10px; text-align:left;">
     Are you sure want to save invoice?
   </p>
-  <div style="text-align: center;">
-    <dx-button text="Yes" stylingMode="contained" type="default" (onClick)="onConfirm(true)"></dx-button>
-    <dx-button text="No" stylingMode="contained" type="normal" (onClick)="onConfirm(false)" style="margin-left: 10px;"></dx-button>
-  </div>
+<div style="text-align: right; padding-right: 10px;">
+  <dx-button 
+    text="Yes" 
+    stylingMode="contained" 
+    type="default" 
+    (onClick)="onConfirm(true)">
+  </dx-button>
+
+  <dx-button 
+    text="No" 
+    stylingMode="contained" 
+    type="normal" 
+    (onClick)="onConfirm(false)" 
+    style="margin-left: 10px;">
+  </dx-button>
+</div>
+
 </dx-popup>

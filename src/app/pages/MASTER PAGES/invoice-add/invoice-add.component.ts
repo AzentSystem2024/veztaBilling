@@ -34,6 +34,8 @@ import {
   DxButtonComponent,
   DxValidationGroupComponent,
   DxValidationGroupModule,
+  DxAutocompleteModule,
+  DxAutocompleteComponent,
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -65,8 +67,8 @@ export class InvoiceAddComponent {
   @ViewChild('billNoBoxRef', { static: false })
   billNoBoxRef!: DxTextBoxComponent;
   @ViewChild('dateBoxRef', { static: false }) dateBoxRef!: DxDateBoxComponent;
-  @ViewChild('wardBoxRef', { static: false }) wardBoxRef!: DxTextBoxComponent;
-  @ViewChild('unitBoxRef', { static: false }) unitBoxRef!: DxTextBoxComponent;
+  @ViewChild('wardBoxRef', { static: false }) wardBoxRef!: DxAutocompleteComponent;
+  @ViewChild('unitBoxRef', { static: false }) unitBoxRef!: DxAutocompleteComponent;
   @ViewChild('uhidBoxRef', { static: false }) uhidBoxRef!: DxTextBoxComponent;
   @ViewChild('ageBoxRef', { static: false }) ageBoxRef!: DxTextBoxComponent;
   @ViewChild('sexBoxRef', { static: false }) sexBoxRef!: DxSelectBoxComponent;
@@ -75,6 +77,8 @@ export class InvoiceAddComponent {
   @ViewChild('insuranceSelect') insuranceSelect!: DxSelectBoxComponent;
 @ViewChild('saveButton', { read: ElementRef }) saveButtonElementRef!: ElementRef;
 @ViewChild('saveButton') saveButton!: DxButtonComponent;
+@ViewChild('yesButton', { static: false }) yesButton: DxButtonComponent;
+@ViewChild('noButton', { static: false }) noButton: DxButtonComponent;
 
   @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
@@ -98,7 +102,7 @@ confirmVisible = false;
     { id: 2, name: 'Female' },
     { id: 3, name: 'Other' },
   ];
-  mobileNumber: string = '+91-';
+  mobileNumber: string = '';
   mobileValid: boolean = true;
   Department: any = {
     DEPARTMENT_ID: 1,
@@ -113,7 +117,7 @@ confirmVisible = false;
     PATIENT_NAME: '',
     PATIENT_AGE: '',
     PATIENT_SEX: '',
-    PATIENT_MOBILE: '+91-',
+    PATIENT_MOBILE: '',
     WARD: '',
     UNIT: '',
     GROSS_AMOUNT: '',
@@ -138,6 +142,9 @@ confirmVisible = false;
   selectedItem: any;
 schemaPercent: string = '';
 readyToConfirm = false;
+  wardOptions: any;
+  unitOptions: any;
+  itemsData: any;
 
   constructor(private dataService: DataService) {}
 
@@ -147,12 +154,14 @@ readyToConfirm = false;
     this.formattedInvoiceDate = this.getFormattedDateTime(
       this.invoiceFormData.INVOICE_DATE
     );
+    this.startMinuteUpdater();
     this.getSchemaList();
-    // this.getSchema();
     this.getPaymentMode();
     this.getInsuranceOptions();
     this.getItems();
+    this.getWardAndUnit()
   }
+  private timerId: any;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -174,6 +183,16 @@ readyToConfirm = false;
           // Focus insurance select if Credit
           this.insuranceSelect?.instance?.focus();
           this.insuranceSelect?.instance?.open();
+
+                  const insuranceHandler = () => {
+          // Unsubscribe after the first selection
+          this.insuranceSelect?.instance?.off('valueChanged', insuranceHandler);
+          setTimeout(() => {
+            this.saveButton?.instance?.focus();
+          });
+        };
+
+        this.insuranceSelect?.instance?.on('valueChanged', insuranceHandler);
         } else {
           this.saveButton?.instance?.focus();
 
@@ -197,8 +216,17 @@ readyToConfirm = false;
   getSchema() {
     this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
       this.schemaOptions = data;
-      console.log(this.schemaOptions, 'SCHEMAOPTIONS');
+      // console.log(this.schemaOptions, 'SCHEMAOPTIONS');
     });
+  }
+
+  getWardAndUnit(){
+    const department = this.Department;
+    this.dataService.getWardAndUnit(department).subscribe((response: any) => {
+      this.wardOptions = response.Ward;
+      this.unitOptions = response.Unit;
+      // console.log(response,"ward and unit")
+    })
   }
 
   onGridContentReady(e: any) {
@@ -211,7 +239,7 @@ readyToConfirm = false;
 getSchemaList(){
   this.dataService.getSchema().subscribe((response: any) => {
     this.schemaOptions = response.Data;
-    console.log(this.schemaOptions,"SCHEMAAAAAAAA")
+    // console.log(this.schemaOptions,"SCHEMAAAAAAAA")
   })
 }
 
@@ -243,20 +271,20 @@ onSchemaChanged(e: any): void {
 
 updateNetAmount() {
   const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
-  console.log(gross,"GROSSSSSSSS")
+  // console.log(gross,"GROSSSSSSSS")
  
   const schema = Number(this.invoiceFormData.SCHEMA_AMOUNT) || 0;
-   console.log(schema,"SCHEMAAAAAAAAA")
+  //  console.log(schema,"SCHEMAAAAAAAAA")
   this.invoiceFormData.NET_AMOUNT = +(gross - schema).toFixed(2);
-  console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
+  // console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
 }
 
 
 calculateSchemaAmount() {
   const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
   const percent = Number(this.invoiceFormData.SCHEMA_PERCENT) || 0;
-console.log(this.invoiceFormData.AMOUNT,"====================")
-  console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
+// console.log(this.invoiceFormData.AMOUNT,"====================")
+  // console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
 
   this.invoiceFormData.SCHEMA_AMOUNT = (gross * percent / 100).toFixed(2);
   this.updateNetAmount();
@@ -268,21 +296,21 @@ console.log(this.invoiceFormData.AMOUNT,"====================")
   getPaymentMode() {
     this.dataService.getDropdownData('PAYMENT_MODE').subscribe((data) => {
       this.paymentModes = data;
-      console.log(this.paymentModes, 'PAYMENTMODES');
+      // console.log(this.paymentModes, 'PAYMENTMODES');
     });
   }
 
   getInsuranceOptions() {
     this.dataService.getDropdownData('INSURANCE').subscribe((data) => {
       this.insuranceOptions = data;
-      console.log(this.insuranceOptions, 'SALARYHEAD');
+      // console.log(this.insuranceOptions, 'SALARYHEAD');
     });
   }
 
   getItems() {
     this.dataService.getDropdownData('ITEMS').subscribe((data) => {
       this.items = data;
-      console.log(this.items, 'ITEMS');
+      // console.log(this.items, 'ITEMS');
     });
   }
 
@@ -294,6 +322,7 @@ console.log(this.invoiceFormData.AMOUNT,"====================")
     this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
       if (response?.data?.length) {
         const item = response.data[0];
+        this.itemsData = response.data
 
         // Update the grid row values
         this.itemsGridRef?.instance?.cellValue(
@@ -307,6 +336,11 @@ console.log(this.invoiceFormData.AMOUNT,"====================")
           item.ITEM_NAME
         );
         this.itemsGridRef?.instance?.cellValue(rowIndex, 'PRICE', item.PRICE);
+        this.itemsGridRef?.instance?.columnOption('PRICE', 'editorOptions', {
+  format: '#,##0.00',
+  readOnly: item.IS_FIXED === true,
+  disabled: item.IS_FIXED === true,
+});
         this.itemsGridRef?.instance?.cellValue(
           rowIndex,
           'IS_FIXED',
@@ -330,7 +364,7 @@ calculateAmount = (rowData: any) => {
 };
 
 onCalculateCustomSummary(e: any) {
-  console.log('onCalculateCustomSummary called', e);
+  // console.log('onCalculateCustomSummary called', e);
   if (e.summaryProcess === "start") {
     e.totalValue = 0;
   }
@@ -358,6 +392,32 @@ onCalculateCustomSummary(e: any) {
     }
   }
 
+  startMinuteUpdater() {
+  // Calculate delay to the next exact minute (e.g., if now is 10:05:23, delay 37 seconds)
+  const now = new Date();
+  const delay = (60 - now.getSeconds()) * 1000;
+
+  setTimeout(() => {
+    this.updateTime();
+
+    // After the first update, update every full minute
+    this.timerId = setInterval(() => {
+      this.updateTime();
+    }, 60000);
+  }, delay);
+}
+
+updateTime() {
+  this.invoiceFormData.INVOICE_DATE = new Date();
+  this.formattedInvoiceDate = this.getFormattedDateTime(this.invoiceFormData.INVOICE_DATE);
+}
+
+ngOnDestroy() {
+  if (this.timerId) {
+    clearInterval(this.timerId);
+  }
+}
+
   getFormattedDateTime(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -378,7 +438,7 @@ onCalculateCustomSummary(e: any) {
     this.dataService.getInvoiceNo(department).subscribe((response: any) => {
       this.invoiceFormData.INVOICE_NO = response.data;
       // this.invoiceFormData.INVOICE_NO = this.billNo;
-      console.log(this.billNo, 'Invoice no.');
+      // console.log(this.billNo, 'Invoice no.');
     });
   }
 
@@ -390,25 +450,32 @@ onCalculateCustomSummary(e: any) {
     }).format(value);
   }
 
-  validateMobileNumber(value: string): void {
-    const regex = /^\+91-\d{10}$/;
+validateMobileNumber(value: string): void {
+  const regex = /^\d{10}$/;
+  this.mobileValid = regex.test(value);
+
+  // Force change detection after value updates
+  setTimeout(() => {
     this.mobileValid = regex.test(value);
-  }
+  });
+}
+
+
 
   onMobileInput(event: any): void {
     let input = event.event.target.value;
 
     // Ensure +91- is always prefixed
-    if (!input.startsWith('+91-')) {
-      input = '+91-' + input.replace(/[^0-9]/g, '').slice(0, 10); // allow only digits
-    }
+    // if (!input.startsWith()) {
+      input =  input.replace(/[^0-9]/g, '').slice(0, 10); // allow only digits
+    // }
 
     // Extract the digits after +91-
     const digits = input
-      .replace('+91-', '')
+      .replace('', '')
       .replace(/[^0-9]/g, '')
       .slice(0, 10);
-    this.mobileNumber = '+91-' + digits;
+    this.mobileNumber =  digits;
 
     this.validateMobileNumber(this.mobileNumber);
   }
@@ -431,6 +498,8 @@ onCalculateCustomSummary(e: any) {
     }
   }
 
+  
+
   onSexKeyDown(event: any): void {
     if (event.event.key === 'Enter') {
       // Focus on the grid and start editing the ITEM_CODE cell in the first row
@@ -442,6 +511,7 @@ onCalculateCustomSummary(e: any) {
   }
 
   onEditorPreparing(e: any): void {
+    
     if (e.parentType === 'dataRow') {
       const rowIndex = e.row.rowIndex;
 
@@ -485,12 +555,12 @@ onCalculateCustomSummary(e: any) {
 
         // <-- ADD onValueChanged here -->
         e.editorOptions.onValueChanged = (args: any) => {
-          console.log('api called++++++++++++++');
+          // console.log('api called++++++++++++++');
           const selectedId = args.value;
           this.selectedItem = this.items.find(
             (item: any) => item.ID === selectedId
           );
-          console.log('Selected item:', this.selectedItem);
+          // console.log('Selected item:', this.selectedItem);
 
           if (this.selectedItem) {
             this.getSelectedItemsData(rowIndex);
@@ -502,11 +572,52 @@ onCalculateCustomSummary(e: any) {
       if (e.dataField === 'QUANTITY') {
         e.editorOptions.onKeyDown = (event: any) => {
           const key = event.event.key;
-
+// console.log(this.itemsData,"IS_FIXEDDDDDDDDDDDDD====")
           if (key === 'Enter') {
             // event.event.preventDefault();
 
             setTimeout(() => {
+              const grid = this.itemsGridRef?.instance;
+
+              // Ensure QUANTITY is not empty before adding a new row
+              const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
+              const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
+
+              
+
+              if (
+                itemIdValue &&
+                quantityValue != null &&
+                quantityValue !== ''
+              ) {
+                // Optional: commit any changes
+                grid.saveEditData();
+
+                // Add a new row
+                // grid.addRow();
+
+                const maxRows = this.items.length;
+                // console.log(maxRows, 'MAXROWS');
+                // console.log(this.items, 'ITEMSSSSSS');
+
+                // const currentRows = grid.getVisibleRows().length;
+                let currentRows = grid.option('dataSource')?.length ?? 0;
+                // console.log(currentRows, 'currentrow');
+                // Focus new row (optional)
+                if (currentRows < maxRows) {
+                  grid.addRow();
+                } else {
+                  // Optional: show some notification about max rows reached
+                  // console.warn('Maximum row limit reached');
+                  this.schemaSelect.instance.focus();
+                  this.schemaSelect.instance.open();
+                }
+              }
+            }, 50);
+          }
+
+          if(key === 'Tab'){
+                        setTimeout(() => {
               const grid = this.itemsGridRef?.instance;
 
               // Ensure QUANTITY is not empty before adding a new row
@@ -523,33 +634,23 @@ onCalculateCustomSummary(e: any) {
 
                 // Add a new row
                 // grid.addRow();
-
-                const maxRows = this.items.length;
-                console.log(maxRows, 'MAXROWS');
-                console.log(this.items, 'ITEMSSSSSS');
-
-                // const currentRows = grid.getVisibleRows().length;
-                let currentRows = grid.option('dataSource')?.length ?? 0;
-                console.log(currentRows, 'currentrow');
-                // Focus new row (optional)
-                if (currentRows < maxRows) {
-                  grid.addRow();
-                } else {
+// else {
                   // Optional: show some notification about max rows reached
                   console.warn('Maximum row limit reached');
                   this.schemaSelect.instance.focus();
                   this.schemaSelect.instance.open();
-                }
+                // }
               }
             }, 50);
           }
         };
       }
     }
+    
   }
 
 onRowRemoving(e: any) {
-  console.log("deletion trigerred")
+  // console.log("deletion trigerred")
   const index = this.items.findIndex(item => item.ID === e.data.ID);
   if (index !== -1) {
     this.items.splice(index, 1); // actually remove it from the array
@@ -632,12 +733,27 @@ handleEnterKey(event: KeyboardEvent) {
   }
 }
 
+focusYesButton() {
+  setTimeout(() => {
+    this.yesButton?.instance?.focus();
+  });
+}
 
+
+
+handleRightArrow(event: any) {
+  if (event.event.key === 'ArrowRight') {
+    event.event.preventDefault();
+    this.noButton?.instance?.focus();
+  }
+}
 
 
 save() {
   
-  console.log("SAVE TRIGGERED");
+
+
+  // console.log("SAVE TRIGGERED");
 
   // Clone the data to avoid mutating the original form
   const clonedData = { ...this.invoiceFormData };
@@ -661,7 +777,7 @@ clonedData.INVOICE_DATE = new Date().toISOString();
 
   // Save to backend
   this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
-    console.log(response, 'SAVE');
+    // console.log(response, 'SAVE');
   if (response.flag == "1") {
     notify(
       {
@@ -680,10 +796,16 @@ clonedData.INVOICE_DATE = new Date().toISOString();
       'error'
     );
   }
+
+    // this.invoiceFormGroup.instance.reset();
+
+  // Then set the mobile field explicitly to '+91-'
+  // this.invoiceFormGroup.instance.option('formData.PATIENT_MOBILE', '+91-');
+  
     // Reset form
     this.invoiceFormData = {
       INVOICE_DATE: new Date().toISOString(),
-      PATIENT_MOBILE:'+91-',
+      PATIENT_MOBILE:'',
       PATIENT_SEX: '',
       INVOICE_ENTRY: [
       {
@@ -698,6 +820,7 @@ clonedData.INVOICE_DATE = new Date().toISOString();
     this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
     this.getInvoiceNo();
 this.invoiceFormGroup.instance.reset();
+
     // Focus on ward field
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -707,12 +830,13 @@ this.invoiceFormGroup.instance.reset();
 
 cancel(){
       // Reset form
-    this.invoiceFormData = {
+   this.invoiceFormData = {
+    PATIENT_NAME: '',
+    UHID:'',
+    PATIENT_AGE:'',
       INVOICE_DATE: new Date().toISOString(),
-      PATIENT_MOBILE:'+91-',
+      PATIENT_MOBILE:'',
       PATIENT_SEX: '',
-      UHID: '',
-      PATIENT_AGE: '',
       INVOICE_ENTRY: [
       {
         ITEM_ID: '',
@@ -724,7 +848,9 @@ cancel(){
     ],
     };
     this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
-    this.invoiceFormGroup.instance.reset();
+    this.getInvoiceNo();
+this.invoiceFormGroup.instance.reset();
+
     this.getInvoiceNo();
         setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -747,6 +873,12 @@ onPaymentModeChange(event: any): void {
     }
   }, 50);
 }
+
+ageNotZero = (e: any) => {
+  const value = e.value;
+  return value !== 0 && value !== '0';  // ensure age is not zero (number or string)
+}
+
 
   printInvoice() {
     const printContents = document.getElementById('invoiceToPrint')?.innerHTML;
@@ -819,7 +951,8 @@ onPaymentModeChange(event: any): void {
     DxiGroupModule,
     FormsModule,
     DxNumberBoxModule,
-    DxValidationGroupModule
+    DxValidationGroupModule,
+    DxAutocompleteModule
   ],
   providers: [],
   declarations: [InvoiceAddComponent],
