@@ -33,13 +33,14 @@ import { HospitalListModule } from './pages/MASTER PAGES/hospitalFiles/hospital-
 
 import { InvoiceAddComponent, InvoiceAddModule } from './pages/MASTER PAGES/invoice-add/invoice-add.component';
 import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/department.component';
+import { ItemModule } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent, InsuranceModule } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schema.component';
 
 
 
 @NgModule({
-  declarations: [AppComponent,],
+  declarations: [AppComponent],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -57,6 +58,7 @@ import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schem
     InvoiceListModule,
     InvoiceAddModule,
     DepartmentModule,
+    ItemModule,
     InsuranceModule,
     SchemaModule,
 

@@ -39,35 +39,54 @@ export class DataService {
   // set_pageLoading_And_Closing_Log(Action: any, PageName: any) {
   //   const userid = sessionStorage.getItem('UserID');
   //   const currentPathName = PageName;
-  
+
   //   // Retrieve userData instead of logData
   //   const userDataString = localStorage.getItem('userData');
   //   if (!userDataString) {
   //     console.error('userData is null. Cannot proceed.');
   //     return;
   //   }
-  
+
   //   const userData = JSON.parse(userDataString);
   //   const userID = userData?.ID; // Use the correct property name
-  
+
   //   if (!userID) {
   //     console.error('User ID is missing in userData.');
   //     return;
   //   }
-  
+
   //   const url = `${BASE_URL}user/useractivity`;
   //   const reqBody = {
   //     USER_ID: userID,
   //     TITLE: currentPathName,
   //     ACTION: Action,
   //   };
-  
+
   //   return this.http.post(url, reqBody);
   // }
-  
-  
-  getResellerList(): Observable<any> {
-    return this.http.post(`${BASE_URL}/reseller/list`, {});
+
+
+
+  // //Invoice - Sales
+  // getInvoiceList(
+  //   orgId: string,
+  //   dateFrom: string,
+  //   dateTo: string
+  // ): Observable<any> {
+  //   const payload = {
+  //     OrgID: orgId,
+  //     DateFrom: dateFrom,
+  //     DateTo: dateTo,
+  //   };
+
+  //   return this.http.post(`${BASE_URL}/organization/invoices`, payload);
+  // }
+
+  //dropdown
+
+  public getDropdownData(type: any): Observable<any> {
+    const reqBodyData = { name: type };
+    return this.http.post(`${BASE_URL}dropdown/`, reqBodyData);
   }
   
   getInvoiceNo(data: any): Observable<any> {
@@ -83,9 +102,15 @@ export class DataService {
   return this.http.post(`${BASE_URL}invoice/getitemsData`, data);
 }
 
+//SCHEMA-LIST
+
+getSchema(): Observable<any> {
+  return this.http.post(`${BASE_URL}Schema/list`, {});
+}
+
   //dropdown
 
-public getDropdownData(type: any): Observable<any> {
+public getDrodownData(type: any): Observable<any> {
   const reqBodyData = { name: type };
   return this.http.post(
     `${BASE_URL}dropdown/`,
@@ -93,7 +118,109 @@ public getDropdownData(type: any): Observable<any> {
   );
 }
 
-//========================HOSPITAL=========================
+  //===========================Department Api=========================
+  //======================Department list=============================
+  get_department_List() {
+    return this.http.post(`${BASE_URL}department/list`, {});
+  }
+  //===========================Select Api =============================
+  select_department_Details(id: any) {
+    return this.http.post(`${BASE_URL}department/select/${id}`, {});
+  }
+
+  //=====================Dropdown======================
+
+  get_dropdown_hospital_api(type: any) {
+    const reqBody = {
+      NAME: 'Hospital',
+    };
+
+    return this.http.post(`${BASE_URL}dropdown`, reqBody);
+  }
+
+//=======================Add Data=========================
+
+  Add_Department_Api(department: any, Hospital, is_Inactive: any,Bill_prefix:any) {
+    const reqBody = {
+      DEPARTMENT: department,
+      HOSPITAL_ID: Hospital,
+      IS_INACTIVE: is_Inactive,
+      BILL_PREFIX:Bill_prefix
+    };
+    return this.http.post(`${BASE_URL}department/insert`, reqBody);
+  }
+
+//========================Update department data==================
+
+  Update_Department_Api(id:any,department: any, Hospital, is_Inactive: any,Bill_prefix:any) {
+    const reqBody = {
+      ID:id,
+      DEPARTMENT: department,
+      HOSPITAL_ID: Hospital,
+      IS_INACTIVE: is_Inactive,
+      BILL_PREFIX:Bill_prefix
+    };
+    return this.http.post(`${BASE_URL}department/update`, reqBody);
+  }
+
+
+  delete_department_api(id: any) {
+    return this.http.post(`${BASE_URL}department/delete/${id}`, {});
+  }
+
+//=====================item Api=============================
+//====================department dropdown===========================
+    get_dropdown_department_api(type: any) {
+    const reqBody = {
+      NAME: 'Department',
+    };
+
+    return this.http.post(`${BASE_URL}dropdown`, reqBody);
+  }
+
+  //=====================get item list===============================
+get_ItemsData_List(){
+  return this.http.post( `${BASE_URL}Items/list`,{} );
+}
+
+select_items_Data(id:any){
+    return this.http.post(`${BASE_URL}Items/select/${id}`, {});
+}
+//=============Add items================================================
+add_items_api(item_code:any,name:any,is_fixed:any,item_price:any,is_inactive,dep_id:any){
+  const reqBody = {
+     ITEM_CODE: item_code,
+  ITEM_NAME: name,
+  IS_FIXED_PRICE: is_fixed,
+  PRICE: item_price,
+  IS_INACTIVE: is_inactive,
+  DEPARTMENT_ID:dep_id,
+
+    };
+    return this.http.post(`${BASE_URL}items/insert`, reqBody);
+
+}
+
+delete_items_api(id:any){
+
+   return this.http.post(`${BASE_URL}items/delete/${id}`, {});
+
+}
+//=====================update items===================
+ update_items_Api(id:any,item_code:any,name:any,is_fixed:any,item_price:any,is_inactive,dep_id:any){
+  const reqBody =
+{
+  ID:id,
+ITEM_CODE: item_code,
+ITEM_NAME: name,
+IS_FIXED_PRICE: is_fixed,
+PRICE: item_price,
+IS_INACTIVE: is_inactive,
+DEPARTMENT_ID: dep_id
+}
+return this.http.post(`${BASE_URL}Items/update`,reqBody);
+ }
+
 get_HospitalData_List(){
   return this.http.post( `${BASE_URL}hospital/list`,{} );
 }
@@ -174,6 +301,7 @@ Delete_Insurance_Api(ID:any){
 }
 
 
+
 //===============USER=======================
 // get_UserData_List(){
 //   return this.http.post( `${BASE_URL}user/list`,{} );
@@ -220,12 +348,6 @@ Delete_Schema_Api(ID:any){
 
 //=====================USER==========================
 //====================department dropdown===========================
-    get_dropdown_department_api(type: any) {
-    const reqBody = {
-      NAME: 'Department',
-    };
-
-    return this.http.post(`${BASE_URL}dropdown`, reqBody);
-  }
-
+  
 }
+

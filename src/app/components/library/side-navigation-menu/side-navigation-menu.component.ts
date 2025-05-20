@@ -82,6 +82,10 @@ export class SideNavigationMenuComponent
           text: 'Department',
           path: '/department',
         },
+           {
+          text: 'Item',
+          path: '/item',
+        },
         {
           text:'Insurance',
           path:'/insurance',
@@ -99,11 +103,11 @@ export class SideNavigationMenuComponent
       path: '',
       items: [
         {
-          text: 'Invoice',
+          text: 'Invoice List',
           path: '/invoice',
         },
         {
-          text: 'Invoice Entry',
+          text: 'Invoice',
           path: '/invoice-entry',
         },
       ],

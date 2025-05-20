@@ -10,7 +10,6 @@
   [width]="'100%'"
   [height]="'90vh'"
   (onRowRemoving)="delete_Department_Data($event)"
-  (onExporting)="onExporting($event)"
   id="dataGrid"
   [pager]="{
     showInfo: true,
@@ -19,8 +18,6 @@
   }"
 >
   <dxo-scrolling mode="virtual"></dxo-scrolling>
-  <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
-
   <dxo-editing
     mode="popup"
     [allowUpdating]="true"
@@ -46,7 +43,7 @@
       ></dx-button>
     </dxi-item>
 
-    <dxi-item name="exportButton"></dxi-item>
+
   </dxo-toolbar>
 
   <dxo-search-panel
@@ -61,22 +58,28 @@
     alignment="left">
   </dxi-column> -->
   <dxi-column
-    dataField="DepartmentName"
+    dataField="DEPARTMENT"
     alignment="left"
     caption="Department"
   ></dxi-column>
   <dxi-column
-    dataField="Hospital"
+    dataField="HOSPITAL_NAME"
     alignment="left"
     caption="Hospital"
   ></dxi-column>
-  <dxi-column
-    dataField="Status"
-    alignment="left"
-    caption="Status"
-    [calculateCellValue]="formatStatus"
-    [cellTemplate]="statusCellTemplate"
-  ></dxi-column>
+  <dxi-column dataField="IS_INACTIVE" caption="Status" alignment="right" cellTemplate="statusCellTemplate"
+  width="100"
+
+  fixedPosition="right">
+  </dxi-column>
+  <div *dxTemplate="let cellData of 'statusCellTemplate'">
+    <i
+      class="fas fa-flag"
+      [ngClass]="getStatusFlagClass(cellData.value)"
+      [attr.title]="cellData.value"
+      style="margin-left: 10px; cursor: default;"
+    ></i>
+      </div>
   <dxi-column type="buttons" [width]="110">
     <dxi-button name="edit"></dxi-button>
     <dxi-button name="delete"></dxi-button>
@@ -104,16 +107,22 @@
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
-    <div style="display: flex; align-items: center; gap: 20px">
-      <label>Department</label>
-      <dx-text-box
-        type="text"
-        name="Department"
-        class="form-control"
-        formControlName="DepartmentName"
-      ></dx-text-box>
-    </div>
+<div style="display: flex; align-items: center; gap: 20px">
+  <label>Department</label>
+  <dx-text-box
+    type="text"
+    class="form-control"
+    formControlName="DepartmentName"
+  ></dx-text-box>
+</div>
 
+<!-- Validation message under the textbox -->
+<div *ngIf="formsource.get('DepartmentName')?.touched && formsource.get('DepartmentName')?.invalid">
+  <small class="text-danger" style="margin-left: 90px;font-weight: 500;">*This field is required</small>
+</div>
+
+
+  
     <div class="d-flex">
       <label style="margin-top: 17px">Hospital</label>
 
@@ -121,22 +130,54 @@
   formControlName="Hospital"
   style="flex: 1; margin-left: 44px; margin-top: 17px"
   [searchEnabled]="true"
-  [items]="hospitals"
-   [(value)]="hospitals.id"
-  displayExpr="name"
-  valueExpr="id"
+  [items]="hospital_Dropdown_list"
+   [(value)]="hospital_Dropdown_list.ID"
+  displayExpr="DESCRIPTION"
+  valueExpr="ID"
   (onValueChanged)="changeHospitals($event)"
-></dx-select-box>
+> </dx-select-box>
 
     </div>
+    <div *ngIf="formsource.get('Hospital')?.touched && formsource.get('Hospital')?.invalid">
+  <small class="text-danger" style="margin-left: 90px;font-weight: 500;">*This field is required</small>
+</div>
 
-    <label for="checboxadd" class="me-5">Inactive </label>
+      <div class="d-flex align-items-center justify-content-between mt-3">
+          <!-- Bill Prefix -->
+          <div class="d-flex align-items-center me-5">
+    <label class="me-3">Bill Prefix</label>
+  <dx-text-box
+  type="text"
+  name="Bill Prefix"
+  class="form-control"
+  formControlName="bill_prefix"
+  style="width: 100px; margin-left: 22px;"
+  [inputAttr]="{ maxlength: 3 }"
+  [isValid]="!formsource.get('bill_prefix')?.errors?.maxlength"
+  [validationMessageMode]="'always'"
+  [validationErrors]="formsource.get('bill_prefix')?.errors?.maxlength && formsource.get('bill_prefix')?.touched ? [{ message: 'Maximum 3 letters allowed.' }] : null"
+> </dx-text-box>
+
+    
+  </div>
+          <!-- Inactive checkbox -->
+  <!-- <div class="d-flex me-4">
+    <label for="checboxadd" class="me-2">Inactive</label>
     <dx-check-box
-      class="mt-4"
-      formControlName="Status"
+      formControlName="IS_INACTIVE"
       [elementAttr]="{ 'aria-label': 'Unchecked' }"
       id="checboxadd"
+    
     ></dx-check-box>
+ 
+  </div> -->
+
+
+
+
+</div>
+   
+
     <div class="d-flex justify-content-end mt-4">
       <!-- Cancel Button -->
       <button
@@ -175,7 +216,7 @@
         type="text"
         name="Department"
         class="form-control"
-        [(value)]="updatedDepartmentData.DepartmentName"
+        [(value)]="department_Value"
       ></dx-text-box>
     </div>
 
@@ -183,10 +224,10 @@
       <label style="margin-top: 17px">Hospital</label>
 
    <dx-select-box
-  [(value)]="updatedDepartmentData.Hospital"
-  [items]="hospitals"
-  displayExpr="name"
-  valueExpr="id"
+  [(value)]="hospital_value"
+    [items]="hospital_Dropdown_list"
+  displayExpr="DESCRIPTION"
+  valueExpr="ID"
   style="flex: 1; margin-left: 44px; margin-top: 17px"
   [searchEnabled]="true"
   (onValueChanged)="changeHospitals($event)"
@@ -194,13 +235,36 @@
 
     </div>
 
-    <label for="checboxadd" class="me-5">Inactive </label>
+   <div class="d-flex align-items-center justify-content-between mt-3">
+          <!-- Bill Prefix -->
+          <div class="d-flex align-items-center me-5">
+    <label class="me-3">Bill Prefix</label>
+  <dx-text-box
+  type="text"
+  name="Bill Prefix"
+  class="form-control"
+  [(value)]="bill_prefix_value"
+  style="width: 100px; margin-left: 22px;"
+  [inputAttr]="{ maxlength: 3 }"
+  [isValid]="!formsource.get('bill_prefix')?.errors?.maxlength"
+  [validationMessageMode]="'always'"
+  [validationErrors]="formsource.get('bill_prefix')?.errors?.maxlength && formsource.get('bill_prefix')?.touched ? [{ message: 'Maximum 3 letters allowed.' }] : null"
+></dx-text-box>
+
+    
+  </div>
+          <!-- Inactive checkbox -->
+  <div class="d-flex me-4">
+    <label for="checboxadd" class="me-2">Inactive</label>
     <dx-check-box
-      class="mt-4"
-      [(value)]="updatedDepartmentData.Status"
+      [(value)]="status_value"
       [elementAttr]="{ 'aria-label': 'Unchecked' }"
       id="checboxadd"
+    
     ></dx-check-box>
+  </div>
+</div>
+   
     <div class="d-flex justify-content-end mt-4">
       <!-- Cancel Button -->
       <button

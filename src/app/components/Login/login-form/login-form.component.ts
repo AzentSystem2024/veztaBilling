@@ -61,6 +61,9 @@ passwordMode = 'password';
   // async onSubmit(event: Event) {
   //   event.preventDefault(); // Prevent default form submission
 
+  // async onSubmit(event: Event) {
+  //   event.preventDefault(); // Prevent default form submission
+
   //   if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
   //     alert('Please enter login name and password');
   //     return;
@@ -119,6 +122,7 @@ passwordMode = 'password';
   //     );
   // }
 
+// async onSubmit(event: Event) {
 
  async onSubmit(event: Event) {
   event.preventDefault(); // Prevent default form submission
