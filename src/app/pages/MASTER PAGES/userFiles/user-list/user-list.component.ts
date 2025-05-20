@@ -26,6 +26,7 @@ import {
   DxTextBoxComponent,
   DxTextBoxTypes,
 } from 'devextreme-angular/ui/text-box';
+import { DataService } from 'src/app/services';
 type EditorOptions = DxTextBoxTypes.Properties;
 
 @Component({
@@ -35,12 +36,13 @@ type EditorOptions = DxTextBoxTypes.Properties;
 })
 export class UserListComponent {
 
-UserType = ['Administration', 'Entry User', 'Hospital User'];
+UserType = ['Administration', 'Entry User', 'HO User'];
 
 
 confirmPasswordValue: any;
   userData: any;
   passwordForm: any;
+  department_list: any[];
   changePasswordMode(arg0: string) {
    
   }
@@ -64,19 +66,18 @@ formData = { IS_INACTIVE: false,pwd:''};
   confirmPasswordMode: 'password' | 'text' = 'password';
   addPopup: boolean = false;
   formsource: FormGroup;
-  dataservice: any;
   IS_INACTIVE: boolean = false;
   showHeaderFilter = true;
   editPopup: boolean = false;
   editUserData: any;
   selectedUserType: any;
-  selectedHospitalId: any[] = [];
+  selectedDepartmentId: any[] = [];
   selectedStatus: any;
   popupWidth = 400;
   userHospital: any;
   // IS_ADMIN: boolean = false;
-  // IS_LAB_USER: boolean = false;
-  // IS_HOSPITAL_USER: boolean = false;
+  // IS_ENTRY_USER: boolean = false;
+  // IS_HO_USER: boolean = false;
 
   Status: any;
 
@@ -86,12 +87,9 @@ formData = { IS_INACTIVE: false,pwd:''};
   USER_NAME: any;
   LOGIN_NAME: any;
   PASSWORD: any;
-  HOSPITAL_ID: any;
+  DEPARTMENT_ID: any;
 
-  // UserType = ['Administration', 'Lab User', 'Hospital User'];
-
-  hospitalss: any;
-  hospitals: any;
+  departments: any;
   userId: any;
   UserName_Value: any;
   LoginName_Value: any;
@@ -99,9 +97,9 @@ formData = { IS_INACTIVE: false,pwd:''};
   Inactive_Value: any;
   UserType_Value: any;
   Admin_Value: any;
-  Hospital_Value: any;
-  Lab_Value: any;
-  isHospitalUser:boolean=false;
+  Entry_Value: any;
+  HO_Value: any;
+  isHOUser:boolean=false;
   isAdmin: boolean=false;
   isEntryUser: boolean=false;
 
@@ -133,18 +131,21 @@ closePop() {
     }, 100);
 }
 
-constructor(private fb: FormBuilder) {
+constructor(private fb: FormBuilder , private dataservice: DataService) {
     this.formsource = this.fb.group({
       USER_NAME: ['', Validators.required], // Set default value as empty string ''
       LOGIN_NAME: ['', Validators.required],
       PASSWORD: ['', Validators.required],
       C_PASSWORD: [null],
       IS_INACTIVE: [false], // Boolean default false
-      Hospital_Id: [''],
+     Department_Id: [''],
       IS_ADMIN: [false],
       IS_ENTRY_USER: [false],
-      IS_HOSPITAL_USER: [false],
+      IS_HO_USER: [false],
     })
+
+   this.department_dropdown_list();
+
 }
 
   statusCellTemplate = (cellElement: any, cellInfo: any) => {
@@ -173,9 +174,9 @@ constructor(private fb: FormBuilder) {
 
  }
 
- formatStatus(data: any) {
-    return data.IS_INACTIVE ? 'Inactive' : 'Active';
-  }
+getStatusFlagClass(IS_INACTIVE: boolean): string {
+  return IS_INACTIVE ? 'flag-red' : 'flag-green';
+}
 
   refreshData() {
     this.dataGrid.instance.refresh();
@@ -244,9 +245,16 @@ constructor(private fb: FormBuilder) {
     this.editPopup = true;
 
     this.selectedUserType = event.data.UserType;
-
-   
   }
+
+  //=======DROPDOWN=========
+  department_dropdown_list(){
+  this.dataservice.get_dropdown_department_api(name).subscribe((res:any)=>{
+    console.log(res,'=========department_dropdown_list========');
+   this.department_list=res
+   
+  })
+}
 
 addData() {
  this.addPopup = true;

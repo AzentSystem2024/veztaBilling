@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxPopupModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent, RowRemovedEvent } from 'devextreme/ui/data_grid';
+import notify from 'devextreme/ui/notify';
 import { DataService } from 'src/app/services';
 
 @Component({
@@ -18,26 +20,15 @@ export class InsuranceComponent {
   addPopup : boolean = false;
   editPopup : boolean = false;
   formsource:FormGroup;
-  dataSource: any = [{
-    Id: 1,
-    INSURANCE_NAME: "Insurance 1",
-    IS_INACTIVE: false
-  },
-  {
-    Id: 2,
-    INSURANCE_NAME: "Insurance 2",
-    IS_INACTIVE: true
-  },
-  {
-    Id: 3,
-    INSURANCE_NAME: "Insurance 3",
-    IS_INACTIVE: false
-  }];
+ dataSource: any = [];
   editInsuranceData: any;
+  selectedData: any;
 
   openPopup(){
   this.addPopup = true
-  this.formsource.reset();
+  this.formsource.reset({
+    Inactive: ""
+  });
   }
 
   closePop(){
@@ -58,10 +49,15 @@ this.formsource.reset()
     Inactive:[false,[Validators.required]]
   
    })
+   this.get_Insurance_List()
   }
   
-formatStatus(data:any){
-return data.IS_INACTIVE ?  'Inactive' : 'Active';
+// formatStatus(data:any){
+// return data.IS_INACTIVE ?  'Inactive' : 'Active';
+// }
+
+getSerialNumber=(rowIndex: number)=> {
+  return rowIndex + 1;
 }
 statusCellTemplate = (cellElement: any, cellInfo: any) => {
   const status = cellInfo.value; // Get the value from `calculateCellValue`
@@ -87,30 +83,184 @@ statusCellTemplate = (cellElement: any, cellInfo: any) => {
 
   onExporting(event:any){}
 
-deleteData(event:any) {
-
-}
-
-
 onEditingStart(event:any) {
 event.cancel=true;
     this.editInsuranceData=event.data;
     this.editPopup=true;
+    this.select_Insurance_Data(event);
+}
+
+getStatusFlagClass(IS_INACTIVE: boolean): string {
+  return IS_INACTIVE ? 'flag-red' : 'flag-green';
+}
+
+get_Insurance_List(){
+  console.log('get_Insurance_List');
+  
+this.dataservice.get_InsuranceData_List().subscribe((response:any)=>{
+  console.log('get_Insurance_List',response);
+
+  if(response){
+    this.dataSource = response.Data.map((item:any, index:any) => ({
+      ...item,
+      "SlNo": index + 1, // Assign serial number
+    }));
+    // console.log(response.data);
+  }
+})
+}
+
+//===========SELECT DATA=========================
+select_Insurance_Data(e:any){
+  console.log(e);
+  const ID = e.data.ID;
+  this.dataservice.Select_InsuranceData_Api(ID).subscribe((res:any)=>{
+    console.log(res,"result");
+    // this.select_Data = res;
+    // this.updatedHospitalData = {...res};
+    this.formsource.patchValue({
+  Id: res.Data.ID,
+  Insurance: res.Data.INSURANCE_NAME,
+  Inactive: res.Data.IS_INACTIVE
+
+    })
+
+    console.log(this.formsource.value);
+    
+  });
+}
+
+
+deleteData(event:any){
+const ID = event.data.ID
+
+if(ID){
+  this.dataservice.Delete_Insurance_Api(ID).subscribe((response:any)=>{
+    console.log(response,'delete response');
+    notify(
+      {
+        message: 'Data succesfully deleted',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 500,
+      },
+      'success'
+    );
+   })
+ }
+
 }
 
 addData(){
+  const Insurance = this.formsource.value.Insurance
+  const Inactive =this.formsource.value.Inactive
+   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
+  
+const isDuplicate = this.dataSource.some((data:any)=>{
+return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase()
+})
+ if(isDuplicate){
+    notify(
+      {
+        message: 'Insurance already exists',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 500,
+      },
+      'error'
+    );
+    return;
+ }
 
+    if(Insurance){
+      console.log("function called");
+      
+      this.dataservice.Insert_InsuranceData_Api(Insurance,isInactiveBoolean).subscribe((response:any)=>{
+        console.log(response,'add response');
+        
+      notify(
+        {
+          message: 'Data succesfully added',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'success'
+      );
+      this.addPopup=false;
+      this.get_Insurance_List()
+    })
+  } 
+     else{
+      notify(
+        {
+          message: 'Please fill the fields',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'error'
+      );
+     }  
+
+     this.get_Insurance_List()
 }
 
 editData(){
+const ID = this.formsource.value.Id
+const Insurance = this.formsource.value.Insurance
+const Inactive =this.formsource.value.Inactive
 
+const isDuplicate = this.dataSource.some((data:any)=>{
+  return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase() && data.ID !== ID //Exclude the current hospital
+ });
+   if(isDuplicate){
+    this.get_Insurance_List()
+      notify(
+        {
+          message: 'Data already exists',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'error'
+      );
+      return;
+   
+   }
+   
+if(Insurance){
+this.dataservice.Update_InsuranceData_Api(ID,Insurance,Inactive).subscribe((response:any)=>{
+  notify(
+    {
+      message: 'Data succesfully added',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 500,
+    },
+    'success'
+  );
+  this.get_Insurance_List()
+ 
+});
+this.get_Insurance_List()
+} 
+ else{
+
+  notify(
+    {
+      message: 'Please fill the fields',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 500,
+    },
+    'error'
+  );
+ } 
+ this.editPopup=false;
+ this.get_Insurance_List();
 }
+
+
 
 }
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule, DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxButtonModule, CommonModule ,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [InsuranceComponent],

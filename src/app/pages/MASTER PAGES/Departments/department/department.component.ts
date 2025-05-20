@@ -1,6 +1,6 @@
 import { Component, NgModule } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import notify from 'devextreme/ui/notify';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   DxSelectBoxModule,
@@ -30,12 +30,8 @@ import {
   DxiGroupModule,
 } from 'devextreme-angular/ui/nested';
 import {
-  EditingStartEvent,
   ExportingEvent,
-  RowRemovingEvent,
 } from 'devextreme/ui/data_grid';
-import { ValueChangedEvent } from 'devextreme/ui/select_box';
-import * as e from 'express';
 import { FormTextboxModule } from 'src/app/components';
 import { DataService } from 'src/app/services';
 
@@ -49,18 +45,20 @@ export class DepartmentComponent {
   isAddPop: boolean = false;
   isEditPop: boolean = false;
   Department_Data: any = [];
-  updatedDepartmentData: any = [];
 selected_Data:any
   department_Value: any;
   hospital_value: any;
   status_value: any;
+  hospital_Dropdown_list: any=[]
+  bill_prefix_value: any;
+  id_Value: any;
   constructor(private fb: FormBuilder, private dataservice: DataService) {
     this.formsource = this.fb.group({
       ID: [null],
-      DepartmentName: [''],
-      Hospital: [''],
-      bill_prefix:[''],
-      Status: [false],
+      DepartmentName:  ['', Validators.required],
+    Hospital: ['', Validators.required],
+      bill_prefix:['', [Validators.maxLength(3)]],
+      IS_INACTIVE: [false],
     });
     this.getDepartment_list();
     this.hospital_Dropdown()
@@ -74,7 +72,7 @@ selected_Data:any
     console.log('on editing start');
     console.log(event);
     this.isEditPop = true;
-    this.updatedDepartmentData;
+  
     this.select_dep_list(event)
   }
   onExporting($event: ExportingEvent) {}
@@ -83,32 +81,13 @@ selected_Data:any
 
   openPopup() {
     this.isAddPop = true;
+    this.formsource.reset()
   }
   departments: any = [];
+
   formatStatus(data: any) {
-    return data.Status ? 'Inactive' : 'Active';
+    return data.IS_INACTIVE ? 'Inactive' : 'Active';
   }
-  statusCellTemplate = (cellElement: any, cellInfo: any) => {
-    const status = cellInfo.value; // Get the value from calculateCellValue
-
-    // Determine background color and display text based on the status
-    const color = status === 'Inactive' ? 'red' : 'green';
-    const text = status; // Use the calculated value ("Inactive" or "Active")
-
-    // Apply the dynamic styles and content
-    cellElement.innerHTML = `
-      <span style="
-        background-color: ${color};
-        color: white;
-        padding: 2px 3px;
-        border-radius: 5px;
-        display: inline-block;
-        text-align: center;
-        min-width: 60px;"
-      >
-        ${text}
-      </span>`;
-  };
 
   //========================== close popup=========================
   closePopup() {
@@ -131,6 +110,8 @@ selected_Data:any
 hospital_Dropdown(){
   this.dataservice.get_dropdown_hospital_api(name).subscribe((res:any)=>{
     console.log(res,'=======hospitals================')
+
+    this.hospital_Dropdown_list=res
   })
 }
 
@@ -141,25 +122,104 @@ delete_Department_Data(event: any) {
    this.dataservice.delete_department_api(id).subscribe((res:any)=>{
     console.log(res)
 
-
-
-    alert('data deleted')
+notify(
+      {
+        message: 'Department deleted successfully.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'success'
+    );
    })
 
+}
+getStatusFlagClass(IS_INACTIVE: boolean): string {
+  return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
 
   //===========================Add Department Data=========================
 
+  // addData() {
+  //   console.log(this.formsource.value);
+  //   this.isAddPop = false;
+  //   const department=this.formsource.value.DepartmentName
+  //    const Hospital=this.formsource.value.Hospital
+  //     const is_Inactive=this.formsource.value.IS_INACTIVE
+  //     const Bill_prefix=this.formsource.value.bill_prefix
+  //     console.log(department,Hospital,is_Inactive,Bill_prefix,'====input datas');
+      
+  //   this.dataservice.Add_Department_Api(department,Hospital,is_Inactive,Bill_prefix).subscribe((res:any)=>{
+  //     console.log(res)
+  //     this.getDepartment_list()
+      
+  //         notify(
+  //           {
+  //             message: 'Department Added successfully',
+  //             position: { at: 'top right', my: 'top right' },
+  //             displayTime: 500,
+  //           },
+  //           'success'
+  //         );
+  //         this.isAddPop=false
+  //   })
+  // }
+
   addData() {
-    console.log(this.formsource.value);
-    this.isAddPop = false;
-    const department=this.formsource.value.DepartmentName
-     const Hospital=this.formsource.value.Hospital
-      const is_Inactive=this.formsource.value.Status
-    this.dataservice.Add_Department_Api(department,Hospital,is_Inactive).subscribe((res:any)=>{
-      console.log(res)
-    })
+      this.formsource.markAllAsTouched();
+
+  // If invalid, return early — error will show under textbox
+  if (this.formsource.invalid) {
+    return;
   }
+  console.log(this.formsource.value);
+  
+  const department = this.formsource.value.DepartmentName
+  const Hospital = this.formsource.value.Hospital;
+  const is_Inactive = this.formsource.value.IS_INACTIVE;
+  const Bill_prefix = this.formsource.value.bill_prefix;
+const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
+
+  // Check for duplication
+  const isDuplicate = this.departments.some(
+    (item: any) =>
+      item.DEPARTMENT.toLowerCase() === department.toLowerCase() &&
+      item.HOSPITAL_ID === Hospital
+  );
+
+  if (isDuplicate) {
+    notify(
+      {
+        message: 'This department already exists under the selected hospital.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
+
+  // Proceed if no duplicate found
+  this.isAddPop = false;
+
+  console.log(department, Hospital, is_Inactive, Bill_prefix, '====input datas');
+
+  this.dataservice.Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix).subscribe((res: any) => {
+    console.log(res);
+    this.getDepartment_list();
+
+    notify(
+      {
+        message: 'Department Added successfully',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 500,
+      },
+      'success'
+    );
+
+    this.isAddPop = false;
+  });
+}
+
   //===========================select department============================
   select_dep_list(event: any) {
      console.log('===========event',event);
@@ -171,15 +231,54 @@ delete_Department_Data(event: any) {
       this.selected_Data=res.Data
     
       console.log(this.selected_Data)
+   this.id_Value=this.selected_Data.ID
       this.department_Value=this.selected_Data.DEPARTMENT
       this.hospital_value=this.selected_Data.HOSPITAL_ID
       this.status_value=this.selected_Data.IS_INACTIVE
-      console.log(this.department_Value,this.hospital_value,this.status_value);
+      this.bill_prefix_value=this.selected_Data.BILL_PREFIX
+
+      console.log(this.department_Value,this.hospital_value,this.status_value,this.bill_prefix_value);
       
         });
   }
   //===========================Update Department Data=========================
-  update_Department_Data() {}
+  update_Department_Data() {
+const id=this.id_Value
+ const department=this.department_Value
+     const Hospital=this.hospital_value
+      const is_Inactive=this.status_value
+      const Bill_prefix=this.bill_prefix_value
+
+const isDuplicate = this.departments.some((item: any) => {
+  // Skip the current record being edited
+  if (item.ID === id) return false;
+
+  return (
+    item.DEPARTMENT.toLowerCase().trim() === department.toLowerCase().trim() &&
+    item.HOSPITAL_ID === Hospital
+  );
+});
+
+if (isDuplicate) {
+  notify(
+    {
+      message: 'This department already exists under the selected hospital.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'error'
+  );
+  return; // Stop further execution
+}
+
+    this.dataservice.Update_Department_Api(id,department,Hospital,is_Inactive,Bill_prefix).subscribe((res:any)=>
+    {
+      console.log(res,'==========updated data');
+      this.getDepartment_list()
+      this.isEditPop=false
+    })
+
+  }
 }
 
 @NgModule({
