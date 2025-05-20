@@ -94,8 +94,22 @@
     
 
     <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
-    <dxi-column dataField="SCHEMA"  caption="Schema" ></dxi-column>
-    <dxi-column dataField="PERCENTAGE" caption="Percentage" alignment="left"></dxi-column>
+    <dxi-column dataField="SCHEMA_NAME"  caption="Schema" ></dxi-column>
+    <dxi-column dataField="DISCOUNT" caption="Discount(%)" alignment="left" cellTemplate="priceTemplate" ></dxi-column>
+    <div *dxTemplate="let cellData of 'priceTemplate'">
+  {{ formatAsPercentage(cellData.value) }}
+</div>
+
+
+    <dxi-column dataField="IS_INACTIVE" caption="status"   cellTemplate="statusCellTemplate"></dxi-column>
+    <div *dxTemplate="let cellData of 'statusCellTemplate'">
+      <i
+        class="fas fa-flag"
+        [ngClass]="getStatusFlagClass(cellData.value)"
+        [attr.title]="cellData.value"
+        style="margin-left: 10px; cursor: default;"
+      ></i>
+    </div>
     </dx-data-grid>
     </div>
 
@@ -104,7 +118,7 @@
       <dx-popup
     [(visible)]="addPopup"
     [width]="400"
-    [height]="250"
+    [height]="280"
     title="Schema"
     [shading]="false"
     [showCloseButton]="true"
@@ -112,14 +126,25 @@
     >
     <form [formGroup]="formsource" class="mt-3">
       
-      
-      <input formControlName="Schema" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
-        <input formControlName="Percentage" label="Percentage" class=" form-control mt-3" type="text"  placeholder="Percentage" >
-    
-    <!-- <div *ngIf="form.get('Percentage')?.invalid && form.get('Percentage')?.touched" class="text-danger mt-1">
-  Please enter a valid percentage (e.g. 12%).
-</div>
-     -->
+      <dxi-item dataField="SCHEMA_NAME">
+        <input
+        formControlName="Schema" class=" form-control" type="text"  placeholder="Schema" >
+      <!-- </input> -->
+      </dxi-item>
+     
+
+      <dxi-item dataField="DISCOUNT">
+        <dx-number-box
+        formControlName="Discount" class=" form-control mt-3" type="text" placeholder="Discount" [min]="0"
+    [max]="100"
+    [showSpinButtons]="true"
+  ></dx-number-box>
+
+  
+      </dxi-item>
+        
+   
+
      <!-- <dxi-item
      dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
           <dx-check-box
@@ -131,9 +156,9 @@
           ></dx-check-box>
         </dxi-item> -->
 
-          <div class="d-flex justify-content-end mt-2">
-            <button class="me-1 btn  text-dark border border-1" (click)='closePop()'>Cancel</button>
-            <dx-button text="Save"  class="me-1" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
+          <div class="d-flex justify-content-end mt-4">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
+            <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
     </form>
      
@@ -145,7 +170,7 @@
         [title]="'Edit Schema'"
         [(visible)]="editPopup"
         [width]="400"
-        [height]="250"
+        [height]="280"
         [closeOnOutsideClick]="true"
         [showCloseButton]="true"
         [shading]="false"
@@ -153,27 +178,30 @@
       >
         <form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input [(value)]="Schema_Value" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
+            <input formControlName="Schema" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
           </dxi-item>
 
           <dxi-item >
-            <input [(value)]="Percentage_Value" label="Percentage" class="form-control mt-3" type="text" placeholder="Percentage"></dxi-item>
-      
-          <!-- <dxi-item>
+        <dx-number-box
+         [(value)]="formsource.get('Discount').value"
+  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" placeholder="Discount"></dx-number-box>
+        </dxi-item>
+        
+          <dxi-item>
           <dx-check-box
           text="Inactive"
             [value]="false"
             [elementAttr]="{ 'aria-label': 'Unchecked' }"
             class="mt-3"
-            [(value)]="Status"
+            formControlName="Inactive"
           ></dx-check-box>
-        </dxi-item> -->
+        </dxi-item>
     
           <dxi-item class="d-flex justify-content-end mt-3">
-            <button class="me-1 btn  text-dark border border-1" (click)="closePop()">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
               Cancel
             </button>
-            <dx-button class="me-1 btn text-dark border border-1" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
+            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
         </form>
       </dx-popup>

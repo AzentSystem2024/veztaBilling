@@ -93,24 +93,26 @@ public getDropdownData(type: any): Observable<any> {
   );
 }
 
-//HOSPITAL
+//========================HOSPITAL=========================
 get_HospitalData_List(){
   return this.http.post( `${BASE_URL}hospital/list`,{} );
 }
 
-Insert_HospitalData_Api( hospital:any, IS_INACTIVE:any) {
-  const getEndpoint = BASE_URL+'hospital/insert';
+Insert_HospitalData_Api( Hospital:any, IS_INACTIVE:any) {
+  const getEndpoint = BASE_URL+`hospital/insert`;
   const reqBody={
    
-   "HOSPITAL_NAME": hospital,
+   "HOSPITAL_NAME": Hospital,
    "IS_INACTIVE":IS_INACTIVE
 }
 
   return this.http.post(getEndpoint, reqBody);
 }
 
-Update_HospitalData_Api(ID:any, Hospital:any, IS_INACTIVE:any){
-const getEndpoint = BASE_URL+'hospital/update';
+//=====================api for update hospital==========================
+
+Update_HospitalData_Api(ID:any,Hospital:any,IS_INACTIVE:any){
+  const getEndpoint = BASE_URL+`hospital/update`;
   const reqBody={
 
 "ID":ID,
@@ -122,6 +124,7 @@ const getEndpoint = BASE_URL+'hospital/update';
   return this.http.post(getEndpoint, reqBody);
 }
 
+//=====================api for select hospital==========================
 Select_HospitalData_Api(ID:any){
   const getEndpoint = BASE_URL+`hospital/select/${ID}`;
   return this.http.post(getEndpoint,{});
@@ -132,6 +135,97 @@ Delete_Hospital_Api(ID:any){
   return this.http.post(getEndpoint,{});
 }
 
+
+//=============INSURANCE===================
+get_InsuranceData_List(){
+  return this.http.post( `${BASE_URL}Insurance/list`,{} );
+}
+
+Insert_InsuranceData_Api( Insurance:any, IS_INACTIVE:any) {
+  const getEndpoint = BASE_URL+'Insurance/insert';
+  const reqBody={
+   
+   "INSURANCE_NAME": Insurance,
+   "IS_INACTIVE":IS_INACTIVE
+}
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Update_InsuranceData_Api(ID:any, Insurance:any, IS_INACTIVE:any){
+const getEndpoint = BASE_URL+'Insurance/update';
+  const reqBody={
+"ID":ID,
+"INSURANCE_NAME": Insurance,
+"IS_INACTIVE": IS_INACTIVE
+
+};
+
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Select_InsuranceData_Api(ID:any){
+  const getEndpoint = BASE_URL+`Insurance/select/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
+
+Delete_Insurance_Api(ID:any){
+  const getEndpoint = BASE_URL+`Insurance/delete/${ID}`;
+  return this.http.post(getEndpoint,{});
 }
 
 
+//===============USER=======================
+// get_UserData_List(){
+//   return this.http.post( `${BASE_URL}user/list`,{} );
+// }
+
+//======================SCHEMA=========================
+get_SchemaData_List(){
+  return this.http.post( `${BASE_URL}Schema/list`,{} );
+}
+
+Insert_SchemaData_Api( Schema:any,Discount:any, IS_INACTIVE:any) {
+  const getEndpoint = BASE_URL+'Schema/insert';
+  const reqBody={
+   
+   "SCHEMA_NAME": Schema,
+    "DISCOUNT": Discount,
+   "IS_INACTIVE":IS_INACTIVE
+}
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Update_SchemaData_Api(ID:any, Schema:any,Discount:any ,IS_INACTIVE:any){
+const getEndpoint = BASE_URL+`Schema/update`;
+  const reqBody={
+"ID":ID,
+"SCHEMA_NAME": Schema,
+"DISCOUNT": Discount,
+"IS_INACTIVE": IS_INACTIVE
+
+};
+
+  return this.http.post(getEndpoint, reqBody);
+}
+
+Select_SchemaData_Api(ID:any){
+  const getEndpoint = BASE_URL+`Schema/select/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
+
+Delete_Schema_Api(ID:any){
+  const getEndpoint = BASE_URL+`Schema/delete/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
+
+//=====================USER==========================
+//====================department dropdown===========================
+    get_dropdown_department_api(type: any) {
+    const reqBody = {
+      NAME: 'Department',
+    };
+
+    return this.http.post(`${BASE_URL}dropdown`, reqBody);
+  }
+
+}

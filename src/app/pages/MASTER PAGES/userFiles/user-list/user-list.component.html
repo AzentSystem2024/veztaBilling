@@ -7,7 +7,7 @@
     [width]="'100%'"
     [height]="'90vh'"
     [showBorders]="true"
-    [showColumnLines]="true"
+    [showColumnLines]="false"
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
     (onEditingStart)="onEditingStart($event)"
@@ -94,9 +94,16 @@
     <dxi-column
       dataField="IS_INACTIVE"
       caption="Status"
-      [calculateCellValue]="formatStatus"
-      [cellTemplate]="statusCellTemplate"
+      cellTemplate="statusCellTemplate"
     ></dxi-column>
+    <div *dxTemplate="let cellData of 'statusCellTemplate'">
+      <i
+        class="fas fa-flag"
+        [ngClass]="getStatusFlagClass(cellData.value)"
+        [attr.title]="cellData.value"
+        style="margin-left: 10px; cursor: default;"
+      ></i>
+    </div>
   </dx-data-grid>
 </div>
 
@@ -171,15 +178,15 @@
     </dxi-item>
     
 
-    <!-- RADIO BUTTON ROLES -->
+    <!-- DROPDOWN ROLES -->
     <dxi-item [label]="{ text: 'UserType',showColon:false}">
-      <dx-radio-group
+      <dx-select-box
         [items]="UserType"
         class="mt-2"
         alignment="center"
         [(value)]="selectedUserType"
       >
-      </dx-radio-group
+      </dx-select-box
     ></dxi-item>
 
     <!-- DROPDOWN HOSPITAL -->
@@ -188,12 +195,12 @@
     <dxi-item>
       <dx-tag-box
         [showClearButton]="true"
-        [visible]="selectedUserType === 'Hospital User'"
-        [items]="hospitals"
+        [visible]="selectedUserType === 'Entry User'"
+        [items]="department_list"
         valueExpr="ID"
-        [(value)]="selectedHospitalId"
-        displayExpr="HOSPITAL"
-        label="Select Hospital"
+        [(value)]="selectedDepartmentId"
+        displayExpr="DESCRIPTION"
+        label="Select Department"
         labelMode="floating"
         labelLocation="left"
         [showSelectionControls]="true"
@@ -328,13 +335,13 @@
     <!-- DROPDOWN HOSPITAL -->
     <dxi-item>
       <dx-tag-box
-        [visible]="selectedUserType === 'Hospital User'"
-        dataField="Hospital"
-        [items]="hospitals"
+        [visible]="selectedUserType === 'Entry User'"
+        dataField="Department"
+        [items]="departments"
         valueExpr="ID"
-        [(value)]="selectedHospitalId"
-        displayExpr="HOSPITAL"
-        label="Select Hospital"
+        [(value)]="selectedDepartmentId"
+        displayExpr="DEPARTMENT"
+        label="Select Department"
         labelMode="floating"
         labelLocation="left"
         [showSelectionControls]="true"

@@ -1,6 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -14,7 +15,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./hospital-list.component.scss']
 })
 export class HospitalListComponent {
-selectedData: any;
+selectedData: any=[]
   Hospital_Value: any;
   Status: any;
 onEditingStart(event : any) {
@@ -39,18 +40,20 @@ IS_INACTIVE: boolean = false;
 //form source for add  hospital
 formsource:FormGroup;
 
-
+ 
 
 //store value for edit 
 editHospitalData:any=[]
 
 dataSource: any = [];
 
-updatedHospitalData:any;
+
 
 openPopup(){
   this.addPopup=true
-  this.formsource.reset();
+  this.formsource.reset({
+    Inactive: "" // Set the checkbox back to unchecked
+  });
 }
 
 
@@ -113,8 +116,14 @@ this.formsource.reset()
 }
 
 
-formatStatus(data:any){
-return data.IS_INACTIVE ?  'Inactive' : 'Active';
+// formatStatus(data:any){
+// return data.IS_INACTIVE ?  'Inactive' : 'Active';
+// }
+
+//===================STATUS FLAG========================
+
+getStatusFlagClass(IS_INACTIVE: boolean): string {
+  return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
 
 
@@ -151,12 +160,12 @@ this.dataservice.get_HospitalData_List().subscribe((response:any)=>{
 }
 
 addData(){
-  // console.log('formsource',this.formsource);
-
   const Hospital = this.formsource.value.Hospital
+  const Inactive =this.formsource.value.Inactive
 
-const Inactive =this.formsource.value.Inactive
-  
+  // Convert Inactive to boolean
+  const isInactiveBoolean = Inactive === 'true' || Inactive === true;
+
 const isDuplicate = this.dataSource.some((data:any)=>{
 return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
 })
@@ -173,7 +182,9 @@ return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
  }
 
     if(Hospital){
-      this.dataservice.Insert_HospitalData_Api(Hospital,Inactive).subscribe((response:any)=>{
+      console.log("function called");
+      
+      this.dataservice.Insert_HospitalData_Api(Hospital,isInactiveBoolean).subscribe((response:any)=>{
         console.log(response,'add response');
         
       notify(
@@ -185,6 +196,7 @@ return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
         'success'
       );
       this.addPopup=false;
+      this.get_Hospital_List()
     })
   } 
      else{
@@ -201,9 +213,7 @@ return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
      this.get_Hospital_List()
 }
 
-//
 editData(){
-
 const ID = this.formsource.value.Id
 const Hospital = this.formsource.value.Hospital
 const Inactive =this.formsource.value.Inactive
@@ -255,17 +265,22 @@ this.get_Hospital_List()
  this.get_Hospital_List();
 }
 
+//===========SELECT DATA=========================
 select_Hospital_Data(e:any){
   console.log(e);
   const ID = e.data.ID;
   this.dataservice.Select_HospitalData_Api(ID).subscribe((res:any)=>{
     console.log(res,"result");
-    this.selectedData = res.Data;
-  console.log(this.selectedData);
+    // this.select_Data = res;
+    // this.updatedHospitalData = {...res};
+    this.formsource.patchValue({
+  Id: res.Data.ID,
+  Hospital: res.Data.HOSPITAL_NAME,
+  Inactive: res.Data.IS_INACTIVE
 
-  this.Hospital_Value = this.selectedData.HOSPITAL_NAME;
-  this.Status = this.selectedData.IS_INACTIVE;
-  console.log(this.Hospital_Value, this.Status);
+    })
+
+    console.log(this.formsource.value);
     
   });
   
@@ -295,7 +310,7 @@ if(ID){
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule, DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxButtonModule,CommonModule, DxTextBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [HospitalListComponent],
