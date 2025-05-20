@@ -197,13 +197,15 @@
 
                 <!-- Ward and Unit below, with gap -->
                 <div style="display: flex; gap: 5px">
-                  <dx-text-box
+                  <dx-number-box
                     #ageBoxRef
                     label="Age"
+                    [min]="0"
                     labelMode="floating"
                     [(value)]="invoiceFormData.PATIENT_AGE"
                     [width]="100"
                     (onKeyDown)="onKeyDownHandler($event, 'sexBoxRef')"
+                    (onInput)="preventNonNumeric($event)"
                   >
                     <dx-validator>
                       <dxi-validation-rule
@@ -216,7 +218,7 @@
       message="Age cannot be zero"
     ></dxi-validation-rule>
                     </dx-validator>
-                  </dx-text-box>
+                  </dx-number-box>
 
                   <dx-select-box
                     #sexBoxRef

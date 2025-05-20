@@ -707,6 +707,7 @@ onConfirm(result: boolean) {
 
   if (result) {
     this.submitForm();
+    
   } else {
     notify('Save cancelled', 'warning', 2000);
   }
@@ -750,23 +751,26 @@ handleRightArrow(event: any) {
 
 
 save() {
-  
-
-
-  // console.log("SAVE TRIGGERED");
-
-  // Clone the data to avoid mutating the original form
   const clonedData = { ...this.invoiceFormData };
 
   // Clean and transform INVOICE_ENTRY
-  clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || []).map(entry => ({
-    ITEM_ID: entry.ITEM_ID,
-    QUANTITY: entry.QUANTITY,
-    UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
-    AMOUNT: entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE)
-      ? (+entry.QUANTITY * +entry.PRICE).toFixed(2)
-      : '0.00',
-  }));
+  // clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || []).map(entry => ({
+  //   ITEM_ID: entry.ITEM_ID,
+  //   QUANTITY: entry.QUANTITY,
+  //   UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
+  //   AMOUNT: entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE)
+  //     ? (+entry.QUANTITY * +entry.PRICE).toFixed(2)
+  //     : '0.00',
+  // }));
+
+    clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || [])
+    .filter(entry => entry.ITEM_ID && entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE))
+    .map(entry => ({
+      ITEM_ID: entry.ITEM_ID,
+      QUANTITY: entry.QUANTITY,
+      UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
+      AMOUNT: (+entry.QUANTITY * +(entry.PRICE ?? entry.UNIT_PRICE)).toFixed(2),
+    }));
 
   // Format the date
 
@@ -797,12 +801,6 @@ clonedData.INVOICE_DATE = new Date().toISOString();
     );
   }
 
-    // this.invoiceFormGroup.instance.reset();
-
-  // Then set the mobile field explicitly to '+91-'
-  // this.invoiceFormGroup.instance.option('formData.PATIENT_MOBILE', '+91-');
-  
-    // Reset form
     this.invoiceFormData = {
       INVOICE_DATE: new Date().toISOString(),
       PATIENT_MOBILE:'',
@@ -824,7 +822,7 @@ this.invoiceFormGroup.instance.reset();
     // Focus on ward field
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
-    }, 0);
+    }, 100);
   });
 }
 
@@ -919,6 +917,15 @@ ageNotZero = (e: any) => {
       }
     }
   }
+
+
+  preventNonNumeric(event: any): void {
+  const input = event.event?.target as HTMLInputElement;
+  if (input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+  }
+}
+
 }
 
 @NgModule({
@@ -952,7 +959,7 @@ ageNotZero = (e: any) => {
     FormsModule,
     DxNumberBoxModule,
     DxValidationGroupModule,
-    DxAutocompleteModule
+    DxAutocompleteModule,
   ],
   providers: [],
   declarations: [InvoiceAddComponent],
