@@ -1,9 +1,11 @@
+<div class="view-wrapper list-page">
 <dx-data-grid
   id="gridContainer"
   [dataSource]="departments"
   [remoteOperations]="true"
   [allowColumnReordering]="true"
   [rowAlternationEnabled]="true"
+  [columnAutoWidth]="true"
   [showBorders]="true"
   [showRowLines]="true"
   (onEditingStart)="onEditingStart($event)"
@@ -96,7 +98,7 @@
     [allowedPageSizes]="[10, 25, 50, 100]"
   ></dxo-pager>
 </dx-data-grid>
-
+</div>
 <!-- =========== Add the Department================ -->
 <dx-popup
   [title]="'Department'"
@@ -138,9 +140,6 @@
 > </dx-select-box>
 
     </div>
-    <div *ngIf="formsource.get('Hospital')?.touched && formsource.get('Hospital')?.invalid">
-  <small class="text-danger" style="margin-left: 90px;font-weight: 500;">*This field is required</small>
-</div>
 
       <div class="d-flex align-items-center justify-content-between mt-3">
           <!-- Bill Prefix -->
@@ -152,10 +151,6 @@
   class="form-control"
   formControlName="bill_prefix"
   style="width: 100px; margin-left: 22px;"
-  [inputAttr]="{ maxlength: 3 }"
-  [isValid]="!formsource.get('bill_prefix')?.errors?.maxlength"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('bill_prefix')?.errors?.maxlength && formsource.get('bill_prefix')?.touched ? [{ message: 'Maximum 3 letters allowed.' }] : null"
 > </dx-text-box>
 
     

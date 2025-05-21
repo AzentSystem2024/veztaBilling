@@ -203,8 +203,19 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   const Hospital = this.formsource.value.Hospital;
   const is_Inactive = this.formsource.value.IS_INACTIVE;
   const Bill_prefix = this.formsource.value.bill_prefix;
-const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
 
+const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
+if (!Hospital) {
+  notify(
+    {
+      message: 'Please select hospital.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'error'
+  );
+}
+else{
   // Check for duplication
   const isDuplicate = this.departments.some(
     (item: any) =>
@@ -244,7 +255,7 @@ const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
 
     this.isAddPop = false;
   });
-}
+}}
 
   //===========================select department============================
   select_dep_list(event: any) {
