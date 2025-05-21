@@ -57,9 +57,17 @@ selected_Data:any
       ID: [null],
       DepartmentName:  ['', Validators.required],
     Hospital: ['', Validators.required],
-      bill_prefix:['', [Validators.maxLength(3)]],
+      bill_prefix:["", [Validators.maxLength(3)]],
       IS_INACTIVE: [false],
     });
+this.department_Value = this.departments.DEPARTMENT;
+this.formsource.patchValue({
+  DepartmentName: this.departments.DEPARTMENT
+});
+    this.hospital_value = this.departments.HOSPITAL_ID;
+this.formsource.patchValue({
+  Hospital: this.departments.HOSPITAL_ID
+});
     this.getDepartment_list();
     this.hospital_Dropdown()
   }
@@ -77,7 +85,18 @@ selected_Data:any
   }
   onExporting($event: ExportingEvent) {}
   
-  changeHospitals(event: any) {}
+  changeHospitals(event: any) {
+    
+  const selectedValue = event.value;
+  this.formsource.get('Hospital')?.setValue(selectedValue);
+  this.formsource.get('Hospital')?.markAsTouched(); 
+  }
+  onDepartmentChanged(e: any) {
+  const newValue = e.value;
+  this.formsource.get('DepartmentName')?.setValue(newValue);
+  this.formsource.get('DepartmentName')?.markAsTouched(); // for showing validation error if empty
+}
+
 
   openPopup() {
     this.isAddPop = true;
@@ -95,15 +114,22 @@ selected_Data:any
     this.isEditPop = false;
   }
   //====================Get department List=================
-  getDepartment_list() {
-    this.dataservice.get_department_List().subscribe((res: any) => {
-      console.log(res);
-      this.Department_Data = res.Data;
-      console.log(this.Department_Data, '======Department list======');
-      this.departments = this.Department_Data;
-    
-    });
-  }
+getDepartment_list() {
+  this.dataservice.get_department_List().subscribe((res: any) => {
+    console.log(res);
+
+    // Add SlNo to each department item
+    this.Department_Data = res.Data.map((item: any, index: number) => ({
+      ...item,
+      SlNo: index + 1
+    }));
+
+    console.log(this.Department_Data, '======Department list with SlNo======');
+
+    this.departments = this.Department_Data;
+  });
+}
+
   //=================dropdown==================
 
 
@@ -276,6 +302,14 @@ if (isDuplicate) {
       console.log(res,'==========updated data');
       this.getDepartment_list()
       this.isEditPop=false
+        notify(
+    {
+      message: 'This department updated successfullyyy.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'success'
+  );
     })
 
   }

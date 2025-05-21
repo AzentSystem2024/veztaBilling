@@ -50,13 +50,13 @@
     [visible]="true"
     [highlightCaseSensitive]="true"
   ></dxo-search-panel>
-  <!-- <dxi-column
+  <dxi-column
     dataField="SlNo"
     [width]="80"
     caption="Sl.No"
     [allowEditing]="false"
     alignment="left">
-  </dxi-column> -->
+  </dxi-column>
   <dxi-column
     dataField="DEPARTMENT"
     alignment="left"
@@ -217,9 +217,12 @@
         name="Department"
         class="form-control"
         [(value)]="department_Value"
+         (onValueChanged)="onDepartmentChanged($event)"
       ></dx-text-box>
     </div>
-
+ <div *ngIf="formsource.get('DepartmentName')?.touched && formsource.get('DepartmentName')?.invalid">
+  <small class="text-danger" style="margin-left: 90px; font-weight: 500;">*This field is required</small>
+</div>
     <div class="d-flex">
       <label style="margin-top: 17px">Hospital</label>
 
@@ -235,6 +238,10 @@
 
     </div>
 
+<!-- Validation message -->
+<div *ngIf="formsource.get('Hospital')?.touched && formsource.get('Hospital')?.invalid">
+  <small class="text-danger" style="margin-left: 90px; font-weight: 500;">*This field is required</small>
+</div>
    <div class="d-flex align-items-center justify-content-between mt-3">
           <!-- Bill Prefix -->
           <div class="d-flex align-items-center me-5">
@@ -245,11 +252,7 @@
   class="form-control"
   [(value)]="bill_prefix_value"
   style="width: 100px; margin-left: 22px;"
-  [inputAttr]="{ maxlength: 3 }"
-  [isValid]="!formsource.get('bill_prefix')?.errors?.maxlength"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('bill_prefix')?.errors?.maxlength && formsource.get('bill_prefix')?.touched ? [{ message: 'Maximum 3 letters allowed.' }] : null"
-></dx-text-box>
+  ></dx-text-box>
 
     
   </div>

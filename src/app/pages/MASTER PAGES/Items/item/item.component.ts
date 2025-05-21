@@ -118,6 +118,10 @@ this.select_list_data(event)
 closePopup(){
   this.isAddPop=false
   this.isEditPop=false
+  this.formsource.reset()
+   this.formsource.reset({
+    IS_INACTIVE: false,
+   })
 
 }
 minValue = 0; // default min value
@@ -175,15 +179,20 @@ department_dropdown_list(){
   })
 }
 
-items_list(){
-  this.dataservice.get_ItemsData_List().subscribe((res:any)=>{
-    console.log(res,'===========items list');
-    this.items_data=res.Data
-this.items_source=this.items_data
-
+items_list() {
+  this.dataservice.get_ItemsData_List().subscribe((res: any) => {
+    console.log(res, '===========items list');
     
-  })
+    // Add SlNo to each item
+    this.items_data = res.Data.map((item: any, index: number) => ({
+      ...item,
+      SlNo: index + 1
+    }));
+
+    this.items_source = this.items_data;
+  });
 }
+
 
 addData(){
   console.log('===========ad data=======');
