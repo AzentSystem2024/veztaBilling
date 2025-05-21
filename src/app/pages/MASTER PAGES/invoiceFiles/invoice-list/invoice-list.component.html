@@ -12,7 +12,7 @@
         showPane: true
       }"
       class="grid theme-dependent"
-      [dataSource]="invoices"
+      [dataSource]="invoiceList"
       [showBorders]="true"
       [columnAutoWidth]="false"
       [wordWrapEnabled]="false"
@@ -30,11 +30,11 @@
       [selection]="{ mode: 'single' }"
       focusStateEnabled="false"
     >
-<dxo-editing
+<!-- <dxo-editing
         mode="popup"
         [allowUpdating]="true"
         [allowDeleting]="true"
-      ></dxo-editing>
+      ></dxo-editing> -->
       <dxo-paging [pageSize]="10"></dxo-paging>
       <dxo-pager
         [visible]="true"
@@ -62,20 +62,18 @@
         </dxi-item>
        
         <dxi-item location="after" locateInMenu="auto"> </dxi-item>
-        <!-- <dxi-item location="after" locateInMenu="auto">
-          <dx-button
-            icon="plus"
-            type="default"
-            hint="Add User"
-            stylingMode="contained"
-            (onClick)="addInvoice()"
-          ></dx-button>
-        </dxi-item> -->
+       
       </dxo-toolbar>
-
-        <dxi-column dataField="Department" caption="Department"></dxi-column>
+<dxi-column dataField="INVOICE_NO" caption="Invoice No."></dxi-column>
+        <dxi-column dataField="DEPARTMENT_NAME" caption="Department"></dxi-column>
   <dxi-column dataField="UHID" caption="UHID"></dxi-column>
-  <dxi-column dataField="patientName" caption="Patient Name"></dxi-column>
+  <dxi-column dataField="PATIENT_NAME" caption="Patient Name"></dxi-column>
+  <dxi-column dataField="NET_AMOUNT" caption="Net Amount" alignment="right"></dxi-column>
+<dxi-column 
+  dataField="INVOICE_DATE" 
+  caption="Date" 
+  dataType="date"
+  format="dd-MM-yyyy hh:mm a"></dxi-column>
 </dx-data-grid>
     </div>
 </div>
