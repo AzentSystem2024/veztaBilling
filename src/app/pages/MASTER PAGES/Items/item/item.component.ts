@@ -84,6 +84,11 @@ constructor(private dataservice:DataService,private fb:FormBuilder){
 
 openPopup(){
 this.isAddPop=true
+this.formsource.reset({
+  IS_INACTIVE: false,
+ 
+})
+
 }
 
 delete_Items_Data(event:any){
@@ -118,6 +123,10 @@ this.select_list_data(event)
 closePopup(){
   this.isAddPop=false
   this.isEditPop=false
+  this.formsource.reset()
+   this.formsource.reset({
+    IS_INACTIVE: false,
+   })
 
 }
 minValue = 0; // default min value
@@ -175,82 +184,106 @@ department_dropdown_list(){
   })
 }
 
-items_list(){
-  this.dataservice.get_ItemsData_List().subscribe((res:any)=>{
-    console.log(res,'===========items list');
-    this.items_data=res.Data
-this.items_source=this.items_data
-
+items_list() {
+  this.dataservice.get_ItemsData_List().subscribe((res: any) => {
+    console.log(res, '===========items list');
     
-  })
+    // Add SlNo to each item
+    this.items_data = res.Data.map((item: any, index: number) => ({
+      ...item,
+      SlNo: index + 1
+    }));
+
+    this.items_source = this.items_data;
+  });
 }
 
-addData(){
+
+addData() {
   console.log('===========ad data=======');
   
   console.log(this.formsource);
-const is_fixed = this.formsource.get('is_fixed')?.value;
-const item_price = this.formsource.value.price;
-const item_code = this.formsource.value.code.toString();
-const name=this.formsource.value.item_name
-const is_inactive=this.formsource.value.IS_INACTIVE
-const dep_id = this.formsource.value.department_id.join(',');
 
-const codeDuplicate = this.items_source?.some((item: any) => 
-  (item.ITEM_CODE?.trim().toLowerCase() || '') === (item_code?.trim().toLowerCase() || '')
-);
+  // Check if required fields are filled
+  if (!this.formsource.value.code || !this.formsource.value.item_name || !this.formsource.value.department_id || this.formsource.value.is_fixed === null) {
+    let errorMessage = 'Please fill all required fields: ';
+    const missingFields = [];
+    
+    if (!this.formsource.value.code) missingFields.push('Item Code');
+    if (!this.formsource.value.item_name) missingFields.push('Item Name');
+    if (!this.formsource.value.department_id) missingFields.push('Department');
+     if ( this.formsource.value.is_fixed === null) missingFields.push('please select fixed or variable');
+    
+    errorMessage += missingFields.join(', ');
 
-const nameDuplicate = this.items_source?.some((item: any) => 
-  (item.ITEM_NAME?.trim().toLowerCase() || '') === (name?.trim().toLowerCase() || '')
-);
-
-if (codeDuplicate || nameDuplicate) {
-  console.log('Duplication Checking Triggered');
-  
-  let errorMessage = '';
-  if (codeDuplicate && nameDuplicate) {
-    errorMessage = 'Item code and name both already exist!';
-  } else if (codeDuplicate) {
-    errorMessage = 'Item code already exists!';
-  } else {
-    errorMessage = 'Item name already exists!';
+    notify(
+      {
+        message: errorMessage,
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 3000,
+      },
+      'error'
+    );
+    return;
   }
 
-  notify(
-    {
-      message: errorMessage,
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 3000, // Increased display time for better readability
-    },
-    'error'
+  const is_fixed = this.formsource.value.is_fixed;
+ let item_price = this.formsource.value.price;
+
+if (item_price == null || item_price === '') {
+  item_price = 0;
+}
+
+  const item_code = this.formsource.value.code.toString();
+  const name = this.formsource.value.item_name;
+  const is_inactive = this.formsource.value.IS_INACTIVE;
+  const dep_id = this.formsource.value.department_id.join(',');
+
+  const codeDuplicate = this.items_source?.some((item: any) => 
+    (item.ITEM_CODE?.trim().toLowerCase() || '') === (item_code?.trim().toLowerCase() || '')
   );
-  return;
-}
- this.dataservice.add_items_api(item_code,name,is_fixed,item_price,is_inactive,dep_id).subscribe((res:any)=>{
-  console.log(res,'===========added responsee===========')
-  
-          notify(
-            {
-              message: 'Items Added successfully',
-              position: { at: 'top right', my: 'top right' },
-              displayTime: 500,
-            },
-            'success'
-          );
-    this.items_list()
-    this.isAddPop=false
- })
 
-if (is_fixed && item_price?.value <= 0) {
-  item_price.setErrors({ priceInvalid: true });
-} else {
-  item_price.setErrors(null);
-}
+  const nameDuplicate = this.items_source?.some((item: any) => 
+    (item.ITEM_NAME?.trim().toLowerCase() || '') === (name?.trim().toLowerCase() || '')
+  );
 
+  if (codeDuplicate || nameDuplicate) {
+    console.log('Duplication Checking Triggered');
+    
+    let errorMessage = '';
+    if (codeDuplicate && nameDuplicate) {
+      errorMessage = 'Item code and name both already exist!';
+    } else if (codeDuplicate) {
+      errorMessage = 'Item code already exists!';
+    } else {
+      errorMessage = 'Item name already exists!';
+    }
 
+    notify(
+      {
+        message: errorMessage,
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 3000,
+      },
+      'error'
+    );
+    return;
+  }
 
-
-
+  this.dataservice.add_items_api(item_code, name, is_fixed, item_price, is_inactive, dep_id).subscribe((res: any) => {
+    console.log(res, '===========added responsee===========');
+    
+    notify(
+      {
+        message: 'Items Added successfully',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 500,
+      },
+      'success'
+    );
+    this.items_list();
+    this.isAddPop = false;
+  });
 }
 
 
@@ -291,7 +324,8 @@ const item_price = this.price_value
 const item_code=this.code_value.toString();
 const name=this.name_value
 const is_inactive=this.is_inactve_value
-const dep_id = this.department_id_value.join(',');const codeDuplicate = this.items_source?.some((item: any) => {
+const dep_id = this.department_id_value.join(',');
+const codeDuplicate = this.items_source?.some((item: any) => {
     if (item.ID === id) return false; // Skip current item when editing
     return (item.ITEM_CODE?.trim().toLowerCase() || '') === (item_code?.trim().toLowerCase() || '');
   });

@@ -1,3 +1,4 @@
+<div class="view-wrapper list-page">
 <dx-data-grid
   id="gridContainer"
   [dataSource]="items_source"
@@ -109,6 +110,7 @@
     [allowedPageSizes]="[10, 25, 50, 100]"
   ></dxo-pager>
   </dx-data-grid>
+  </div>
   <!-- //=======================Add items====================== --><dx-popup
   [title]="'Item'"
   [(visible)]="isAddPop"
@@ -140,12 +142,7 @@
         width="100%"
         class="form-control"
         formControlName="item_name"
-      > <dx-validator>
-          <dxi-validation-rule
-            type="required"
-            message="This field is required"
-          ></dxi-validation-rule> </dx-validator
-      ></dx-text-box>
+      > </dx-text-box>
     </div>
 
     <!-- Department -->
@@ -162,12 +159,7 @@
         [searchEnabled]="true"
         formControlName="department_id"
         width="100%"
-      > <dx-validator>
-          <dxi-validation-rule
-            type="required"
-            message="This field is required"
-          ></dxi-validation-rule> </dx-validator
-      >
+      > 
       </dx-tag-box>
     </div>
 
@@ -186,24 +178,21 @@
   [inputAttr]="{ style: 'text-align: right;' }"
   style="margin-left: 10px; width: 100px;"
   formControlName="price"
-  [isValid]="!formsource.get('price')?.errors?.priceInvalid"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('price')?.errors?.priceInvalid && formsource.get('price')?.touched ? [{ message: 'Price must be greater than 0' }] : null"
->
+ >
 </dx-number-box>
 
 
     </div>
 
     <!-- Inactive Checkbox -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+    <!-- <div style="display: flex; align-items: center; margin-bottom: 16px;">
       <label style="width: 120px;">Inactive</label>
       <dx-check-box
         formControlName="IS_INACTIVE"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
         id="checboxadd"
       ></dx-check-box>
-    </div>
+    </div> -->
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-end mt-4">
@@ -294,10 +283,7 @@
   [inputAttr]="{ style: 'text-align: right;' }"
   style="margin-left: 10px; width: 100px;"
    [(value)]="price_value"
-  [isValid]="!formsource.get('price')?.errors?.priceInvalid"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('price')?.errors?.priceInvalid && formsource.get('price')?.touched ? [{ message: 'Price must be greater than 0' }] : null"
->
+ >
 </dx-number-box>
 
 

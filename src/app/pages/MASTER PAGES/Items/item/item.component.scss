@@ -1,3 +1,8 @@
+
+@use "../../../../../variables.scss" as *;
+@use "sass:math";
+
+
 .equal-button {
   width: 80px;     /* adjust as needed */
   height: 30px;     /* adjust to match desired size */
