@@ -40,6 +40,10 @@
       [allowedPageSizes]="[10, 20, 30, 40]"
     ></dxo-pager>
 
+    <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+
+<dxo-filter-row [visible]="showFilterRow" [applyFilter]="currentFilter"></dxo-filter-row>
+
     <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
@@ -75,9 +79,6 @@
           (onClick)="openPopup()"
         ></dx-button>
       </dxi-item>
-
-      <!-- Enable export options -->
-      <dxi-item name="exportButton"> </dxi-item>
     </dxo-toolbar>
  
     <dxi-column
@@ -156,9 +157,9 @@
           }
         }
       ]">
-        <dx-validator>
+        <!-- <dx-validator>
         <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
-      </dx-validator>
+      </dx-validator> -->
       </dx-text-box>
     </dxi-item>
 
@@ -172,17 +173,24 @@
         formControlName="ConfirmPassword"
         class="form-control mb-2"
         [height]="35"
+        [buttons]="[
+        {
+          name: 'togglePassword',
+          location: 'after',
+          options: {
+            icon: confirmPasswordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
+            stylingMode: 'text',
+            onClick: toggleConfirmPasswordVisibility
+          }
+        }
+      ]"
       >
-      <dx-validator>
+      <!-- <dx-validator>
         <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
-        <dxi-validation-rule 
-          type="compare"
-          [comparisonTarget]="passwordComparison"
-          message="Password and Confirm Password do not match">
-        </dxi-validation-rule>
-      </dx-validator>
+      </dx-validator> -->
     </dx-text-box>
     </dxi-item>
+   
 
     
     <!-- DROPDOWN ROLES -->
@@ -280,18 +288,17 @@
           options: {
             icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
             stylingMode: 'text',
-           
+            onClick: togglePasswordVisibility
           }
         }
       ]">
-        
-      </dx-text-box>
-      <dx-validator>
+        <!-- <dx-validator>
         <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
-      </dx-validator>
+      </dx-validator> -->
+      </dx-text-box>
     </dxi-item>
 
-    <dxi-item
+   <dxi-item
       [label]="{ text: 'Confirm Password', showColon: false }"
       [editorOptions]="{ mode: 'password' }"
     >
@@ -301,17 +308,24 @@
         formControlName="ConfirmPassword"
         class="form-control mb-2"
         [height]="35"
+        [buttons]="[
+        {
+          name: 'togglePassword',
+          location: 'after',
+          options: {
+            icon: confirmPasswordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
+            stylingMode: 'text',
+            onClick: toggleConfirmPasswordVisibility
+          }
+        }
+      ]"
       >
-      <dx-validator>
+      <!-- <dx-validator>
         <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
-        <dxi-validation-rule 
-          type="compare"
-    
-          message="Password and Confirm Password do not match">
-        </dxi-validation-rule>
-      </dx-validator>
+      </dx-validator> -->
     </dx-text-box>
     </dxi-item>
+   
 
    <!-- ACTIVE CHECKBOX -->
 <dxi-item>

@@ -60,6 +60,10 @@
       [allowedPageSizes]="[10,20,30,40]"
       ></dxo-pager>
       
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+
+<dxo-filter-row [visible]="showFilterRow" [applyFilter]="currentFilter"></dxo-filter-row>
+
       <dxo-header-filter [visible]="true">
         <dxo-search [enabled]="true"></dxo-search>
       </dxo-header-filter>
@@ -78,12 +82,7 @@
             stylingMode="contained"
             (onClick)="openPopup()"
            ></dx-button>
-        </dxi-item>
-     
-    
-        
-       <!-- Enable export options -->
-       <dxi-item name="exportButton"> </dxi-item> 
+        </dxi-item> 
       
     
         <dxi-item location="after" locateInMenu="auto">
@@ -93,7 +92,7 @@
     </dxo-toolbar>
     
 
-    <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
+    <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column>
     <dxi-column dataField="SCHEMA_NAME"  caption="Schema" ></dxi-column>
     <dxi-column dataField="DISCOUNT" caption="Discount(%)" alignment="left" cellTemplate="priceTemplate" ></dxi-column>
     <div *dxTemplate="let cellData of 'priceTemplate'">
@@ -138,31 +137,8 @@
     [max]="100"
     [showSpinButtons]="true"
   >
-  <!-- <dx-validator> -->
-    <!-- Required -->
-    <!-- <dxi-validation-rule
-      type="required"
-      message="Discount is required"
-    ></dxi-validation-rule>
-  </dx-validator> -->
 </dx-number-box>
       </dxi-item>
-      <!-- <div *ngIf=" formsource.get('Discount')?.touched && formsource.get('Discount')?.invalid">
-  <small class="text-danger" style="margin-left: 90px;font-weight: 500;">*This field is required</small>
-</div> -->
-   
-   
-
-     <!-- <dxi-item
-     dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
-          <dx-check-box
-          text="Inactive"
-          formControlName="Inactive"
-            [value]="false"
-            [elementAttr]="{ 'aria-label': 'Unchecked' }"
-            class="mt-3"
-          ></dx-check-box>
-        </dxi-item> -->
 
           <div class="d-flex justify-content-end mt-4">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>

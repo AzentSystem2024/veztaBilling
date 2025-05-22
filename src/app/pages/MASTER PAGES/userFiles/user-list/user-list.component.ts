@@ -28,6 +28,9 @@ import {
 } from 'devextreme-angular/ui/text-box';
 import { DataService } from 'src/app/services';
 import notify from 'devextreme/ui/notify';
+import  Validator  from 'devextreme/ui/validator';
+import { get } from 'jquery';
+
 type EditorOptions = DxTextBoxTypes.Properties;
 
 @Component({
@@ -46,9 +49,7 @@ confirmPasswordValue: any;
   department_list: any[];
   usertype_list:any[];
   user_Id_value: any;
-  changePasswordMode(arg0: string) {
-   
-  }
+ 
   @ViewChild(DxDataGridComponent, { static: true }) form!: DxFormComponent;
   @ViewChild('confirmPasswordBox', { static: false })
   confirmPasswordField!: DxTextBoxComponent;
@@ -75,7 +76,8 @@ formData = { IS_INACTIVE: false,pwd:''};
   selectedStatus: any;
   popupWidth = 400;
   userHospital: any;
-
+  showFilterRow: boolean = true;
+  currentFilter: string = 'auto';
   Status: any;
 
   CollectionDisplay: boolean = false;
@@ -93,11 +95,14 @@ formData = { IS_INACTIVE: false,pwd:''};
   Password_Value: any;
   Inactive_Value: any;
   UserType_Value: any
+  changePasswordMode: any;
 
 closePop() {
   this.addPopup = false;
     this.editPopup = false;
-    this.formsource.reset();
+    this.formsource.reset({
+      LoginPassword: 0,
+    });
     this.selectedUserType = [];
     this.confirmPasswordMode = 'password';
 
@@ -124,7 +129,7 @@ closePop() {
 
 constructor(private fb: FormBuilder , private dataservice: DataService) {
     this.formsource = this.fb.group({
-      // ID: [null,Validators.required],  // ✅ Ensure this line exists
+      ID: [null,Validators.required],  // ✅ Ensure this line exists
       UserName: ['', Validators.required], // Set default value as empty string ''
       LoginName: ['', Validators.required],
       LoginPassword: [null, Validators.required],
@@ -161,10 +166,8 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
       </span>`;
   };
 
- ngOnInit() {
-
- }
-
+ validation:boolean = false;
+  
 getStatusFlagClass(IS_INACTIVE: boolean): string {
   return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
@@ -198,15 +201,15 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
     return e.value === this.formData.pwd;
   };
   
- passwordComparison = () => {
-    return this.formsource.get('LoginPassword')?.value;
-  };
+//  passwordComparison = () => {
+//     return this.formsource.get('LoginPassword')?.value;
+//   };
 
  togglePasswordVisibility = () => {
     this.passwordMode = this.passwordMode === 'password' ? 'text' : 'password';
   };
 
-  toggleConfirmPasswordVisibility() {
+  toggleConfirmPasswordVisibility=()=> {
     this.confirmPasswordMode =
       this.confirmPasswordMode === 'password' ? 'text' : 'password';
   }
@@ -227,7 +230,13 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
     ],
   };
 
-  onEditingStart(event:any){   event.cancel = true;
+
+
+
+  onEditingStart(event:any){  
+    console.log(event,'onEditingStart');
+    
+     event.cancel = true;
     this.editUserData = event.data;
     this.editPopup = true;
 
@@ -274,12 +283,12 @@ this.dataservice.get_UserData_List_Api().subscribe((response:any)=>{
 }
 
 addData(){
-
+ this.validation = true;
 //  // Step 1: Trigger DevExtreme internal validation (especially for compare rule)
 //   const result = this.dxFormInstance.instance.validate();
 
   // Step 2: Angular form validation
-  this.formsource.markAllAsTouched();
+  // this.formsource.markAllAsTouched();
 
     console.log("Button Clicked");
     console.log(this.formsource,'reset');
@@ -302,6 +311,17 @@ const payload = {
   DEPARTMENT_ID: Department_Id
 };
 
+ if (!User_name || !Login_name || !Login_password || !Usertype) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
 
 // Optional: Check for duplicate login name
   const isDuplicate = this.dataSource?.some((data: any) => {
@@ -319,8 +339,18 @@ const payload = {
     );
     return;
   }
-  if (this.formsource.valid) {
-    console.log('Form is valid, saving...', this.formsource.value);
+  
+     if (Login_password !== this.formsource.get('ConfirmPassword')?.value) {
+    notify(
+      {
+        message: 'Both Password and Confirm Password do not match',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1500,
+      },
+      'error'
+    );
+    return; // 🚫 prevent saving
+  }
      
      if(Login_name && User_name && Login_password  && Usertype) {
       this.dataservice
@@ -341,16 +371,16 @@ const payload = {
           
           this.addPopup = false;
           this.formsource.reset();
+         this.dxFormInstance?.instance?.resetValidation();
           this.get_User_List();
          
         });
-    }
   } 
-
 }
 
 openPopup() {
  this.addPopup = true;
+ this.validation = false;
     this.formsource.reset();
     console.log(this.formsource,'reset');
     
@@ -385,6 +415,18 @@ editData() {
     DEPARTMENT_ID: Department_Id,
   };
 
+  if (!User_name || !Login_name || !Login_password || !Usertype) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
+
   // Optional: Check for duplicate login name
   const isDuplicate = this.dataSource?.some((data: any) => {
     return data.LOGIN_NAME?.trim().toLowerCase() === Login_name.toLowerCase() && data.ID !== Id;
@@ -400,6 +442,19 @@ editData() {
       'error'
     );
     return;
+  }
+
+
+  if (Login_password !== this.formsource.get('ConfirmPassword')?.value) {
+    notify(
+      {
+        message: 'Both Password and Confirm Password do not match',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1500,
+      },
+      'error'
+    );
+    return; // 🚫 prevent saving
   }
 
   // Call API
@@ -443,7 +498,8 @@ editData() {
   Id: res.Data.ID,
   UserName: res.Data.USER_NAME,
   LoginName: res.Data.LOGIN_NAME,
-  LoginPassword: res.Data.LOGIN_PWD, // Set the Discount value from your data
+  LoginPassword: res.Data.LOGIN_PWD, 
+  ConfirmPassword:res.Data.LOGIN_PWD,// Set the Discount value from your data
   Inactive: res.Data.IS_INACTIVE,
   DepartmentId: res.Data.DEPARTMENT_ID,
   UserType: res.Data.USER_TYPE,

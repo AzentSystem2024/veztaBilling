@@ -36,7 +36,8 @@ addPopup : boolean = false;
 isMobile:boolean=false;
 editPopup : boolean = false;  
 IS_INACTIVE: boolean = false;
-
+showFilterRow: boolean = true;
+currentFilter: string = 'auto';
 //form source for add  hospital
 formsource:FormGroup;
 
@@ -163,6 +164,19 @@ addData(){
   const Hospital = this.formsource.value.Hospital
   const Inactive =this.formsource.value.Inactive
 
+  
+if (!Hospital) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
+
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
 
@@ -199,24 +213,25 @@ return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
       this.get_Hospital_List()
     })
   } 
-     else{
-      notify(
-        {
-          message: 'Please fill the fields',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 500,
-        },
-        'error'
-      );
-     }  
-
-     this.get_Hospital_List()
 }
 
 editData(){
 const ID = this.formsource.value.Id
 const Hospital = this.formsource.value.Hospital
 const Inactive =this.formsource.value.Inactive
+
+
+if (!Hospital) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase() && data.ID !== ID //Exclude the current hospital
@@ -245,24 +260,12 @@ this.dataservice.Update_HospitalData_Api(ID,Hospital,Inactive).subscribe((respon
     },
     'success'
   );
+  this.editPopup=false;
   this.get_Hospital_List()
  
 });
 this.get_Hospital_List()
-} 
- else{
-
-  notify(
-    {
-      message: 'Please fill the fields',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 500,
-    },
-    'error'
-  );
- } 
- this.editPopup=false;
- this.get_Hospital_List();
+}  
 }
 
 //===========SELECT DATA=========================
