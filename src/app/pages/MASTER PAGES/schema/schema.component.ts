@@ -149,6 +149,18 @@ addData(){
   const Discount = this.formsource.value.Discount
   const Inactive =this.formsource.value.Inactive
 
+  // Check if Discount is out of valid range
+    if (Discount < 0 || Discount > 100) {
+      notify(
+        {
+          message: 'The discount must be between 0 and 100',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'error'
+      );
+      return; // Prevent saving
+    }
 
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
@@ -187,17 +199,6 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
     })
   } 
 
-//   if (Discount > 100) {
-//   notify(
-//     {
-//       message: 'Discount must not exceed 100%',
-//       position: { at: 'top right', my: 'top right' },
-//       displayTime: 500,
-//     },
-//     'error'
-//   );
-//   return; // Prevent saving
-// }
      else{
       notify(
         {
@@ -211,7 +212,6 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
 
      this.get_Schema_List()
 }
-
 editData(){
 const ID = this.formsource.value.Id
 const Schema = this.formsource.value.Schema
