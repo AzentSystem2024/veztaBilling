@@ -301,12 +301,6 @@ Delete_Insurance_Api(ID:any){
 }
 
 
-
-//===============USER=======================
-// get_UserData_List(){
-//   return this.http.post( `${BASE_URL}user/list`,{} );
-// }
-
 //======================SCHEMA=========================
 get_SchemaData_List(){
   return this.http.post( `${BASE_URL}Schema/list`,{} );
@@ -347,7 +341,36 @@ Delete_Schema_Api(ID:any){
 }
 
 //=====================USER==========================
-//====================department dropdown===========================
-  
+
+get_dropdown_User_Api(type: any) {
+    const reqBody = {
+      NAME: 'USERS',
+    };
+    return this.http.post(`${BASE_URL}dropdown`, reqBody);
+  }
+
+get_UserData_List_Api(){
+  return this.http.post( `${BASE_URL}User/list`,{} );
+}
+
+ Insert_User_Api(payload) {
+  const getEndpoint = BASE_URL+'User/insert';
+  return this.http.post(getEndpoint, payload);
+}
+
+Update_User_Api(payload){
+const getEndpoint = BASE_URL+'User/update';
+  return this.http.post(getEndpoint, payload);
+}
+
+Select_UserData_Api(ID:any){
+  const getEndpoint = BASE_URL+`User/select/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
+
+Delete_User_Api(ID:any){
+  const getEndpoint = BASE_URL+`User/delete/${ID}`;
+  return this.http.post(getEndpoint,{});
+}
 }
 

@@ -132,17 +132,25 @@
       <!-- </input> -->
       </dxi-item>
      
-
       <dxi-item dataField="DISCOUNT">
         <dx-number-box
         formControlName="Discount" class=" form-control mt-3" type="text" placeholder="Discount" [min]="0"
     [max]="100"
     [showSpinButtons]="true"
-  ></dx-number-box>
-
-  
+  >
+  <!-- <dx-validator> -->
+    <!-- Required -->
+    <!-- <dxi-validation-rule
+      type="required"
+      message="Discount is required"
+    ></dxi-validation-rule>
+  </dx-validator> -->
+</dx-number-box>
       </dxi-item>
-        
+      <!-- <div *ngIf=" formsource.get('Discount')?.touched && formsource.get('Discount')?.invalid">
+  <small class="text-danger" style="margin-left: 90px;font-weight: 500;">*This field is required</small>
+</div> -->
+   
    
 
      <!-- <dxi-item

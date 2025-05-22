@@ -11,7 +11,7 @@
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
     (onEditingStart)="onEditingStart($event)"
-    
+     (onRowRemoved)="deleteData($event)"
   
     [elementAttr]="{ class: 'custom-popup' }"
     [pager]="{
@@ -122,22 +122,25 @@
     <dxi-item [label]="{ text: 'UserName', showColon: false }">
       <input
         type="text"
-        formControlName="USER_NAME"
+        formControlName="UserName"
         class="form-control mb-2"
         label="UserName"
     /></dxi-item>
     <dxi-item [label]="{ text: 'LoginName', showColon: false }">
       <input
         type="text"
-        formControlName="LOGIN_NAME"
+        formControlName="LoginName"
         class="form-control mb-2"
       />
     </dxi-item>
 
 
-    <dxi-item [label]="{ text: 'Password', showColon: false }">
-      <dx-text-box
-        formControlName="PASSWORD"
+    <dxi-item
+      [label]="{ text: 'Password', showColon: false }"
+      [editorOptions]="{ mode: 'password' }"
+    >
+    <dx-text-box
+        formControlName="LoginPassword"
         class="form-control mb-2"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
@@ -153,31 +156,35 @@
           }
         }
       ]">
-        
-      </dx-text-box>
-      <dx-validator>
+        <dx-validator>
         <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
       </dx-validator>
+      </dx-text-box>
     </dxi-item>
-    <dxi-item [label]="{ text: 'Confirm Password', showColon: false }">
+
+    <dxi-item
+      [label]="{ text: 'Confirm Password', showColon: false }"
+      [editorOptions]="{ mode: 'password' }"
+    >
+    
       <dx-text-box
-        formControlName="C_PASSWORD"
+        [mode]="confirmPasswordMode"
+        formControlName="ConfirmPassword"
         class="form-control mb-2"
         [height]="35"
-        [mode]="confirmPasswordMode"
-        >
+      >
       <dx-validator>
         <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
         <dxi-validation-rule 
           type="compare"
           [comparisonTarget]="passwordComparison"
-          message="Password and Confirm Password do not match"
-          [validationCallback]="checkPasswords"></dxi-validation-rule>
+          message="Password and Confirm Password do not match">
+        </dxi-validation-rule>
       </dx-validator>
-      </dx-text-box>
+    </dx-text-box>
     </dxi-item>
-    
 
+    
     <!-- DROPDOWN ROLES -->
     <dxi-item [label]="{ text: 'UserType',showColon:false}">
       <dx-select-box
@@ -185,6 +192,11 @@
         class="mt-2"
         alignment="center"
         [(value)]="selectedUserType"
+        formControlName="UserType"
+        valueExpr="ID"
+        displayExpr="DESCRIPTION"
+        [items]="usertype_list"
+        (onChange)="onUserTypeChange($event)"
       >
       </dx-select-box
     ></dxi-item>
@@ -195,7 +207,7 @@
     <dxi-item>
       <dx-tag-box
         [showClearButton]="true"
-        [visible]="selectedUserType === 'Entry User'"
+        [visible]="selectedUserType===3"
         [items]="department_list"
         valueExpr="ID"
         [(value)]="selectedDepartmentId"
@@ -207,6 +219,8 @@
         applyValueMode="instantly"
         [multiline]="false"
         [searchEnabled]="true"
+        formControlName="DepartmentId"
+        
       >
       </dx-tag-box>
     </dxi-item>
@@ -243,10 +257,10 @@
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
     <dxi-item [label]="{ text: 'UserName', showColon: false }">
-      <dx-text-box formControlName="USER_NAME" class="mb-2"></dx-text-box
+      <dx-text-box formControlName="UserName" class="mb-2"></dx-text-box
     ></dxi-item>
     <dxi-item [label]="{ text: 'LoginName', showColon: false }">
-      <dx-text-box formControlName="LOGIN_NAME" class="mb-2"></dx-text-box
+      <dx-text-box formControlName="LoginName" class="mb-2"></dx-text-box
     ></dxi-item>
 
     <dxi-item
@@ -254,7 +268,7 @@
       [editorOptions]="{ mode: 'password' }"
     >
     <dx-text-box
-        formControlName="PASSWORD"
+        formControlName="LoginPassword"
         class="form-control mb-2"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
@@ -266,7 +280,7 @@
           options: {
             icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
             stylingMode: 'text',
-            onClick: togglePasswordVisibility
+           
           }
         }
       ]">
@@ -284,7 +298,7 @@
     
       <dx-text-box
         [mode]="confirmPasswordMode"
-        formControlName="C_PASSWORD"
+        formControlName="ConfirmPassword"
         class="form-control mb-2"
         [height]="35"
       >
@@ -292,7 +306,7 @@
         <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
         <dxi-validation-rule 
           type="compare"
-          [comparisonTarget]="passwordComparison"
+    
           message="Password and Confirm Password do not match">
         </dxi-validation-rule>
       </dx-validator>
@@ -300,47 +314,40 @@
     </dxi-item>
 
    <!-- ACTIVE CHECKBOX -->
-    <!-- <dxi-item
-      dataField="IS_INACTIVE"
-      [label]="{ text: 'Inactive', showColon: false }"
-    >
-      <dx-check-box
-        formControlName="IS_INACTIVE"
-        class="mt-2"
-        [elementAttr]="{ 'aria-label': 'Unchecked' }"
-        id="checkboxadd"
-      ></dx-check-box>
-    </dxi-item> -->
 <dxi-item>
 <label for="checboxadd" class="me-5" >Inactive</label>
       <dx-check-box
         class="mt-2"
-        formControlName="IS_INACTIVE"
+        formControlName="Inactive"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
         id="checboxadd"
       ></dx-check-box>
       </dxi-item>
 
-    <!-- RADIO BUTTON ROLES -->
+    <!-- DROPDOWN ROLES -->
     <dxi-item [label]="{ text: 'UserType',showColon:false }">
-      <dx-radio-group
+      <dx-select-box
         [items]="UserType"
         class="mt-2"
         alignment="center"
-        [(value)]="selectedUserType"
+        [(value)]="user_Id_value"
+        valueExpr="ID"
+        displayExpr="DESCRIPTION"
+        [items]="usertype_list"
+        (onChange)="onUserTypeChange($event)"
       >
-      </dx-radio-group
+      </dx-select-box
     ></dxi-item>
 
     <!-- DROPDOWN HOSPITAL -->
     <dxi-item>
       <dx-tag-box
-        [visible]="selectedUserType === 'Entry User'"
+        [visible]="user_Id_value==3 "
         dataField="Department"
-        [items]="departments"
+        [items]="department_list"
         valueExpr="ID"
         [(value)]="selectedDepartmentId"
-        displayExpr="DEPARTMENT"
+        displayExpr="DESCRIPTION"
         label="Select Department"
         labelMode="floating"
         labelLocation="left"
@@ -348,6 +355,7 @@
         applyValueMode="instantly"
         [multiline]="false"
         [searchEnabled]="true"
+        
       >
       </dx-tag-box>
     </dxi-item>
