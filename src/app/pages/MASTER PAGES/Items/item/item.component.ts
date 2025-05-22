@@ -56,7 +56,7 @@ formsource:FormGroup
   items_data: any=[]
   selected_data: any=[]
   code_value:any
-  department_id_value: any[]=[];
+  department_id_value: any
   is_inactve_value: any;
   is_fixed_value: boolean;
   name_value: any;
@@ -230,9 +230,24 @@ addData() {
   const is_fixed = this.formsource.value.is_fixed;
  let item_price = this.formsource.value.price;
 
-if (item_price == null || item_price === '') {
-  item_price = 0;
-}
+if (is_fixed === true) {
+    if (item_price == null || item_price === '' || item_price <= 1) {
+      notify(
+        {
+          message: 'Fixed items must have a price greater than 1',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 3000,
+        },
+        'error'
+      );
+      return;
+    }
+  } else {
+    // For variable items, set null/empty price to 0
+    if (item_price == null || item_price === '') {
+      item_price = 0;
+    }
+  }
 
   const item_code = this.formsource.value.code.toString();
   const name = this.formsource.value.item_name;
@@ -316,11 +331,55 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
 
- 
+ //=================
 update_item_Data(){
-const id=this.selected_data.ID
+   if (!this.code_value|| !this.name_value || this.department_id_value==0|| this.is_fixed_value === null) {
+    let errorMessage = 'Please fill all required fields: ';
+    const missingFields = [];
+    
+    if (!this.code_value) missingFields.push('Item Code');
+    if (!this.name_value ) missingFields.push('Item Name');
+    if (this.department_id_value==0) missingFields.push('Department');
+     if ( this.is_fixed_value=== null) missingFields.push('please select fixed or variable');
+    
+    errorMessage += missingFields.join(', ');
+
+    notify(
+      {
+        message: errorMessage,
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 3000,
+      },
+      'error'
+    );
+    return;
+  }
+
+//   const is_fixed = this.formsource.value.is_fixed;
+//  let item_price = this.formsource.value.price;
 const is_fixed = this.is_fixed_value
-const item_price = this.price_value
+let item_price = this.price_value
+if (is_fixed === true) {
+    if (item_price == null || item_price === '' || item_price <= 1) {
+      notify(
+        {
+          message: 'Fixed items must have a price greater than 1',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 3000,
+        },
+        'error'
+      );
+      return;
+    }
+  } else {
+    // For variable items, set null/empty price to 0
+    if (item_price == null || item_price === '') {
+      item_price = 0;
+    }
+  }
+
+const id=this.selected_data.ID
+
 const item_code=this.code_value.toString();
 const name=this.name_value
 const is_inactive=this.is_inactve_value
