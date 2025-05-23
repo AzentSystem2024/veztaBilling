@@ -101,7 +101,7 @@ this.formsource.patchValue({
 
   openPopup() {
     this.isAddPop = true;
-    this.formsource.reset()
+ 
   }
   departments: any = [];
 
@@ -113,6 +113,13 @@ this.formsource.patchValue({
   closePopup() {
     this.isAddPop = false;
     this.isEditPop = false;
+    this.formsource.reset({
+      ID: null,
+      DepartmentName: '',
+      Hospital: '',
+   
+      bill_prefix:''
+    });
   }
   //====================Get department List=================
 getDepartment_list() {
