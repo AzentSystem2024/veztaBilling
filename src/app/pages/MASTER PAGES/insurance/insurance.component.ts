@@ -23,6 +23,8 @@ export class InsuranceComponent {
  dataSource: any = [];
   editInsuranceData: any;
   selectedData: any;
+showFilterRow: boolean = true;
+currentFilter: string = 'auto';
 
   openPopup(){
   this.addPopup = true
@@ -154,6 +156,19 @@ addData(){
   const Insurance = this.formsource.value.Insurance
   const Inactive =this.formsource.value.Inactive
    const isInactiveBoolean = Inactive === 'true' || Inactive === true;
+
+   
+if (!Insurance) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
   
 const isDuplicate = this.dataSource.some((data:any)=>{
 return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase()
@@ -188,24 +203,25 @@ return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase()
       this.get_Insurance_List()
     })
   } 
-     else{
-      notify(
-        {
-          message: 'Please fill the fields',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 500,
-        },
-        'error'
-      );
-     }  
-
-     this.get_Insurance_List()
 }
 
 editData(){
 const ID = this.formsource.value.Id
 const Insurance = this.formsource.value.Insurance
 const Inactive =this.formsource.value.Inactive
+
+
+if (!Insurance) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase() && data.ID !== ID //Exclude the current hospital
@@ -234,24 +250,13 @@ this.dataservice.Update_InsuranceData_Api(ID,Insurance,Inactive).subscribe((resp
     },
     'success'
   );
+  this.editPopup=false
   this.get_Insurance_List()
  
 });
 this.get_Insurance_List()
 } 
- else{
 
-  notify(
-    {
-      message: 'Please fill the fields',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 500,
-    },
-    'error'
-  );
- } 
- this.editPopup=false;
- this.get_Insurance_List();
 }
 
 

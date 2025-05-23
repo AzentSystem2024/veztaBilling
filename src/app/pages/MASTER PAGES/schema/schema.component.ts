@@ -21,7 +21,8 @@ export class SchemaComponent {
   editPopup: boolean = false;
   formsource: any;
   editSchemaData: any;
-
+showFilterRow: boolean = true;
+currentFilter: string = 'auto';
 Status: boolean;
 IS_INACTIVE: boolean = false;
   selectedData: any;
@@ -149,6 +150,18 @@ addData(){
   const Discount = this.formsource.value.Discount
   const Inactive =this.formsource.value.Inactive
 
+  if (!Schema || !Discount) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
+
   // Check if Discount is out of valid range
     if (Discount < 0 || Discount > 100) {
       notify(
@@ -198,19 +211,6 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
       this.get_Schema_List()
     })
   } 
-
-     else{
-      notify(
-        {
-          message: 'Please fill the fields',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 500,
-        },
-        'error'
-      );
-     }  
-
-     this.get_Schema_List()
 }
 editData(){
 const ID = this.formsource.value.Id
@@ -218,7 +218,17 @@ const Schema = this.formsource.value.Schema
 const Discount = this.formsource.value.Discount
 const Inactive =this.formsource.value.Inactive
 
-
+if (!Schema || !Discount) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()  && data.ID !== ID //Exclude the current hospital
@@ -247,24 +257,13 @@ this.dataservice.Update_SchemaData_Api(ID,Schema,Discount,Inactive).subscribe((r
     },
     'success'
   );
+  this.editPopup=false
   this.get_Schema_List()
  
 });
 this.get_Schema_List()
 } 
- else{
 
-  notify(
-    {
-      message: 'Please fill the fields',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 500,
-    },
-    'error'
-  );
- } 
- this.editPopup=false;
- this.get_Schema_List();
 }
 
  select_Schema_Data(e:any){
