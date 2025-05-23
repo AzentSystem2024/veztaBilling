@@ -96,3 +96,42 @@
     gap: 10px; /* Space between buttons */
 }
 
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+
+.invoice-table th, .invoice-table td {
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: left;
+}
+
+.invoice-table th.numeric, .invoice-table td.numeric {
+  text-align: right;        /* Right align numbers */
+  font-variant-numeric: tabular-nums; /* Uniform digit width */
+  font-family: 'Courier New', Courier, monospace; /* Optional: monospace font */
+}
+
+.totals {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+.totals td {
+  padding: 4px 8px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Courier New', Courier, monospace;
+}

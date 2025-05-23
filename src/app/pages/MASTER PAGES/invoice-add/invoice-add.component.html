@@ -463,29 +463,40 @@
 
 
 <!-- PRINT POPUP -->
- <dx-popup
+<dx-popup
   [(visible)]="printConfirmVisible"
   [showTitle]="true"
   title="Print Invoice"
   [width]="300"
-  [height]="150"
+  [height]="170"
   [dragEnabled]="false"
   [showCloseButton]="false"
   [closeOnOutsideClick]="false"
 >
-  <div class="popup-content">
+  <div class="popup-body">
     <p>Do you want to print the invoice?</p>
-    <dx-button
-      text="Yes"
-      type="default"
-      stylingMode="contained"
-    ></dx-button>
-    <dx-button
-      text="No"
-      type="normal"
-      stylingMode="outlined"
 
-      class="ml-2"
-    ></dx-button>
+    <div class="popup-footer">
+      <dx-button
+        text="No"
+        type="normal"
+        stylingMode="outlined"
+        (onClick)="onConfirmPrint('no')"
+      ></dx-button>
+      <dx-button
+        text="Print & Preview"
+        type="default"
+        stylingMode="contained"
+        (onClick)="onConfirmPrint('Print & Preview')"
+      ></dx-button>
+      <dx-button
+        text="Print"
+        type="default"
+        stylingMode="contained"
+        (onClick)="onConfirmPrint('print')"
+      ></dx-button>
+    </div>
+   
   </div>
 </dx-popup>
+
