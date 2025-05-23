@@ -7,7 +7,7 @@
         [height]="'90vh'"
         [dataSource]="dataSource"
         [showBorders]="true"
-        [showColumnLines]="true"
+        [showColumnLines]="false"
         (onEditingStart)="onEditingStart($event)"
         [rowAlternationEnabled]="true"
         [columnAutoWidth]="true"
@@ -123,17 +123,17 @@
     [showCloseButton]="true"
     [width]="PopupWidth"
     >
-    <form [formGroup]="formsource" class="mt-3">
+    <dx-form [formGroup]="formsource" class="mt-3">
       
-      <dxi-item dataField="SCHEMA_NAME">
-        <input
-        formControlName="Schema" class=" form-control" type="text"  placeholder="Schema" >
+      <dxi-item>
+        <dx-text-box
+        formControlName="Schema Name" label="SchemaName" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
       <!-- </input> -->
       </dxi-item>
      
-      <dxi-item dataField="DISCOUNT">
+      <dxi-item>
         <dx-number-box
-        formControlName="Discount" class=" form-control mt-3" type="text" placeholder="Discount" [min]="0"
+        formControlName="Discount" label="Discount" class=" form-control mt-3" type="text" labelMode="floating" [min]="0"
     [max]="100"
     [showSpinButtons]="true"
   >
@@ -144,7 +144,7 @@
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
-    </form>
+    </dx-form>
      
     </dx-popup>
 
@@ -160,15 +160,15 @@
         [shading]="false"
         [width]="PopupWidth"
       >
-        <form [formGroup]="formsource" class="mt-3">
+        <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input formControlName="Schema" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
+            <dx-text-box formControlName="Schema" label="Schema" class=" form-control" type="text" labelMode="floating"></dx-text-box>
           </dxi-item>
 
           <dxi-item >
         <dx-number-box
          [(value)]="formsource.get('Discount').value"
-  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" placeholder="Discount"></dx-number-box>
+  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" label="Discount" labelMode="floating"></dx-number-box>
         </dxi-item>
         
           <dxi-item>
@@ -187,5 +187,5 @@
             </button>
             <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
-        </form>
+        </dx-form>
       </dx-popup>

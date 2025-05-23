@@ -116,29 +116,20 @@
     [showCloseButton]="true"
     [width]="PopupWidth"
     >
-    <form [formGroup]="formsource" class="mt-3">
+    <dx-form [formGroup]="formsource" class="mt-3">
       
       <dxi-item>
-        <input dataField="INSURANCE_NAME" formControlName="Insurance" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
+        <dx-text-box formControlName="Insurance" label="Insurance Name" class=" form-control" type="text" labelMode="floating" ></dx-text-box>
       </dxi-item>
 
-    
-     <!-- <dxi-item
-     dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
-          <dx-check-box
-          text="Inactive"
-          formControlName="Inactive"
-            [value]="false"
-            [elementAttr]="{ 'aria-label': 'Unchecked' }"
-            class="mt-3"
-          ></dx-check-box>
-        </dxi-item> -->
 
+  <dxi-item>
           <div class="d-flex justify-content-end mt-4">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
-    </form>
+              </dxi-item>
+    </dx-form>
      
     </dx-popup>
 
@@ -156,7 +147,7 @@
       >
         <form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input formControlName="Insurance" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
+            <dx-text-box formControlName="Insurance" label="Insurance" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
           </dxi-item>
       
           <dxi-item>

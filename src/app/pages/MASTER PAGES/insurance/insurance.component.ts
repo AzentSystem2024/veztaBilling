@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxPopupModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent, RowRemovedEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -265,7 +265,7 @@ this.get_Insurance_List()
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule, CommonModule ,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxButtonModule,DxTextBoxModule ,CommonModule ,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [InsuranceComponent],
