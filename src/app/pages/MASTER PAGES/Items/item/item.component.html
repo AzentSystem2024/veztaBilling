@@ -22,7 +22,7 @@
   
   <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-  
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
 
   <dxo-editing
     mode="popup"
@@ -62,6 +62,7 @@
     [width]="80"
     caption="Sl.No"
     [allowEditing]="false"
+      [allowFiltering]="false"
     alignment="left">
   </dxi-column>
     <dxi-column
@@ -90,7 +91,7 @@
     <i
       class="fas fa-flag"
       [ngClass]="getStatusFlagClass(cellData.value)"
-      [attr.title]="cellData.value"
+      [attr.title]="cellData.value ? 'Inactive ' : 'Active '"
       style="margin-left: 10px; cursor: default;"
     ></i>
       </div>
@@ -115,7 +116,7 @@
   [title]="'Item'"
   [(visible)]="isAddPop"
   [width]="560"
-  [height]="460"
+  [height]="400"
   [shading]="false"
   (onHiding)="closePopup()"
 >
@@ -219,7 +220,7 @@
   [title]="' Item'"
   [(visible)]="isEditPop"
   [width]="560"
-  [height]="460"
+  [height]="410"
   [shading]="false"
   (onHiding)="closePopup()"
 >

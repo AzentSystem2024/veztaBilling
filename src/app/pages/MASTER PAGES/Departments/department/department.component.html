@@ -20,6 +20,7 @@
   }"
 >
   <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-editing
     mode="popup"
     [allowUpdating]="true"
@@ -57,6 +58,7 @@
     [width]="80"
     caption="Sl.No"
     [allowEditing]="false"
+     [allowFiltering]="false"
     alignment="left">
   </dxi-column>
   <dxi-column
@@ -73,12 +75,13 @@
   width="100"
 
   fixedPosition="right">
+  
   </dxi-column>
   <div *dxTemplate="let cellData of 'statusCellTemplate'">
     <i
       class="fas fa-flag"
       [ngClass]="getStatusFlagClass(cellData.value)"
-      [attr.title]="cellData.value"
+      [attr.title]="cellData.value ? 'Inactive ' : 'Active '"
       style="margin-left: 10px; cursor: default;"
     ></i>
       </div>
@@ -137,7 +140,14 @@
   displayExpr="DESCRIPTION"
   valueExpr="ID"
   (onValueChanged)="changeHospitals($event)"
-> </dx-select-box>
+>
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="Please select payment mode"
+                  ></dxi-validation-rule>
+                </dx-validator>
+ </dx-select-box>
 
     </div>
 

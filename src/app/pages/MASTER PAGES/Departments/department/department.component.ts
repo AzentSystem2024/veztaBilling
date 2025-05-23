@@ -21,6 +21,7 @@ import {
   DxTabPanelModule,
   DxTabsModule,
   DxNumberBoxModule,
+  DxTooltipModule,
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -163,60 +164,43 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
 
-  //===========================Add Department Data=========================
 
-  // addData() {
-  //   console.log(this.formsource.value);
-  //   this.isAddPop = false;
-  //   const department=this.formsource.value.DepartmentName
-  //    const Hospital=this.formsource.value.Hospital
-  //     const is_Inactive=this.formsource.value.IS_INACTIVE
-  //     const Bill_prefix=this.formsource.value.bill_prefix
-  //     console.log(department,Hospital,is_Inactive,Bill_prefix,'====input datas');
-      
-  //   this.dataservice.Add_Department_Api(department,Hospital,is_Inactive,Bill_prefix).subscribe((res:any)=>{
-  //     console.log(res)
-  //     this.getDepartment_list()
-      
-  //         notify(
-  //           {
-  //             message: 'Department Added successfully',
-  //             position: { at: 'top right', my: 'top right' },
-  //             displayTime: 500,
-  //           },
-  //           'success'
-  //         );
-  //         this.isAddPop=false
-  //   })
-  // }
+addData() {
+  this.formsource.markAllAsTouched();
 
-  addData() {
-      this.formsource.markAllAsTouched();
-
-  // If invalid, return early — error will show under textbox
-  if (this.formsource.invalid) {
-    return;
-  }
   console.log(this.formsource.value);
-  
-  const department = this.formsource.value.DepartmentName
+
+  const department = this.formsource.value.DepartmentName;
   const Hospital = this.formsource.value.Hospital;
   const is_Inactive = this.formsource.value.IS_INACTIVE;
   const Bill_prefix = this.formsource.value.bill_prefix;
-
-const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
-if (!Hospital) {
+if (Bill_prefix && Bill_prefix.length > 3) {
   notify(
     {
-      message: 'Please select hospital.',
+      message: 'Bill prefix can be maximum 3 characters.',
       position: { at: 'top right', my: 'top right' },
       displayTime: 1000,
     },
     'error'
   );
+  return; // Stop further execution
 }
-else{
-  // Check for duplication
+  const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
+
+  // Validate hospital selection
+  // if (!Hospital) {
+  //   notify(
+  //     {
+  //       message: 'Please select hospital.',
+  //       position: { at: 'top right', my: 'top right' },
+  //       displayTime: 1000,
+  //     },
+  //     'error'
+  //   );
+  //   return; // Stop further execution
+  // }
+
+  // Check for duplicate department under the same hospital
   const isDuplicate = this.departments.some(
     (item: any) =>
       item.DEPARTMENT.toLowerCase() === department.toLowerCase() &&
@@ -232,30 +216,33 @@ else{
       },
       'error'
     );
-    return; // Stop further execution
+    return;
   }
 
-  // Proceed if no duplicate found
+  // Proceed to add
   this.isAddPop = false;
 
   console.log(department, Hospital, is_Inactive, Bill_prefix, '====input datas');
 
-  this.dataservice.Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix).subscribe((res: any) => {
-    console.log(res);
-    this.getDepartment_list();
+  this.dataservice
+    .Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix)
+    .subscribe((res: any) => {
+      console.log(res);
+      this.getDepartment_list();
 
-    notify(
-      {
-        message: 'Department Added successfully',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 500,
-      },
-      'success'
-    );
+      notify(
+        {
+          message: 'Department Added successfully',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'success'
+      );
 
-    this.isAddPop = false;
-  });
-}}
+      this.isAddPop = false;
+    });
+}
+
 
   //===========================select department============================
   select_dep_list(event: any) {
@@ -356,6 +343,7 @@ if (isDuplicate) {
     DxiGroupModule,
     DxNumberBoxModule,
     ReactiveFormsModule,
+    DxTooltipModule 
   ],
   providers: [],
   declarations: [DepartmentComponent],

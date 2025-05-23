@@ -292,8 +292,7 @@ addData(){
   console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Usertype,'add data');
 
   
-const payload = {
-  user: 'admin',  // or dynamic: this.loggedInUser
+const payload = { // or dynamic: this.loggedInUser
   USER_NAME: User_name,
   LOGIN_NAME: Login_name,
   LOGIN_PWD: Login_password,
