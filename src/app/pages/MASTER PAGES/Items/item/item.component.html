@@ -1,209 +1,200 @@
-<dx-data-grid
-  id="gridContainer"
-  [dataSource]="items_source"
-  [remoteOperations]="true"
-  [allowColumnReordering]="true"
-  [rowAlternationEnabled]="true"
-  [showBorders]="true"
-  [showRowLines]="true"
-  (onEditingStart)="onEditingStart($event)"
-  [width]="'100%'"
-  [height]="'90vh'"
-  (onRowRemoving)="delete_Items_Data($event)"
+<div class="view-wrapper list-page">
+  <dx-data-grid
+    id="gridContainer"
+    [dataSource]="items_source"
+    [remoteOperations]="true"
+    [allowColumnReordering]="true"
+    [rowAlternationEnabled]="true"
+    [showBorders]="true"
+    [showRowLines]="true"
+    (onEditingStart)="onEditingStart($event)"
+    [width]="'100%'"
+    [height]="'90vh'"
+    (onRowRemoving)="delete_Items_Data($event)"
+    id="dataGrid"
+    [pager]="{
+      showInfo: true,
+      infoText: 'Page {0} of {1}',
+      showNavigationButtons: true
+    }"
+  >
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-  id="dataGrid"
-  [pager]="{
-    showInfo: true,
-    infoText: 'Page {0} of {1}',
-    showNavigationButtons: true
-  }">
+    <dxo-filter-row [visible]="true"></dxo-filter-row>
 
-  
-  <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <dxo-editing
+      mode="popup"
+      [allowUpdating]="true"
+      [allowDeleting]="true"
+      [useIcons]="true"
+      editIcon="edit"
+    ></dxo-editing>
 
-  
+    <dxo-toolbar>
+      <dxi-item
+        location="before"
+        text="Item"
+        cssClass="font-bold text-lg"
+      ></dxi-item>
+      <!-- <dxi-item name="searchPanel" locateInMenu="auto"></dxi-item> -->
+      <dxi-item name="" locateInMenu="auto"></dxi-item>
+      <dxi-item location="after" locateInMenu="auto">
+        <dx-button
+          icon="plus"
+          type="default"
+          stylingMode="contained"
+          (onClick)="openPopup()"
+        ></dx-button>
+      </dxi-item>
+    </dxo-toolbar>
 
-  <dxo-editing
-    mode="popup"
-    [allowUpdating]="true"
-    [allowDeleting]="true"
-    [useIcons]="true"
-    editIcon="edit"
-  ></dxo-editing>
-
-  <dxo-toolbar>
-    <dxi-item
-      location="before"
-      text="Item"
-      cssClass="font-bold text-lg"
-    ></dxi-item>
-    <!-- <dxi-item name="searchPanel" locateInMenu="auto"></dxi-item> -->
-    <dxi-item name="" locateInMenu="auto"></dxi-item>
-    <dxi-item location="after" locateInMenu="auto">
-      <dx-button
-        icon="plus"
-        type="default"
-        stylingMode="contained"
-        (onClick)="openPopup()"
-      ></dx-button>
-    </dxi-item>
-
-
-    
-  </dxo-toolbar>
-
-  <dxo-search-panel
-    [visible]="true"
-    [highlightCaseSensitive]="true"
-  ></dxo-search-panel>
-  <dxi-column
-    dataField="SlNo"
-    [width]="80"
-    caption="Sl.No"
-    [allowEditing]="false"
-    alignment="left">
-  </dxi-column>
+    <dxo-search-panel
+      [visible]="true"
+      [highlightCaseSensitive]="true"
+    ></dxo-search-panel>
     <dxi-column
-    dataField="ITEM_CODE"
-    alignment="left"
-    caption="Item Code"
-  ></dxi-column>
-  <dxi-column
-    dataField="ITEM_NAME"
-    alignment="left"
-    caption="Item Name"
-  ></dxi-column>
-<dxi-column
-  dataField="PRICE"
-  alignment="right"
-  caption="Price"
-  format="#,##0.00">
-</dxi-column>
+      dataField="SlNo"
+      [width]="80"
+      caption="Sl.No"
+      [allowEditing]="false"
+      [allowFiltering]="false"
+      alignment="left"
+    >
+    </dxi-column>
+    <dxi-column
+      dataField="ITEM_CODE"
+      alignment="left"
+      caption="Item Code"
+    ></dxi-column>
+    <dxi-column
+      dataField="ITEM_NAME"
+      alignment="left"
+      caption="Item Name"
+    ></dxi-column>
+    <dxi-column
+      dataField="PRICE"
+      alignment="right"
+      caption="Price"
+      format="#,##0.00"
+    >
+    </dxi-column>
 
-  <dxi-column dataField="IS_INACTIVE" caption="Status" alignment="right" cellTemplate="statusCellTemplate"
-  width="100"
+    <dxi-column
+      dataField="IS_INACTIVE"
+      caption="Status"
+      alignment="right"
+      cellTemplate="statusCellTemplate"
+      width="100"
+      fixedPosition="right"
+    >
+    </dxi-column>
+    <div *dxTemplate="let cellData of 'statusCellTemplate'">
+      <i
+        class="fas fa-flag"
+        [ngClass]="getStatusFlagClass(cellData.value)"
+        [attr.title]="cellData.value ? 'Inactive ' : 'Active '"
+        style="margin-left: 10px; cursor: default"
+      ></i>
+            
+    </div>
+    <dxi-column type="buttons" [width]="110">
+      <dxi-button name="edit"></dxi-button>
+      <dxi-button name="delete"></dxi-button>
+    </dxi-column>
 
-  fixedPosition="right">
-  </dxi-column>
-  <div *dxTemplate="let cellData of 'statusCellTemplate'">
-    <i
-      class="fas fa-flag"
-      [ngClass]="getStatusFlagClass(cellData.value)"
-      [attr.title]="cellData.value"
-      style="margin-left: 10px; cursor: default;"
-    ></i>
-      </div>
-  <dxi-column type="buttons" [width]="110">
-    <dxi-button name="edit"></dxi-button>
-    <dxi-button name="delete"></dxi-button>
-  </dxi-column>
+    <dxo-header-filter [visible]="true">
+      <dxo-search [enabled]="true"></dxo-search>
+    </dxo-header-filter>
 
-  <dxo-header-filter [visible]="true">
-    <dxo-search [enabled]="true"></dxo-search>
-  </dxo-header-filter>
-
-  <dxo-paging [pageSize]="10"></dxo-paging>
-  <dxo-pager
-    [visible]="true"
-    [showPageSizeSelector]="true"
-    [allowedPageSizes]="[10, 25, 50, 100]"
-  ></dxo-pager>
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-pager
+      [visible]="true"
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[10, 25, 50, 100]"
+    ></dxo-pager>
   </dx-data-grid>
-  <!-- //=======================Add items====================== --><dx-popup
+</div>
+<!-- //=======================Add items====================== --><dx-popup
   [title]="'Item'"
   [(visible)]="isAddPop"
-  [width]="560"
-  [height]="460"
+  [width]="360"
+  [height]="370"
   [shading]="false"
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
-    
     <!-- Code -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 100px;">Code</label>
-      <dx-text-box
-        type="text"
-        name="Code"
-        width="150px"
-        class="form-control"
-        formControlName="code"
-      ></dx-text-box>
-    </div>
+
+    <dx-text-box
+      type="text"
+      name="Code"
+      width="150px"
+      class="form-control"
+      formControlName="code"
+      label="Code"
+      labelMode="floating"
+    ></dx-text-box>
 
     <!-- Item Name -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Item Name</label>
-      <dx-text-box
-        type="text"
-        name="Item Name"
-        width="100%"
-        class="form-control"
-        formControlName="item_name"
-      > <dx-validator>
-          <dxi-validation-rule
-            type="required"
-            message="This field is required"
-          ></dxi-validation-rule> </dx-validator
-      ></dx-text-box>
-    </div>
+
+    <dx-text-box
+      type="text"
+      name="Item Name"
+      width="100%"
+      class="form-control"
+      formControlName="item_name"
+      label="Item Name"
+      labelMode="floating"
+    >
+    </dx-text-box>
 
     <!-- Department -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Department</label>
-      <dx-tag-box
-        [showClearButton]="true"
-        [items]="department_list"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        [showSelectionControls]="true"
-        applyValueMode="instantly"
-        [multiline]="false"
-        [searchEnabled]="true"
-        formControlName="department_id"
-        width="100%"
-      > <dx-validator>
-          <dxi-validation-rule
-            type="required"
-            message="This field is required"
-          ></dxi-validation-rule> </dx-validator
-      >
-      </dx-tag-box>
-    </div>
+
+    <dx-tag-box
+      [showClearButton]="true"
+      [items]="department_list"
+      valueExpr="ID"
+      displayExpr="DESCRIPTION"
+      [showSelectionControls]="true"
+      applyValueMode="instantly"
+      [multiline]="false"
+      [searchEnabled]="true"
+      formControlName="department_id"
+      width="100%"
+      label="Department"
+      labelMode="floating"
+    >
+    </dx-tag-box>
 
     <!-- Price -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Price</label>
- <dx-radio-group
-  [items]="select_option"
-  [valueExpr]="'value'"
-  [displayExpr]="'text'"
-  layout="horizontal"
-  formControlName="is_fixed"
-> </dx-radio-group>
-<dx-number-box
-  valueChangeEvent="input"
-  [inputAttr]="{ style: 'text-align: right;' }"
-  style="margin-left: 10px; width: 100px;"
-  formControlName="price"
-  [isValid]="!formsource.get('price')?.errors?.priceInvalid"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('price')?.errors?.priceInvalid && formsource.get('price')?.touched ? [{ message: 'Price must be greater than 0' }] : null"
->
-</dx-number-box>
-
-
-    </div>
-
+   <div style="display: flex; align-items: center; margin-bottom: 16px">
+    <dx-radio-group
+      [items]="select_option"
+      [valueExpr]="'value'"
+      [displayExpr]="'text'"
+      layout="horizontal"
+      formControlName="is_fixed"
+    >
+    </dx-radio-group>
+    <dx-number-box
+      valueChangeEvent="input"
+      [inputAttr]="{ style: 'text-align: right;' }"
+      style="margin-left: 10px; width: 100px"
+      formControlName="price"
+      label="Price"
+      labelMode="floating"
+    >
+    </dx-number-box>
+</div>
     <!-- Inactive Checkbox -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+    <!-- <div style="display: flex; align-items: center; margin-bottom: 16px;">
       <label style="width: 120px;">Inactive</label>
       <dx-check-box
         formControlName="IS_INACTIVE"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
         id="checboxadd"
       ></dx-check-box>
-    </div>
+    </div> -->
 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-end mt-4">
@@ -229,83 +220,80 @@
 <dx-popup
   [title]="' Item'"
   [(visible)]="isEditPop"
-  [width]="560"
-  [height]="460"
+  [width]="360"
+  [height]="380"
   [shading]="false"
   (onHiding)="closePopup()"
 >
-  <form >
+  <form>
     <!-- Code -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 100px;">Code</label>
+   
       <dx-text-box
         type="text"
         name="Code"
         width="150px"
         class="form-control"
         [(value)]="code_value"
+           label="Code"
+                            labelMode="floating"
       ></dx-text-box>
-    </div>
+    
 
     <!-- Item Name -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Item Name</label>
       <dx-text-box
         type="text"
         name="Item Name"
         width="100%"
         class="form-control"
-          [(value)]="name_value"
-     
+           label="Item Name"
+                            labelMode="floating"
+        [(value)]="name_value"
       ></dx-text-box>
-    </div>
+  
 
     <!-- Department -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Department</label>
-     <dx-tag-box
-  [showClearButton]="true"
-  [showSelectionControls]="true"
-  valueExpr="ID"
-  displayExpr="DESCRIPTION"
-  applyValueMode="instantly"
-  [searchEnabled]="true"
-  [(value)]="department_id_value"
-  [items]="department_list"
-  [multiline]="false"
-  width="100%"
->
-</dx-tag-box>
-
-    </div>
+ 
+      <dx-tag-box
+        [showClearButton]="true"
+        [showSelectionControls]="true"
+        valueExpr="ID"
+        displayExpr="DESCRIPTION"
+        applyValueMode="instantly"
+        [searchEnabled]="true"
+        [(value)]="department_id_value"
+        [items]="department_list"
+        [multiline]="false"
+        width="100%"
+           label="Department"
+                            labelMode="floating"
+      >
+      </dx-tag-box>
+  
 
     <!-- Price -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Price</label>
- <dx-radio-group
-  [items]="select_option"
-  [valueExpr]="'value'"
-  [displayExpr]="'text'"
-  layout="horizontal"
+    <div style="display: flex; align-items: center; margin-bottom: 16px">
+      
+      <dx-radio-group
+        [items]="select_option"
+        [valueExpr]="'value'"
+        [displayExpr]="'text'"
+        layout="horizontal"
         [(value)]="is_fixed_value"
-></dx-radio-group>
-<dx-number-box
-  valueChangeEvent="input"
-  [inputAttr]="{ style: 'text-align: right;' }"
-  style="margin-left: 10px; width: 100px;"
-   [(value)]="price_value"
-  [isValid]="!formsource.get('price')?.errors?.priceInvalid"
-  [validationMessageMode]="'always'"
-  [validationErrors]="formsource.get('price')?.errors?.priceInvalid && formsource.get('price')?.touched ? [{ message: 'Price must be greater than 0' }] : null"
->
-</dx-number-box>
-
-
+      ></dx-radio-group>
+      <dx-number-box
+        valueChangeEvent="input"
+        [inputAttr]="{ style: 'text-align: right;' }"
+        style="margin-left: 10px; width: 100px"
+        [(value)]="price_value"
+           label="Price"
+                            labelMode="floating"
+      >
+      </dx-number-box>
     </div>
 
     <!-- Inactive Checkbox -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Inactive</label>
+    <div style="display: flex; align-items: center; margin-bottom: 16px">
+      <label style="width: 60px">Inactive</label>
       <dx-check-box
         [(value)]="is_inactve_value"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
@@ -314,8 +302,7 @@
     </div>
 
     <div class="d-flex justify-content-end mt-4">
-      <!-- Cancel Button -->
-      <button
+  <button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
       >

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxValidatorModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -21,7 +21,8 @@ export class SchemaComponent {
   editPopup: boolean = false;
   formsource: any;
   editSchemaData: any;
-
+showFilterRow: boolean = true;
+currentFilter: string = 'auto';
 Status: boolean;
 IS_INACTIVE: boolean = false;
   selectedData: any;
@@ -149,6 +150,18 @@ addData(){
   const Discount = this.formsource.value.Discount
   const Inactive =this.formsource.value.Inactive
 
+  if (!Schema || !Discount) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
+
 
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
@@ -168,6 +181,21 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
     return;
  }
 
+ const discountValue = parseFloat(this.formsource.Discount); // Convert to number
+
+  // Only show notify when out of range
+  if (discountValue < 0 || discountValue > 100) {
+    notify(
+      {
+        message: 'The discount must be between 0 and 100',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 2000,
+        type: 'error',
+      }
+    );
+    return;
+  }
+
     if(Schema){
       console.log("function called");
       
@@ -186,39 +214,24 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
       this.get_Schema_List()
     })
   } 
-
-//   if (Discount > 100) {
-//   notify(
-//     {
-//       message: 'Discount must not exceed 100%',
-//       position: { at: 'top right', my: 'top right' },
-//       displayTime: 500,
-//     },
-//     'error'
-//   );
-//   return; // Prevent saving
-// }
-     else{
-      notify(
-        {
-          message: 'Please fill the fields',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 500,
-        },
-        'error'
-      );
-     }  
-
-     this.get_Schema_List()
 }
-
 editData(){
 const ID = this.formsource.value.Id
 const Schema = this.formsource.value.Schema
 const Discount = this.formsource.value.Discount
 const Inactive =this.formsource.value.Inactive
 
-
+if (!Schema || !Discount) {
+    notify(
+      {
+        message: 'Please fill the field.',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 1000,
+      },
+      'error'
+    );
+    return; // Stop further execution
+  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()  && data.ID !== ID //Exclude the current hospital
@@ -247,24 +260,13 @@ this.dataservice.Update_SchemaData_Api(ID,Schema,Discount,Inactive).subscribe((r
     },
     'success'
   );
+  this.editPopup=false
   this.get_Schema_List()
  
 });
 this.get_Schema_List()
 } 
- else{
 
-  notify(
-    {
-      message: 'Please fill the fields',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 500,
-    },
-    'error'
-  );
- } 
- this.editPopup=false;
- this.get_Schema_List();
 }
 
  select_Schema_Data(e:any){
@@ -293,7 +295,7 @@ this.get_Schema_List()
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule,DxValidatorModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxTextBoxModule ,DxButtonModule,DxValidatorModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [SchemaComponent],

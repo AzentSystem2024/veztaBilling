@@ -59,6 +59,10 @@
       [showPageSizeSelector]="true"
       [allowedPageSizes]="[10,20,30,40]"
       ></dxo-pager>
+
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+
+<dxo-filter-row [visible]="showFilterRow" [applyFilter]="currentFilter"></dxo-filter-row>
       
       <dxo-header-filter [visible]="true">
         <dxo-search [enabled]="true"></dxo-search>
@@ -79,11 +83,6 @@
             (onClick)="openPopup()"
            ></dx-button>
         </dxi-item>
-     
-    
-        
-       <!-- Enable export options -->
-       <dxi-item name="exportButton"> </dxi-item> 
       
     
         <dxi-item location="after" locateInMenu="auto">
@@ -93,7 +92,7 @@
     </dxo-toolbar>
     
 
-    <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
+    <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column>
     <dxi-column dataField="INSURANCE_NAME"  caption="Insurance" ></dxi-column>
     <dxi-column dataField="IS_INACTIVE" caption="Status"  cellTemplate="statusCellTemplate"></dxi-column>
     <div *dxTemplate="let cellData of 'statusCellTemplate'">
@@ -117,29 +116,20 @@
     [showCloseButton]="true"
     [width]="PopupWidth"
     >
-    <form [formGroup]="formsource" class="mt-3">
+    <dx-form [formGroup]="formsource" class="mt-3">
       
       <dxi-item>
-        <input dataField="INSURANCE_NAME" formControlName="Insurance" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
+        <dx-text-box formControlName="Insurance" label="Insurance Name" class=" form-control" type="text" labelMode="floating" ></dx-text-box>
       </dxi-item>
 
-    
-     <!-- <dxi-item
-     dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
-          <dx-check-box
-          text="Inactive"
-          formControlName="Inactive"
-            [value]="false"
-            [elementAttr]="{ 'aria-label': 'Unchecked' }"
-            class="mt-3"
-          ></dx-check-box>
-        </dxi-item> -->
 
+  <dxi-item>
           <div class="d-flex justify-content-end mt-4">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
-    </form>
+              </dxi-item>
+    </dx-form>
      
     </dx-popup>
 
@@ -157,7 +147,7 @@
       >
         <form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input formControlName="Insurance" label="Insurance" class=" form-control" type="text"  placeholder="Insurance" >
+            <dx-text-box formControlName="Insurance" label="Insurance" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
           </dxi-item>
       
           <dxi-item>

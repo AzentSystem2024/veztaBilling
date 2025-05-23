@@ -7,7 +7,7 @@
         [height]="'90vh'"
         [dataSource]="dataSource"
         [showBorders]="true"
-        [showColumnLines]="true"
+        [showColumnLines]="false"
         (onEditingStart)="onEditingStart($event)"
         [rowAlternationEnabled]="true"
         [columnAutoWidth]="true"
@@ -60,6 +60,10 @@
       [allowedPageSizes]="[10,20,30,40]"
       ></dxo-pager>
       
+      <dxo-filter-panel [visible]="true"></dxo-filter-panel>
+
+<dxo-filter-row [visible]="showFilterRow" [applyFilter]="currentFilter"></dxo-filter-row>
+
       <dxo-header-filter [visible]="true">
         <dxo-search [enabled]="true"></dxo-search>
       </dxo-header-filter>
@@ -78,12 +82,7 @@
             stylingMode="contained"
             (onClick)="openPopup()"
            ></dx-button>
-        </dxi-item>
-     
-    
-        
-       <!-- Enable export options -->
-       <dxi-item name="exportButton"> </dxi-item> 
+        </dxi-item> 
       
     
         <dxi-item location="after" locateInMenu="auto">
@@ -93,7 +92,7 @@
     </dxo-toolbar>
     
 
-    <!-- <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column> -->
+    <dxi-column dataField="SlNo" [width]="80" caption="Sl.No" [allowEditing]="false" alignment="left"></dxi-column>
     <dxi-column dataField="SCHEMA_NAME"  caption="Schema" ></dxi-column>
     <dxi-column dataField="DISCOUNT" caption="Discount(%)" alignment="left" cellTemplate="priceTemplate" ></dxi-column>
     <div *dxTemplate="let cellData of 'priceTemplate'">
@@ -124,43 +123,28 @@
     [showCloseButton]="true"
     [width]="PopupWidth"
     >
-    <form [formGroup]="formsource" class="mt-3">
+    <dx-form [formGroup]="formsource" class="mt-3">
       
-      <dxi-item dataField="SCHEMA_NAME">
-        <input
-        formControlName="Schema" class=" form-control" type="text"  placeholder="Schema" >
+      <dxi-item>
+        <dx-text-box
+        formControlName="Schema Name" label="SchemaName" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
       <!-- </input> -->
       </dxi-item>
      
-
-      <dxi-item dataField="DISCOUNT">
+      <dxi-item>
         <dx-number-box
-        formControlName="Discount" class=" form-control mt-3" type="text" placeholder="Discount" [min]="0"
+        formControlName="Discount" label="Discount" class=" form-control mt-3" type="text" labelMode="floating" [min]="0"
     [max]="100"
     [showSpinButtons]="true"
-  ></dx-number-box>
-
-  
+  >
+</dx-number-box>
       </dxi-item>
-        
-   
-
-     <!-- <dxi-item
-     dataField="IS_INACTIVE" [label]="{ text: 'Inactive', showColon: false }">
-          <dx-check-box
-          text="Inactive"
-          formControlName="Inactive"
-            [value]="false"
-            [elementAttr]="{ 'aria-label': 'Unchecked' }"
-            class="mt-3"
-          ></dx-check-box>
-        </dxi-item> -->
 
           <div class="d-flex justify-content-end mt-4">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
-    </form>
+    </dx-form>
      
     </dx-popup>
 
@@ -176,15 +160,15 @@
         [shading]="false"
         [width]="PopupWidth"
       >
-        <form [formGroup]="formsource" class="mt-3">
+        <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input formControlName="Schema" label="Schema" class=" form-control" type="text"  placeholder="Schema" >
+            <dx-text-box formControlName="Schema" label="Schema" class=" form-control" type="text" labelMode="floating"></dx-text-box>
           </dxi-item>
 
           <dxi-item >
         <dx-number-box
          [(value)]="formsource.get('Discount').value"
-  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" placeholder="Discount"></dx-number-box>
+  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" label="Discount" labelMode="floating"></dx-number-box>
         </dxi-item>
         
           <dxi-item>
@@ -203,5 +187,5 @@
             </button>
             <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
-        </form>
+        </dx-form>
       </dx-popup>

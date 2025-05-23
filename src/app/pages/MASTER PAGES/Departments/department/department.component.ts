@@ -21,6 +21,7 @@ import {
   DxTabPanelModule,
   DxTabsModule,
   DxNumberBoxModule,
+  DxTooltipModule,
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -57,9 +58,17 @@ selected_Data:any
       ID: [null],
       DepartmentName:  ['', Validators.required],
     Hospital: ['', Validators.required],
-      bill_prefix:['', [Validators.maxLength(3)]],
+      bill_prefix:["", [Validators.maxLength(3)]],
       IS_INACTIVE: [false],
     });
+this.department_Value = this.departments.DEPARTMENT;
+this.formsource.patchValue({
+  DepartmentName: this.departments.DEPARTMENT
+});
+    this.hospital_value = this.departments.HOSPITAL_ID;
+this.formsource.patchValue({
+  Hospital: this.departments.HOSPITAL_ID
+});
     this.getDepartment_list();
     this.hospital_Dropdown()
   }
@@ -77,11 +86,22 @@ selected_Data:any
   }
   onExporting($event: ExportingEvent) {}
   
-  changeHospitals(event: any) {}
+  changeHospitals(event: any) {
+    
+  const selectedValue = event.value;
+  this.formsource.get('Hospital')?.setValue(selectedValue);
+  this.formsource.get('Hospital')?.markAsTouched(); 
+  }
+  onDepartmentChanged(e: any) {
+  const newValue = e.value;
+  this.formsource.get('DepartmentName')?.setValue(newValue);
+  this.formsource.get('DepartmentName')?.markAsTouched(); // for showing validation error if empty
+}
+
 
   openPopup() {
     this.isAddPop = true;
-    this.formsource.reset()
+ 
   }
   departments: any = [];
 
@@ -93,17 +113,31 @@ selected_Data:any
   closePopup() {
     this.isAddPop = false;
     this.isEditPop = false;
-  }
-  //====================Get department List=================
-  getDepartment_list() {
-    this.dataservice.get_department_List().subscribe((res: any) => {
-      console.log(res);
-      this.Department_Data = res.Data;
-      console.log(this.Department_Data, '======Department list======');
-      this.departments = this.Department_Data;
-    
+    this.formsource.reset({
+      ID: null,
+      DepartmentName: '',
+      Hospital: '',
+   
+      bill_prefix:''
     });
   }
+  //====================Get department List=================
+getDepartment_list() {
+  this.dataservice.get_department_List().subscribe((res: any) => {
+    console.log(res);
+
+    // Add SlNo to each department item
+    this.Department_Data = res.Data.map((item: any, index: number) => ({
+      ...item,
+      SlNo: index + 1
+    }));
+
+    console.log(this.Department_Data, '======Department list with SlNo======');
+
+    this.departments = this.Department_Data;
+  });
+}
+
   //=================dropdown==================
 
 
@@ -137,49 +171,43 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   return IS_INACTIVE ? 'flag-red' : 'flag-green';
 }
 
-  //===========================Add Department Data=========================
 
-  // addData() {
-  //   console.log(this.formsource.value);
-  //   this.isAddPop = false;
-  //   const department=this.formsource.value.DepartmentName
-  //    const Hospital=this.formsource.value.Hospital
-  //     const is_Inactive=this.formsource.value.IS_INACTIVE
-  //     const Bill_prefix=this.formsource.value.bill_prefix
-  //     console.log(department,Hospital,is_Inactive,Bill_prefix,'====input datas');
-      
-  //   this.dataservice.Add_Department_Api(department,Hospital,is_Inactive,Bill_prefix).subscribe((res:any)=>{
-  //     console.log(res)
-  //     this.getDepartment_list()
-      
-  //         notify(
-  //           {
-  //             message: 'Department Added successfully',
-  //             position: { at: 'top right', my: 'top right' },
-  //             displayTime: 500,
-  //           },
-  //           'success'
-  //         );
-  //         this.isAddPop=false
-  //   })
-  // }
+addData() {
+  this.formsource.markAllAsTouched();
 
-  addData() {
-      this.formsource.markAllAsTouched();
-
-  // If invalid, return early — error will show under textbox
-  if (this.formsource.invalid) {
-    return;
-  }
   console.log(this.formsource.value);
-  
-  const department = this.formsource.value.DepartmentName
+
+  const department = this.formsource.value.DepartmentName;
   const Hospital = this.formsource.value.Hospital;
   const is_Inactive = this.formsource.value.IS_INACTIVE;
   const Bill_prefix = this.formsource.value.bill_prefix;
-const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
+if (Bill_prefix && Bill_prefix.length > 3) {
+  notify(
+    {
+      message: 'Bill prefix can be maximum 3 characters.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'error'
+  );
+  return; // Stop further execution
+}
+  const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
 
-  // Check for duplication
+  // Validate hospital selection
+  // if (!Hospital) {
+  //   notify(
+  //     {
+  //       message: 'Please select hospital.',
+  //       position: { at: 'top right', my: 'top right' },
+  //       displayTime: 1000,
+  //     },
+  //     'error'
+  //   );
+  //   return; // Stop further execution
+  // }
+
+  // Check for duplicate department under the same hospital
   const isDuplicate = this.departments.some(
     (item: any) =>
       item.DEPARTMENT.toLowerCase() === department.toLowerCase() &&
@@ -195,30 +223,33 @@ const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
       },
       'error'
     );
-    return; // Stop further execution
+    return;
   }
 
-  // Proceed if no duplicate found
+  // Proceed to add
   this.isAddPop = false;
 
   console.log(department, Hospital, is_Inactive, Bill_prefix, '====input datas');
 
-  this.dataservice.Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix).subscribe((res: any) => {
-    console.log(res);
-    this.getDepartment_list();
+  this.dataservice
+    .Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix)
+    .subscribe((res: any) => {
+      console.log(res);
+      this.getDepartment_list();
 
-    notify(
-      {
-        message: 'Department Added successfully',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 500,
-      },
-      'success'
-    );
+      notify(
+        {
+          message: 'Department Added successfully',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 500,
+        },
+        'success'
+      );
 
-    this.isAddPop = false;
-  });
+      this.isAddPop = false;
+    });
 }
+
 
   //===========================select department============================
   select_dep_list(event: any) {
@@ -276,6 +307,14 @@ if (isDuplicate) {
       console.log(res,'==========updated data');
       this.getDepartment_list()
       this.isEditPop=false
+        notify(
+    {
+      message: 'This department updated successfullyyy.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'success'
+  );
     })
 
   }
@@ -311,6 +350,7 @@ if (isDuplicate) {
     DxiGroupModule,
     DxNumberBoxModule,
     ReactiveFormsModule,
+    DxTooltipModule 
   ],
   providers: [],
   declarations: [DepartmentComponent],
