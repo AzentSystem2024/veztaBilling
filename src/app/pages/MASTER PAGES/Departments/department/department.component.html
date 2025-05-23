@@ -20,6 +20,7 @@
   }"
 >
   <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <dxo-filter-row [visible]="true"></dxo-filter-row>
   <dxo-editing
     mode="popup"
     [allowUpdating]="true"
@@ -57,6 +58,7 @@
     [width]="80"
     caption="Sl.No"
     [allowEditing]="false"
+     [allowFiltering]="false"
     alignment="left">
   </dxi-column>
   <dxi-column
@@ -73,12 +75,13 @@
   width="100"
 
   fixedPosition="right">
+  
   </dxi-column>
   <div *dxTemplate="let cellData of 'statusCellTemplate'">
     <i
       class="fas fa-flag"
       [ngClass]="getStatusFlagClass(cellData.value)"
-      [attr.title]="cellData.value"
+      [attr.title]="cellData.value ? 'Inactive ' : 'Active '"
       style="margin-left: 10px; cursor: default;"
     ></i>
       </div>
@@ -109,14 +112,15 @@
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
-<div style="display: flex; align-items: center; gap: 20px">
-  <label>Department</label>
+
+ 
   <dx-text-box
     type="text"
     class="form-control"
     formControlName="DepartmentName"
+     label="Department Name "
+      labelMode="floating"
   ></dx-text-box>
-</div>
 
 <!-- Validation message under the textbox -->
 <div *ngIf="formsource.get('DepartmentName')?.touched && formsource.get('DepartmentName')?.invalid">
@@ -125,36 +129,42 @@
 
 
   
-    <div class="d-flex">
-      <label style="margin-top: 17px">Hospital</label>
+
+     
 
  <dx-select-box
   formControlName="Hospital"
-  style="flex: 1; margin-left: 44px; margin-top: 17px"
   [searchEnabled]="true"
   [items]="hospital_Dropdown_list"
    [(value)]="hospital_Dropdown_list.ID"
   displayExpr="DESCRIPTION"
   valueExpr="ID"
   (onValueChanged)="changeHospitals($event)"
-> </dx-select-box>
+   label="Hospital"
+      labelMode="floating"
+>
+               
+ </dx-select-box>
 
-    </div>
+  
+    <div *ngIf="formsource.get('Hospital')?.touched && formsource.get('Hospital')?.invalid">
+  <small class="text-danger" style="margin-left: 90px; font-weight: 500;">*This field is required</small>
+</div>
 
-      <div class="d-flex align-items-center justify-content-between mt-3">
+    
           <!-- Bill Prefix -->
-          <div class="d-flex align-items-center me-5">
-    <label class="me-3">Bill Prefix</label>
+         
   <dx-text-box
   type="text"
   name="Bill Prefix"
   class="form-control"
   formControlName="bill_prefix"
-  style="width: 100px; margin-left: 22px;"
+ label="Bill Prefix"
+  labelMode="floating"
 > </dx-text-box>
 
     
-  </div>
+
           <!-- Inactive checkbox -->
   <!-- <div class="d-flex me-4">
     <label for="checboxadd" class="me-2">Inactive</label>
@@ -170,8 +180,6 @@
 
 
 
-</div>
-   
 
     <div class="d-flex justify-content-end mt-4">
       <!-- Cancel Button -->
@@ -205,8 +213,7 @@
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
-    <div style="display: flex; align-items: center; gap: 20px">
-      <label>Department</label>
+   
       <dx-text-box
         type="text"
         name="Department"
@@ -214,12 +221,11 @@
         [(value)]="department_Value"
          (onValueChanged)="onDepartmentChanged($event)"
       ></dx-text-box>
-    </div>
+    
  <div *ngIf="formsource.get('DepartmentName')?.touched && formsource.get('DepartmentName')?.invalid">
   <small class="text-danger" style="margin-left: 90px; font-weight: 500;">*This field is required</small>
 </div>
-    <div class="d-flex">
-      <label style="margin-top: 17px">Hospital</label>
+   
 
    <dx-select-box
   [(value)]="hospital_value"
@@ -231,7 +237,7 @@
   (onValueChanged)="changeHospitals($event)"
 ></dx-select-box>
 
-    </div>
+    
 
 <!-- Validation message -->
 <div *ngIf="formsource.get('Hospital')?.touched && formsource.get('Hospital')?.invalid">
@@ -239,18 +245,19 @@
 </div>
    <div class="d-flex align-items-center justify-content-between mt-3">
           <!-- Bill Prefix -->
-          <div class="d-flex align-items-center me-5">
-    <label class="me-3">Bill Prefix</label>
+        
   <dx-text-box
   type="text"
   name="Bill Prefix"
   class="form-control"
   [(value)]="bill_prefix_value"
   style="width: 100px; margin-left: 22px;"
+   label="Bill Prefix"
+  labelMode="floating"
   ></dx-text-box>
 
     
-  </div>
+  
           <!-- Inactive checkbox -->
   <div class="d-flex me-4">
     <label for="checboxadd" class="me-2">Inactive</label>
