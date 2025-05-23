@@ -67,7 +67,7 @@ export class AuthService {
       const userData = JSON.parse(userDataString);
       
       // Ensure LOGIN_NAME exists and USER_TYPE is valid
-      return !!(userData.LOGIN_NAME && userData.USER_TYPE);
+      return !!(userData.USER_ID);
     } catch (error) {
       this.logout(); // Clear storage if data is corrupted
       return false;
@@ -115,27 +115,15 @@ export class AuthService {
     return this.UserData;
   }
   //=================internet ip of system================================
-  // getIPAddress() {
-  //   return this.http.get('https://api.ipify.org/?format=json');
-  // }
 
   initializeProject() {
     return this.http.post(`${BaseURL}CustomerInfo/getinfo`, {});
   }
   //================Log In function===============================
-  // logIn(username: string, password: string) {
-  //   const API_URL = `${BaseURL}user/LOGIN`;
-  
-  //   const ReqBody = {
-  //     LOGIN_NAME: username,  
-  //     PASSWORD: password     
-  //   };
-  
-  //   return this.http.post<any>(API_URL, ReqBody);
-  // }
+
 
   logIn(username: string, password: string) {
-    const API_URL = `${BaseURL}user/LOGIN`;
+    const API_URL = `${BaseURL}Login/login`;
     const ReqBody = {
       LOGIN_NAME: username,
       PASSWORD: password,
@@ -147,6 +135,7 @@ export class AuthService {
           localStorage.setItem('userData', JSON.stringify(response));
           sessionStorage.setItem('LOGIN_NAME', username);
           this.loggedin.next(true);
+          // this.router.navigate(['/dashboard']);
         }
         return response;
       })
@@ -233,12 +222,6 @@ export class AuthService {
     }
   }
 
-  // logOut() {
-  //   const API_URL = ` ${BaseURL}user/logout`;
-  //   const token = JSON.parse(localStorage.getItem('logData')).Token;
-  //   const ReqBody = { Token: token };
-  //   return this.http.post(API_URL, ReqBody);
-  // }
 }
 
 @Injectable()
