@@ -331,7 +331,8 @@ export class InvoiceAddComponent {
 
   getItems() {
     this.dataService.getDropdownData('ITEMS').subscribe((data) => {
-      this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+      // this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+      this.items = data;
       // console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
     });
   }
@@ -874,6 +875,17 @@ export class InvoiceAddComponent {
     }
   }
 
+  @HostListener('document:keydown.esc', ['$event'])
+@HostListener('document:keydown.Escape', ['$event']) // support both
+handleEscapeKey(event: KeyboardEvent) {
+  if (this.printConfirmVisible) {
+    event.preventDefault();
+    this.onConfirmPrint('no'); // cancel print
+    notify('Print cancelled', 'warning', 2000);
+  }
+}
+
+
   focusYesButton() {
     setTimeout(() => {
       this.yesButton?.instance?.focus();
@@ -983,6 +995,8 @@ export class InvoiceAddComponent {
     }
     else if (action === 'no') {
       notify('Print cancelled', 'warning', 2000);
+      this.resetInvoiceForm();
+      
     }
 
     setTimeout(() => {

@@ -123,27 +123,27 @@ export class SideNavigationMenuComponent
         },
         {
           text: 'Bill Wise Summary',
-          // path: '/invoice-entry',
+          path: '/billwise-summary',
         },
         {
           text: 'Staff Wise Summary',
-          // path: '/invoice-entry',
+          path: '/staffwise-summary',
         },
         {
           text: 'Test Item Wise Summary',
-          // path: '/invoice-entry',
+          path: '/testitemwise-summary',
         },
         {
           text: 'Scheme Wise Summary',
-          // path: '/invoice-entry',
+          path: '/schemewise-summary',
         },
         {
-          text: 'Scheme Wise Bill wise Summary',
-          // path: '/invoice-entry',
+          text: 'Scheme Wise Bill Summary',
+          path: '/schemewise-bill-summary',
         },
         {
-          text: 'Patiewnt Wise Summary',
-          // path: '/invoice-entry',
+          text: 'Patient Wise Summary',
+          path: '/patientwise-summary',
         },
       ],
     },

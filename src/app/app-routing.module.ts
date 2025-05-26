@@ -23,6 +23,12 @@ import { ItemComponent } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent } from './pages/MASTER PAGES/schema/schema.component';
 import { DateWiseSummaryComponent } from './pages/REPORTS/dateWiseSummary/date-wise-summary/date-wise-summary.component';
+import { BillWiseSummaryComponent } from './pages/REPORTS/billWiseSummary/bill-wise-summary/bill-wise-summary.component';
+import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staff-wise-summary/staff-wise-summary.component';
+import { SchemeWiseSummaryComponent } from './pages/REPORTS/schemeWiseSummary/scheme-wise-summary/scheme-wise-summary.component';
+import { SchemeWiseBillSummaryComponent } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
+import { PatientWiseSummaryComponent } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
+import { TestItemWiseSummaryComponent } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
 const routes: Routes = [
   {
     path: '',
@@ -106,6 +112,37 @@ const routes: Routes = [
       {
         path: 'datewise-summary',
         component: DateWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'billwise-summary',
+        component: BillWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'staffwise-summary',
+        component: StaffWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'schemewise-summary',
+        component: SchemeWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'schemewise-bill-summary',
+        component: SchemeWiseBillSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'patientwise-summary',
+        component: PatientWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+
+      {
+        path: 'testitemwise-summary',
+        component: TestItemWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },
      
