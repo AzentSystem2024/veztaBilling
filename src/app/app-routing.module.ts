@@ -19,12 +19,17 @@ import { InvoiceListComponent } from './pages/MASTER PAGES/invoiceFiles/invoice-
 import { HospitalListComponent } from './pages/MASTER PAGES/hospitalFiles/hospital-list/hospital-list.component';
 import { InvoiceAddComponent } from './pages/MASTER PAGES/invoice-add/invoice-add.component';
 import { DepartmentComponent } from './pages/MASTER PAGES/Departments/department/department.component';
+import { ItemComponent } from './pages/MASTER PAGES/Items/item/item.component';
+import { InsuranceComponent } from './pages/MASTER PAGES/insurance/insurance.component';
+import { SchemaComponent } from './pages/MASTER PAGES/schema/schema.component';
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'auth/login',
     pathMatch: 'full',
   },
+  
+
 
   {
     path: 'auth',
@@ -34,6 +39,7 @@ const routes: Routes = [
         path: 'login',
         component: LoginFormComponent,  // <-- Add this line
       },
+       
       {
         path: 'create-account',
         component: CreateAccountFormComponent,
@@ -44,6 +50,7 @@ const routes: Routes = [
         redirectTo: 'login',
         pathMatch: 'full',
       },
+      
     ],
   },
   {
@@ -74,6 +81,20 @@ const routes: Routes = [
         {
         path: 'department',
         component: DepartmentComponent,
+        canActivate: [AuthGuardService],
+      },
+         {
+        path: 'item',
+        component: ItemComponent,
+    },
+       {
+        path: 'insurance',
+        component:InsuranceComponent,
+        canActivate:[AuthGuardService]
+      },
+      {
+        path: 'schema',
+        component : SchemaComponent,
         canActivate: [AuthGuardService],
       },
       {

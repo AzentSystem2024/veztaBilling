@@ -1,5 +1,6 @@
-@use "../../../../../variables.scss" as *;
+@use "../../../../variables.scss" as *;
 @use "sass:math";
+
 
 
 .equal-button {
@@ -17,3 +18,4 @@
   .flag-green {
     color: green;
   }
+

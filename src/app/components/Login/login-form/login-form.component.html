@@ -67,20 +67,20 @@
             <span class="dx-button-text">
               <ng-container *ngIf="loading; else notLoading">
                 <dx-load-indicator
-                  width="24px"
-                  height="24px"
+                  width="30px"
+                  height="30px"
                   [visible]="true"
                 ></dx-load-indicator>
               </ng-container>
-              <ng-template #notLoading>Sign In</ng-template>
+              <ng-template #notLoading>Log In</ng-template>
             </span>
           </ng-container>
         </dx-form>
       </form>
 
-      <div class="reset-link">
+      <!-- <div class="reset-link">
         <a [routerLink]="resetLink">Forgot password?</a>
-      </div>
+      </div> -->
     </div>
   </div>
   

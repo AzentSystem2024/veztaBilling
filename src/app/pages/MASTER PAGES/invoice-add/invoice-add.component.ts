@@ -2,6 +2,7 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  HostListener,
   NgModule,
   ViewChild,
 } from '@angular/core';
@@ -31,6 +32,10 @@ import {
   DxTextBoxComponent,
   DxDateBoxComponent,
   DxButtonComponent,
+  DxValidationGroupComponent,
+  DxValidationGroupModule,
+  DxAutocompleteModule,
+  DxAutocompleteComponent,
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -50,7 +55,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./invoice-add.component.scss'],
 })
 export class InvoiceAddComponent {
-  
+  @ViewChild('invoiceFormGroup') invoiceFormGroup: DxValidationGroupComponent;
   @ViewChild('itemsGridRef') itemsGridRef: any;
   @ViewChild('departmentBoxRef', { static: false })
   departmentBoxRef!: DxSelectBoxComponent;
@@ -61,16 +66,21 @@ export class InvoiceAddComponent {
   @ViewChild('billNoBoxRef', { static: false })
   billNoBoxRef!: DxTextBoxComponent;
   @ViewChild('dateBoxRef', { static: false }) dateBoxRef!: DxDateBoxComponent;
-  @ViewChild('wardBoxRef', { static: false }) wardBoxRef!: DxTextBoxComponent;
-  @ViewChild('unitBoxRef', { static: false }) unitBoxRef!: DxTextBoxComponent;
+  @ViewChild('wardBoxRef', { static: false })
+  wardBoxRef!: DxAutocompleteComponent;
+  @ViewChild('unitBoxRef', { static: false })
+  unitBoxRef!: DxAutocompleteComponent;
   @ViewChild('uhidBoxRef', { static: false }) uhidBoxRef!: DxTextBoxComponent;
   @ViewChild('ageBoxRef', { static: false }) ageBoxRef!: DxTextBoxComponent;
   @ViewChild('sexBoxRef', { static: false }) sexBoxRef!: DxSelectBoxComponent;
   @ViewChild('schemaSelect') schemaSelect!: DxSelectBoxComponent;
   @ViewChild('paymentModeSelect') paymentModeSelect!: DxSelectBoxComponent;
   @ViewChild('insuranceSelect') insuranceSelect!: DxSelectBoxComponent;
-@ViewChild('saveButton', { read: ElementRef }) saveButtonElementRef!: ElementRef;
-@ViewChild('saveButton') saveButton!: DxButtonComponent;
+  @ViewChild('saveButton', { read: ElementRef })
+  saveButtonElementRef!: ElementRef;
+  @ViewChild('saveButton') saveButton!: DxButtonComponent;
+  @ViewChild('yesButton', { static: false }) yesButton: DxButtonComponent;
+  @ViewChild('noButton', { static: false }) noButton: DxButtonComponent;
 
   @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
@@ -85,7 +95,7 @@ export class InvoiceAddComponent {
   selectedPaymentModeId: any = null;
   creditModeId = 2; // or the actual ID value for credit mode
   insuranceOptions: any;
-
+  confirmVisible = false;
   paymentModes: any;
   schemaOptions: any;
   items: any;
@@ -94,8 +104,9 @@ export class InvoiceAddComponent {
     { id: 2, name: 'Female' },
     { id: 3, name: 'Other' },
   ];
-  mobileNumber: string = '+91-';
+  mobileNumber: string = '';
   mobileValid: boolean = true;
+  mobileTouched = false;
   Department: any = {
     DEPARTMENT_ID: 1,
   };
@@ -108,8 +119,8 @@ export class InvoiceAddComponent {
     UHID: '',
     PATIENT_NAME: '',
     PATIENT_AGE: '',
-    PATIENT_SEX: 'MALE',
-    PATIENT_MOBILE: '+91-',
+    PATIENT_SEX: '',
+    PATIENT_MOBILE: '',
     WARD: '',
     UNIT: '',
     GROSS_AMOUNT: '',
@@ -122,7 +133,7 @@ export class InvoiceAddComponent {
     INVOICE_ENTRY: [
       {
         ITEM_ID: '',
-        // DESCRIPTION: '',
+
         QUANTITY: '',
         UNIT_PRICE: '',
         AMOUNT: '',
@@ -132,8 +143,14 @@ export class InvoiceAddComponent {
   billNo: any;
   itemData: { ITEM_ID: number; DEPARTMENT_ID: number };
   selectedItem: any;
-schemaPercent: string = '';
-
+  schemaPercent: string = '';
+  readyToConfirm = false;
+  wardOptions: any;
+  unitOptions: any;
+  itemsData: any;
+  printData: any;
+  hasQuantityError: boolean = false;
+  printConfirmVisible = false;
 
   constructor(private dataService: DataService) {}
 
@@ -143,118 +160,162 @@ schemaPercent: string = '';
     this.formattedInvoiceDate = this.getFormattedDateTime(
       this.invoiceFormData.INVOICE_DATE
     );
-    this.getSchema();
+    this.startMinuteUpdater();
+    this.getSchemaList();
     this.getPaymentMode();
     this.getInsuranceOptions();
     this.getItems();
+    this.getWardAndUnit();
   }
+  private timerId: any;
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
     }, 0);
-      if (this.schemaSelect && this.schemaSelect.instance) {
-    this.schemaSelect.instance.on('keyDown', (e: any) => {
-      if (e.event.key === 'Enter') {
-        // Focus and open payment mode select
-        setTimeout(() => {
-          this.paymentModeSelect.instance.focus();
-          this.paymentModeSelect.instance.open();
-        }, 50);
-      }
-    });
-      this.paymentModeSelect?.instance?.on('keyDown', (e: any) => {
-    if (e.event.key === 'Enter') {
-      setTimeout(() => {
-        if (this.selectedPaymentModeId === this.creditModeId) {
-          // Focus insurance select if Credit
-          this.insuranceSelect?.instance?.focus();
-          this.insuranceSelect?.instance?.open();
-        } else {
-          this.saveButton?.instance?.focus();
-
-          // Listen for Enter key on save button
-         const saveBtnElement = this.saveButtonElementRef?.nativeElement;
-
-          if (saveBtnElement) {
-  saveBtnElement.addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      this.save();
-    }
-  });
-}
-
+    if (this.schemaSelect && this.schemaSelect.instance) {
+      this.schemaSelect.instance.on('keyDown', (e: any) => {
+        if (e.event.key === 'Enter') {
+          // Focus and open payment mode select
+          setTimeout(() => {
+            this.paymentModeSelect.instance.focus();
+            this.paymentModeSelect.instance.open();
+          }, 50);
         }
-      }, 50);
+      });
+      this.paymentModeSelect?.instance?.on('keyDown', (e: any) => {
+        if (e.event.key === 'Enter') {
+          setTimeout(() => {
+            if (this.selectedPaymentModeId === this.creditModeId) {
+              // Focus insurance select if Credit
+              this.insuranceSelect?.instance?.focus();
+              this.insuranceSelect?.instance?.open();
+
+              const insuranceHandler = () => {
+                // Unsubscribe after the first selection
+                this.insuranceSelect?.instance?.off(
+                  'valueChanged',
+                  insuranceHandler
+                );
+                setTimeout(() => {
+                  this.saveButton?.instance?.focus();
+                });
+              };
+
+              this.insuranceSelect?.instance?.on(
+                'valueChanged',
+                insuranceHandler
+              );
+            } else {
+              this.saveButton?.instance?.focus();
+
+              // Listen for Enter key on save button
+              //          const saveBtnElement = this.saveButtonElementRef?.nativeElement;
+
+              //           if (saveBtnElement) {
+              //   saveBtnElement.addEventListener('keydown', (event: KeyboardEvent) => {
+              //     if (event.key === 'Enter') {
+              //       this.submitForm();
+              //     }
+              //   });
+              // }
+            }
+          }, 50);
+        }
+      });
     }
-  });
-  }
   }
   getSchema() {
     this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
       this.schemaOptions = data;
-      console.log(this.schemaOptions, 'SCHEMAOPTIONS');
+      // console.log(this.schemaOptions, 'SCHEMAOPTIONS');
+    });
+  }
+
+  getWardAndUnit() {
+    const department = this.Department;
+    this.dataService.getWardAndUnit(department).subscribe((response: any) => {
+      this.wardOptions = response.Ward;
+      this.unitOptions = response.Unit;
+      // console.log(response,"ward and unit")
     });
   }
 
   onGridContentReady(e: any) {
-  // Get the summary total for the AMOUNT column
-  const summary = e.component.getTotalSummaryValue('AMOUNT');
-  this.invoiceFormData.GROSS_AMOUNT = summary?.toFixed(2) ?? '0.00';
-  
-}
-
-onSchemaChanged(e: any) {
-  const selectedId = e.value;
-  if (selectedId === 1) {
-    this.invoiceFormData.SCHEMA_PERCENT = '10';
-  } else {
-    this.invoiceFormData.SCHEMA_PERCENT = '25';
+    // Get the summary total for the AMOUNT column
+    const summary = e.component.getTotalSummaryValue('AMOUNT');
+    this.invoiceFormData.GROSS_AMOUNT = summary?.toFixed(2) ?? '0.00';
   }
-  this.calculateSchemaAmount();
-}
 
-updateNetAmount() {
-  const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
-  console.log(gross,"GROSSSSSSSS")
- 
-  const schema = Number(this.invoiceFormData.SCHEMA_AMOUNT) || 0;
-   console.log(schema,"SCHEMAAAAAAAAA")
-  this.invoiceFormData.NET_AMOUNT = +(gross - schema).toFixed(2);
-  console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
-}
+  getSchemaList() {
+    this.dataService.getSchema().subscribe((response: any) => {
+      this.schemaOptions = response.Data;
+      // console.log(this.schemaOptions,"SCHEMAAAAAAAA")
+    });
+  }
 
+  onSchemaChanged(e: any): void {
+    const selectedId = e.value;
 
-calculateSchemaAmount() {
-  const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
-  const percent = Number(this.invoiceFormData.SCHEMA_PERCENT) || 0;
-console.log(this.invoiceFormData.AMOUNT,"====================")
-  console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
+    const selectedSchema = this.schemaOptions.find(
+      (schema: any) => schema.ID === selectedId
+    );
 
-  this.invoiceFormData.SCHEMA_AMOUNT = (gross * percent / 100).toFixed(2);
-  this.updateNetAmount();
-}
+    if (selectedSchema) {
+      this.invoiceFormData.SCHEMA_PERCENT = selectedSchema.DISCOUNT;
+    } else {
+      this.invoiceFormData.SCHEMA_PERCENT = null;
+    }
+    this.calculateSchemaAmount();
+  }
 
+  // onSchemaChanged(e: any) {
+  //   const selectedId = e.value;
+  //   if (selectedId === 1) {
+  //     this.invoiceFormData.SCHEMA_PERCENT = '10';
+  //   } else {
+  //     this.invoiceFormData.SCHEMA_PERCENT = '25';
+  //   }
+  //   this.calculateSchemaAmount();
+  // }
 
+  updateNetAmount() {
+    const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
+    // console.log(gross,"GROSSSSSSSS")
 
+    const schema = Number(this.invoiceFormData.SCHEMA_AMOUNT) || 0;
+    //  console.log(schema,"SCHEMAAAAAAAAA")
+    this.invoiceFormData.NET_AMOUNT = +(gross - schema).toFixed(2);
+    // console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
+  }
+
+  calculateSchemaAmount() {
+    const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
+    const percent = Number(this.invoiceFormData.SCHEMA_PERCENT) || 0;
+    // console.log(this.invoiceFormData.AMOUNT,"====================")
+    // console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
+
+    this.invoiceFormData.SCHEMA_AMOUNT = ((gross * percent) / 100).toFixed(2);
+    this.updateNetAmount();
+  }
 
   getPaymentMode() {
     this.dataService.getDropdownData('PAYMENT_MODE').subscribe((data) => {
       this.paymentModes = data;
-      console.log(this.paymentModes, 'PAYMENTMODES');
+      // console.log(this.paymentModes, 'PAYMENTMODES');
     });
   }
 
   getInsuranceOptions() {
     this.dataService.getDropdownData('INSURANCE').subscribe((data) => {
       this.insuranceOptions = data;
-      console.log(this.insuranceOptions, 'SALARYHEAD');
+      // console.log(this.insuranceOptions, 'SALARYHEAD');
     });
   }
 
   getItems() {
     this.dataService.getDropdownData('ITEMS').subscribe((data) => {
-      this.items = data;
-      console.log(this.items, 'ITEMS');
+      this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+      // console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
     });
   }
 
@@ -266,6 +327,7 @@ console.log(this.invoiceFormData.AMOUNT,"====================")
     this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
       if (response?.data?.length) {
         const item = response.data[0];
+        this.itemsData = response.data;
 
         // Update the grid row values
         this.itemsGridRef?.instance?.cellValue(
@@ -279,43 +341,43 @@ console.log(this.invoiceFormData.AMOUNT,"====================")
           item.ITEM_NAME
         );
         this.itemsGridRef?.instance?.cellValue(rowIndex, 'PRICE', item.PRICE);
+        this.itemsGridRef?.instance?.columnOption('PRICE', 'editorOptions', {
+          format: '#,##0.00',
+          readOnly: item.IS_FIXED === true,
+          disabled: item.IS_FIXED === true,
+        });
         this.itemsGridRef?.instance?.cellValue(
           rowIndex,
           'IS_FIXED',
           item.IS_FIXED
         );
-              setTimeout(() => {
-        this.itemsGridRef?.instance?.focus(
-          this.itemsGridRef?.instance?.getCellElement(rowIndex, 'QUANTITY')
-        );
-      }, 0);
+        setTimeout(() => {
+          this.itemsGridRef?.instance?.focus(
+            this.itemsGridRef?.instance?.getCellElement(rowIndex, 'QUANTITY')
+          );
+        }, 0);
       }
     });
   }
 
-  
+  calculateAmount = (rowData: any) => {
+    const price = parseFloat(rowData.PRICE || 0);
+    const quantity = parseFloat(rowData.QUANTITY || 0);
+    return price * quantity;
+  };
 
-calculateAmount = (rowData: any) => {
-  const price = parseFloat(rowData.PRICE || 0);
-  const quantity = parseFloat(rowData.QUANTITY || 0);
-  return price * quantity;
-};
-
-onCalculateCustomSummary(e: any) {
-  console.log('onCalculateCustomSummary called', e);
-  if (e.summaryProcess === "start") {
-    e.totalValue = 0;
+  onCalculateCustomSummary(e: any) {
+    // console.log('onCalculateCustomSummary called', e);
+    if (e.summaryProcess === 'start') {
+      e.totalValue = 0;
+    }
+    if (e.summaryProcess === 'calculate') {
+      e.totalValue += e.value;
+    }
+    if (e.summaryProcess === 'finalize') {
+      // finalize if needed
+    }
   }
-  if (e.summaryProcess === "calculate") {
-    e.totalValue += e.value;
-  }
-  if (e.summaryProcess === "finalize") {
-    // finalize if needed
-  }
-}
-
-
-
 
   onCellChanged(e: any) {
     if (e.column.dataField === 'ITEM_ID') {
@@ -327,6 +389,34 @@ onCalculateCustomSummary(e: any) {
           selectedItem.DESCRIPTION
         );
       }
+    }
+  }
+
+  startMinuteUpdater() {
+    // Calculate delay to the next exact minute (e.g., if now is 10:05:23, delay 37 seconds)
+    const now = new Date();
+    const delay = (60 - now.getSeconds()) * 1000;
+
+    setTimeout(() => {
+      this.updateTime();
+
+      // After the first update, update every full minute
+      this.timerId = setInterval(() => {
+        this.updateTime();
+      }, 60000);
+    }, delay);
+  }
+
+  updateTime() {
+    this.invoiceFormData.INVOICE_DATE = new Date();
+    this.formattedInvoiceDate = this.getFormattedDateTime(
+      this.invoiceFormData.INVOICE_DATE
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
     }
   }
 
@@ -348,9 +438,9 @@ onCalculateCustomSummary(e: any) {
   getInvoiceNo() {
     const department = this.Department;
     this.dataService.getInvoiceNo(department).subscribe((response: any) => {
-      this.billNo = response.data;
-      this.invoiceFormData.INVOICE_NO = this.billNo;
-      console.log(this.billNo, 'Invoice no.');
+      this.invoiceFormData.INVOICE_NO = response.data;
+      // this.invoiceFormData.INVOICE_NO = this.billNo;
+      // console.log(this.billNo, 'Invoice no.');
     });
   }
 
@@ -362,27 +452,39 @@ onCalculateCustomSummary(e: any) {
     }).format(value);
   }
 
-  validateMobileNumber(value: string): void {
-    const regex = /^\+91-\d{10}$/;
-    this.mobileValid = regex.test(value);
+  onKeyDownMobile(event: any): void {
+    // First: limit input length to 10 digits
+    const inputValue = this.invoiceFormData.PATIENT_MOBILE || '';
+    const isDigit = /^[0-9]$/.test(event.event.key);
+
+    if (isDigit && inputValue.length >= 10) {
+      event.event.preventDefault();
+      return;
+    }
   }
 
   onMobileInput(event: any): void {
-    let input = event.event.target.value;
+    let input = event.event.target.value.replace(/\D/g, ''); // Remove non-digits
+    input = input.replace(/^0+/, ''); // Remove leading zeros
+    input = input.slice(0, 10); // Limit to 10 digits
+    input = input.replace(/^0+/, '');
+    this.mobileNumber = input;
+    this.invoiceFormData.PATIENT_MOBILE = input;
 
-    // Ensure +91- is always prefixed
-    if (!input.startsWith('+91-')) {
-      input = '+91-' + input.replace(/[^0-9]/g, '').slice(0, 10); // allow only digits
-    }
+    this.validateMobileNumber(input); // Validates as you type
+  }
 
-    // Extract the digits after +91-
-    const digits = input
-      .replace('+91-', '')
-      .replace(/[^0-9]/g, '')
-      .slice(0, 10);
-    this.mobileNumber = '+91-' + digits;
+  validateMobileNumber(value: string): void {
+    const regex = /^[1-9][0-9]{9}$/;
+    this.mobileValid = regex.test(value);
+  }
 
-    this.validateMobileNumber(this.mobileNumber);
+  onMobileBlur(): void {
+    this.mobileTouched = true; // mark as touched once user leaves field
+    // validate again on blur
+    this.mobileValid = /^[1-9][0-9]{9}$/.test(
+      this.invoiceFormData.PATIENT_MOBILE
+    );
   }
 
   onKeyDownHandler(event: any, nextField: string): void {
@@ -403,15 +505,75 @@ onCalculateCustomSummary(e: any) {
     }
   }
 
+  onPatientNameInput(event: any): void {
+    const inputElement = event.event.target;
+    const originalValue = inputElement.value;
+
+    // Remove any numeric characters from the value
+    const filteredValue = originalValue.replace(/[0-9]/g, '');
+
+    // Update the form model
+    this.invoiceFormData.PATIENT_NAME = filteredValue;
+
+    // Also update the actual input value if needed
+    inputElement.value = filteredValue;
+  }
+
   onSexKeyDown(event: any): void {
     if (event.event.key === 'Enter') {
-      // Focus on the grid and start editing the ITEM_CODE cell in the first row
       setTimeout(() => {
-        this.itemsGridRef?.instance?.focus();
-        this.itemsGridRef?.instance?.editCell(0, 'ITEM_CODE');
-      }, 50);
+        const grid = this.itemsGridRef?.instance;
+        if (grid) {
+          const visibleRows = grid.getVisibleRows();
+          if (visibleRows.length > 0) {
+            grid.cancelEditData(); // Cancel previous editing state if any
+
+            // Find the column index of ITEM_ID (or ITEM_CODE)
+            const columns = grid.getVisibleColumns();
+            const itemIdIndex = columns.findIndex(
+              (col) => col.dataField === 'ITEM_ID'
+            ); // or 'ITEM_CODE'
+
+            if (itemIdIndex !== -1) {
+              grid.editRow(0);
+
+              // Delay to ensure editRow() completes before editCell()
+              setTimeout(() => {
+                grid.editCell(0, itemIdIndex);
+              }, 50);
+            }
+          }
+        }
+      }, 100); // Let any form reset/focus finish
     }
   }
+
+  // onSexKeyDown(event: any): void {
+  //   if (event.event.key === 'Enter') {
+  //     setTimeout(() => {
+  //       const grid = this.itemsGridRef?.instance;
+  //       if (grid) {
+  //         // Ensure the grid is ready and data exists
+  //         const visibleRows = grid.getVisibleRows();
+  //         if (visibleRows.length > 0) {
+  //           grid.focus(); // Focus grid first
+  //           grid.editRow(0,0); // Start editing the first row
+  //           grid.editCell(0, 'ITEM_CODE'); // Then edit the specific cell
+  //         }
+  //       }
+  //     }, 100); // Increased timeout for stability after grid reset
+  //   }
+  // }
+
+  // onSexKeyDown(event: any): void {
+  //   if (event.event.key === 'Enter') {
+  //     // Focus on the grid and start editing the ITEM_CODE cell in the first row
+  //     setTimeout(() => {
+  //       this.itemsGridRef?.instance?.focus();
+  //       this.itemsGridRef?.instance?.editCell(0, 'ITEM_CODE');
+  //     }, 50);
+  //   }
+  // }
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -420,7 +582,16 @@ onCalculateCustomSummary(e: any) {
       // ITEM_ID
       if (e.dataField === 'ITEM_ID') {
         let enterPressedOnce = false;
+        const selectedItemIds = this.itemsGridRef.instance
+          .getVisibleRows()
+          .filter((row) => row.rowIndex !== rowIndex)
+          .map((row) => row.data?.ITEM_ID)
+          .filter((id) => id !== undefined && id !== null);
 
+        // 👇 Set dynamic dataSource for lookup
+        e.editorOptions.dataSource = this.items.filter(
+          (item) => !selectedItemIds.includes(item.ID)
+        );
         e.editorOptions.onKeyDown = (event: any) => {
           const key = event.event.key;
 
@@ -446,16 +617,15 @@ onCalculateCustomSummary(e: any) {
             }
           }
         };
-        
 
         // <-- ADD onValueChanged here -->
         e.editorOptions.onValueChanged = (args: any) => {
-          console.log('api called++++++++++++++');
+          // console.log('api called++++++++++++++');
           const selectedId = args.value;
           this.selectedItem = this.items.find(
             (item: any) => item.ID === selectedId
           );
-          console.log('Selected item:', this.selectedItem);
+          // console.log('Selected item:', this.selectedItem);
 
           if (this.selectedItem) {
             this.getSelectedItemsData(rowIndex);
@@ -464,214 +634,513 @@ onCalculateCustomSummary(e: any) {
           }
         };
       }
+      if (e.dataField === 'QUANTITY') {
+        e.editorOptions.onKeyDown = (event: any) => {
+          const key = event.event.key;
+          // console.log(this.itemsData,"IS_FIXEDDDDDDDDDDDDD====")
+          if (key === 'Enter') {
+            // event.event.preventDefault();
 
-if (e.dataField === 'QUANTITY') {
-  e.editorOptions.onKeyDown = (event: any) => {
-    const key = event.event.key;
-
-    if (key === 'Enter') {
-      event.event.preventDefault();
-
-      setTimeout(() => {
-        const grid = this.itemsGridRef?.instance;
-
-        // Ensure QUANTITY is not empty before adding a new row
-        const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
-        const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
-
-        if (itemIdValue && quantityValue != null && quantityValue !== '') {
-          // Optional: commit any changes
-          grid.saveEditData();
-
-          // Add a new row
-          // grid.addRow();
-
-           const maxRows = this.items.length;
-           console.log(maxRows,"MAXROWS")
-            const currentRows = grid.getVisibleRows().length;
-          // Focus new row (optional)
-         if (currentRows < maxRows) {
-            grid.addRow();
-
-            // Focus first cell of new row after adding
-            const newRowIndex = grid.getVisibleRows().length - 1;
             setTimeout(() => {
-              grid.editCell(newRowIndex, 'ITEM_ID');
+              const grid = this.itemsGridRef?.instance;
+
+              // Ensure QUANTITY is not empty before adding a new row
+              const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
+              const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
+
+              if (
+                itemIdValue &&
+                quantityValue != null &&
+                quantityValue !== ''
+              ) {
+                // Optional: commit any changes
+                grid.saveEditData();
+
+                // Add a new row
+                // grid.addRow();
+
+                const maxRows = this.items.length;
+                // console.log(maxRows, 'MAXROWS');
+                // console.log(this.items, 'ITEMSSSSSS');
+
+                // const currentRows = grid.getVisibleRows().length;
+                let currentRows = grid.option('dataSource')?.length ?? 0;
+                // console.log(currentRows, 'currentrow');
+                // Focus new row (optional)
+                if (currentRows < maxRows) {
+                  grid.addRow();
+                } else {
+                  // Optional: show some notification about max rows reached
+                  // console.warn('Maximum row limit reached');
+                  this.schemaSelect.instance.focus();
+                  this.schemaSelect.instance.open();
+                }
+              }
             }, 50);
-          } else {
-            // Optional: show some notification about max rows reached
-            console.warn('Maximum row limit reached');
-            this.schemaSelect.instance.focus();
-            this.schemaSelect.instance.open(); 
           }
-        }
-      }, 50);
-    }
-  };
-}
+          if (key === 'Tab') {
+            const grid = this.itemsGridRef?.instance;
 
-     
+            const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
+            const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
+            const hasError =
+              !itemIdValue ||
+              quantityValue == null ||
+              quantityValue === '' ||
+              isNaN(quantityValue) ||
+              quantityValue <= 0;
 
-      // UNIT_PRICE
-      // if (e.dataField === 'UNIT_PRICE') {
-      //   e.editorOptions.onKeyDown = (event: any) => {
-      //     const key = event.event.key;
+            if (hasError) {
+              event.event.preventDefault();
+              event.event.stopPropagation();
 
-      //     if (key === 'Enter') {
-      //       event.event.preventDefault();
+              // 🔁 Re-focus the same cell
+              grid.editCell(rowIndex, 'QUANTITY');
+              console.log('Quantity and Item ID are required.', 'error');
+              return;
+            }
 
-      //       setTimeout(() => {
-      //         this.itemsGridRef?.instance?.editCell(rowIndex, 'AMOUNT');
-      //       }, 50);
-      //     }
-      //   };
-      // }
+            // ✅ Only proceed if there's no error
+            setTimeout(() => {
+              grid.saveEditData();
 
-      // AMOUNT
-      // if (e.dataField === 'AMOUNT') {
-      //   e.editorOptions.onKeyDown = (event: any) => {
-      //     const key = event.event.key;
+              const maxRows = this.items.length;
+              const currentRows = grid.option('dataSource')?.length ?? 0;
 
-      //     if (key === 'Enter') {
-      //       event.event.preventDefault();
+              if (currentRows < maxRows) {
+                grid.addRow();
+              }
+               else {
+                this.schemaSelect.instance.focus();
+                this.schemaSelect.instance.open();
+              }
+            }, 100);
+          }
 
-      //       setTimeout(() => {
-      //         const grid = this.itemsGridRef?.instance;
-      //         const rowCount = grid?.getVisibleRows()?.length || 0;
+          //           if(key === 'Tab'){
 
-      //         if (rowIndex + 1 < rowCount) {
-      //           // Move to next row, first editable cell
-      //           grid?.editCell(rowIndex + 1, 'ITEM_ID');
-      //         } else {
-      //           // Optionally add a new row or stay put
-      //           // grid?.addRow();
-      //         }
-      //       }, 50);
-      //     }
-      //   };
-      // }
-    }
-  }
+          //                         setTimeout(() => {
+          //               const grid = this.itemsGridRef?.instance;
 
+          //               // Ensure QUANTITY is not empty before adding a new row
+          //               const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
+          //               const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
 
-  convertNumbersToStrings(obj: any): any {
-  if (Array.isArray(obj)) {
-    return obj.map(item => this.convertNumbersToStrings(item));
-  } else if (obj !== null && typeof obj === 'object') {
-    const result: any = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const value = obj[key];
-        if (typeof value === 'number') {
-          result[key] = value.toString();
-        } else {
-          result[key] = this.convertNumbersToStrings(value);
-        }
+          //               if (
+          //                 itemIdValue &&
+          //                 quantityValue != null &&
+          //                 quantityValue !== ''
+          //               ) {
+          //                 // Optional: commit any changes
+          //                 grid.saveEditData();
+
+          //                 // Add a new row
+          //                 // grid.addRow();
+          // // else {
+          //                   // Optional: show some notification about max rows reached
+          //                   console.warn('Maximum row limit reached');
+          //                   this.schemaSelect.instance.focus();
+          //                   this.schemaSelect.instance.open();
+          //                 // }
+          //               }
+          //             }, 100);
+          //           }
+          if (key === 'ArrowLeft') {
+            // event.event.preventDefault(); // Optional: prevent default left arrow behavior
+            this.itemsGridRef?.instance?.editCell(rowIndex, 'ITEM_ID');
+          }
+        };
       }
     }
-    return result;
   }
-  return obj;
-}
 
+  onRowRemoving(e: any) {
+    // console.log("deletion trigerred")
+    const index = this.items.findIndex((item) => item.ID === e.data.ID);
+    if (index !== -1) {
+      this.items.splice(index, 1); // actually remove it from the array
+    }
+  }
 
-save() {
-  console.log("SAVE TRIGGERED");
+  convertNumbersToStrings(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.convertNumbersToStrings(item));
+    } else if (obj !== null && typeof obj === 'object') {
+      const result: any = {};
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          const value = obj[key];
+          if (typeof value === 'number') {
+            result[key] = value.toString();
+          } else {
+            result[key] = this.convertNumbersToStrings(value);
+          }
+        }
+      }
+      return result;
+    }
+    return obj;
+  }
 
-  // Clone the data to avoid mutating the original form
-  const clonedData = { ...this.invoiceFormData };
+  handleGridKeyDown(e: any) {
+    if (e.event.key === 'Tab') {
+      e.event.preventDefault(); // Stop the default tab behavior
 
-  // Clean and transform INVOICE_ENTRY
-  clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || []).map(entry => ({
-    ITEM_ID: entry.ITEM_ID,
-    QUANTITY: entry.QUANTITY,
-    UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
-    AMOUNT: entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE)
-      ? (+entry.QUANTITY * +entry.PRICE).toFixed(2)
-      : '0.00',
-  }));
+      // Focus the schema select box
+      setTimeout(() => {
+        this.schemaSelect.instance.focus();
+        this.schemaSelect.instance.open(); // Optional: open the dropdown
+      }, 0);
+    }
+  }
 
-  // Format the date
+  onCellPrepared(e: any) {
+    if (
+      e.rowType === 'data' &&
+      e.column.dataField === 'QUANTITY' &&
+      e.cellElement === document.activeElement // focused cell
+    ) {
+      const quantity = e.data.QUANTITY;
+      if (!quantity || isNaN(quantity) || quantity <= 0) {
+        e.cellElement.style.backgroundColor = '#ffe6e6';
+      } else {
+        e.cellElement.style.backgroundColor = '';
+      }
+    }
+  }
 
-clonedData.INVOICE_DATE = new Date().toISOString();
+  onRowValidating(e: any) {
+    // Merge old and new data to get the complete row
+    const rowData = { ...e.oldData, ...e.newData };
 
-  // Convert numbers to strings
-  const dataToSave = this.convertNumbersToStrings(clonedData);
+    const quantity = rowData.QUANTITY;
+    const itemId = rowData.ITEM_ID;
 
-  // Save to backend
-  this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
-    console.log(response, 'SAVE');
-  if (response.flag == "1") {
-    notify(
-      {
-        message: 'Invoice Entered Successfully',
+    if (!itemId) {
+      e.isValid = false;
+      e.errorText = 'Item ID is required.';
+    } else if (!quantity || isNaN(quantity) || quantity <= 0) {
+      e.isValid = false;
+      e.errorText = 'Quantity is required';
+      this.hasQuantityError = true;
+    }
+    // else if(!netAmount || isNaN(netAmount) || netAmount <=0){
+    //   e.isValid = false;
+    //   e.errorText = 'Amount is required';
+    // }
+  }
+
+  showConfirm() {
+    this.confirmVisible = true;
+    setTimeout(() => {
+      this.readyToConfirm = true;
+    }, 300);
+  }
+
+  onConfirm(result: boolean) {
+    this.confirmVisible = false;
+    this.readyToConfirm = false;
+
+    if (result) {
+      this.submitForm();
+    } else {
+      notify('Save cancelled', 'warning', 2000);
+    }
+  }
+
+  submitForm() {
+    const result = this.invoiceFormGroup.instance.validate().isValid;
+
+    if (result) {
+      console.log('Form is valid. Submitting data...');
+      this.save(); // Your method to handle form submission
+    } else {
+      console.log('Form has errors. Please correct them.');
+    }
+  }
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleEnterKey(event: KeyboardEvent) {
+    if (this.confirmVisible && this.readyToConfirm) {
+      event.preventDefault();
+      this.onConfirm(true);
+    }
+  }
+
+  focusYesButton() {
+    setTimeout(() => {
+      this.yesButton?.instance?.focus();
+    });
+  }
+
+  handleRightArrow(event: any) {
+    if (event.event.key === 'ArrowRight') {
+      event.event.preventDefault();
+      this.noButton?.instance?.focus();
+    }
+  }
+
+  save() {
+    if (
+      !this.invoiceFormData.NET_AMOUNT ||
+      +this.invoiceFormData.NET_AMOUNT === 0
+    ) {
+      notify({
+        message: 'Quantity or Net amount is 0',
+        type: 'error',
+        displayTime: 3000,
         position: { at: 'top center', my: 'top center' },
-      },
-      'success'
+      });
+      return;
+    }
+    const clonedData = { ...this.invoiceFormData };
+    const invoiceEntries = clonedData.INVOICE_ENTRY || [];
+    const entries = clonedData.INVOICE_ENTRY || [];
+
+    const invalidEntry = entries.find(
+      (entry) =>
+        entry.ITEM_ID &&
+        (!entry.QUANTITY ||
+          isNaN(entry.QUANTITY) ||
+          +entry.QUANTITY <= 0 ||
+          !(entry.PRICE ?? entry.UNIT_PRICE))
     );
 
-  } else {
-    notify(
-      {
-        message: 'Invoice Not Generated',
-        position: { at: 'top right', my: 'top right' },
-      },
-      'error'
-    );
+    if (invalidEntry) {
+      notify({
+        message:
+          'Each item with an Item ID must have a valid Quantity and Price.',
+        type: 'error',
+        displayTime: 3000,
+        position: { at: 'top center', my: 'top center' },
+      });
+      return; // stop execution
+    }
+    clonedData.INVOICE_ENTRY = (clonedData.INVOICE_ENTRY || [])
+      .filter(
+        (entry) =>
+          entry.ITEM_ID && entry.QUANTITY && (entry.PRICE ?? entry.UNIT_PRICE)
+      )
+      .map((entry) => ({
+        ITEM_ID: entry.ITEM_ID,
+        QUANTITY: entry.QUANTITY,
+        UNIT_PRICE: entry.PRICE ?? entry.UNIT_PRICE,
+        AMOUNT: (+entry.QUANTITY * +(entry.PRICE ?? entry.UNIT_PRICE)).toFixed(
+          2
+        ),
+      }));
+
+    // Format the date
+
+    clonedData.INVOICE_DATE = new Date().toISOString();
+
+    // Convert numbers to strings
+    const dataToSave = this.convertNumbersToStrings(clonedData);
+
+    // Save to backend
+    this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
+      // console.log(response, 'SAVE');
+      if (response.flag == '1') {
+        this.printData = response.data;
+        console.log(this.printData, 'PRINTDATAAAAAAAAAAAA');
+        notify(
+          {
+            message: 'Invoice Entered Successfully',
+            position: { at: 'top center', my: 'top center' },
+          },
+          'success'
+        );
+        this.printInvoice(); 
+      } else {
+        notify(
+          {
+            message: 'Invoice Not Generated',
+            position: { at: 'top right', my: 'top right' },
+          },
+          'error'
+        );
+      }
+      this.invoiceFormData = {
+        INVOICE_NO: '',
+        INVOICE_DATE: new Date().toISOString(),
+        DEPARTMENT_ID: '1',
+        USER_ID: '1',
+        UHID: '',
+        PATIENT_NAME: '',
+        PATIENT_AGE: '',
+        PATIENT_SEX: '',
+        PATIENT_MOBILE: '',
+        WARD: '',
+        UNIT: '',
+        GROSS_AMOUNT: '',
+        SCHEMA_ID: '',
+        SCHEMA_PERCENT: '',
+        SCHEMA_AMOUNT: '',
+        NET_AMOUNT: '',
+        PAYMENT_MODE: '',
+        INSURANCE_ID: '',
+        INVOICE_ENTRY: [
+          {
+            ITEM_ID: '',
+
+            QUANTITY: '',
+            UNIT_PRICE: '',
+            AMOUNT: '',
+          },
+        ],
+      };
+
+      this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
+      this.getInvoiceNo();
+      this.invoiceFormGroup.instance.reset();
+
+      // Focus on ward field
+      setTimeout(() => {
+        this.wardBoxRef?.instance?.focus();
+      }, 100);
+    });
+
+    // this.printInvoice();
   }
+
+  cancel() {
     // Reset form
     this.invoiceFormData = {
-      INVOICE_DATE: new Date(),
-    };
-    this.getInvoiceNo();
+      PATIENT_NAME: '',
+      UHID: '',
+      PATIENT_AGE: '',
+      INVOICE_DATE: new Date().toISOString(),
+      PATIENT_MOBILE: '',
+      PATIENT_SEX: '',
+      INVOICE_ENTRY: [
+        {
+          ITEM_ID: '',
 
-    // Focus on ward field
+          QUANTITY: '',
+          UNIT_PRICE: '',
+          AMOUNT: '',
+        },
+      ],
+    };
+    this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
+    this.getInvoiceNo();
+    this.invoiceFormGroup.instance.reset();
+
+    this.getInvoiceNo();
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
     }, 0);
-  });
-}
+  }
 
+  validateMobile = (e: any) => {
+    const value = e.value || '';
+    const mobileRegex = /^[6-9]\d{9}$/;
+    return mobileRegex.test(value);
+  };
 
+  onPaymentModeChange(event: any): void {
+    setTimeout(() => {
+      if (this.selectedPaymentModeId === this.creditModeId) {
+        this.insuranceSelect?.instance?.focus();
+      } else {
+        this.saveButton?.instance?.focus();
+      }
+    }, 50);
+  }
+
+  ageNotZero = (e: any) => {
+    const value = e.value;
+    return value !== 0 && value !== '0'; // ensure age is not zero (number or string)
+  };
 
   printInvoice() {
-    const printContents = document.getElementById('invoiceToPrint')?.innerHTML;
-
-    if (printContents) {
-      const popupWin = window.open('', '_blank', 'width=800,height=900');
-      if (popupWin) {
-        popupWin.document.open();
-        popupWin.document.write(`
-        <html>
-          <head>
-            <title>Print Invoice</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-              }
-              table {
-                width: 100%;
-                border-collapse: collapse;
-              }
-              th, td {
-                border: 1px solid black;
-                padding: 5px;
-                text-align: left;
-              }
-              .dx-datagrid {
-                font-size: 12px;
-              }
-            </style>
-          </head>
-          <body onload="window.print(); window.close();">
-            ${printContents}
-          </body>
-        </html>
-      `);
-        popupWin.document.close();
-      }
+    const data = this.printData;
+    console.log(this.printData, '==========//////////');
+    if (!data) {
+      alert('No invoice data to print!');
+      return;
     }
+
+    const headersHtml = `
+    <div style="text-align:center; margin-bottom: 20px;">
+      <h3 style="margin: 0;">${data.DEPARTMENT || ''}</h3>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+      <tr>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Patient Name:</strong> ${
+          data.PATIENT_NAME || ''
+        }</td>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Age / Sex:</strong> ${
+          data.PATIENT_AGE || ''
+        } / ${data.PATIENT_SEX || ''}</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Mobile:</strong> ${
+          data.PATIENT_MOBILE || ''
+        }</td>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>UHID:</strong> ${
+          data.UHID || ''
+        }</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Date:</strong> ${new Date(
+          data.INVOICE_DATE
+        ).toLocaleString()}</td>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Invoice No:</strong> ${
+          data.INVOICE_NO || 'N/A'
+        }</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Ward:</strong> ${
+          data.WARD || ''
+        }</td>
+        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Unit:</strong> ${
+          data.UNIT || ''
+        }</td>
+      </tr>
+    </table>
+    <hr />
+  `;
+
+    const popupWin = window.open('', '_blank', 'width=800,height=900');
+    if (!popupWin) {
+      alert('Popup blocked! Please allow popups for this site.');
+      return;
+    }
+
+    popupWin.document.open();
+    popupWin.document.write(`
+    <html>
+      <head>
+        <title>Print Invoice</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          h3 { margin: 0; text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+          td { border: 1px solid #ccc; padding: 5px; }
+          hr { margin: 20px 0; }
+        </style>
+      </head>
+      <body>
+        ${headersHtml}
+      </body>
+    </html>
+  `);
+    popupWin.document.close();
+    popupWin.focus();
+
+    setTimeout(() => {
+      popupWin.print();
+      popupWin.close();
+    }, 500);
+  }
+
+  preventNonNumeric(event: any): void {
+    const input = event.event?.target as HTMLInputElement;
+    if (input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+    
   }
 }
 
@@ -705,6 +1174,8 @@ clonedData.INVOICE_DATE = new Date().toISOString();
     DxiGroupModule,
     FormsModule,
     DxNumberBoxModule,
+    DxValidationGroupModule,
+    DxAutocompleteModule,
   ],
   providers: [],
   declarations: [InvoiceAddComponent],

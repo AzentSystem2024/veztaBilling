@@ -1,3 +1,8 @@
+
+@use "../../../../../variables.scss" as *;
+@use "sass:math";
+
+
 .equal-button {
   width: 80px;     /* adjust as needed */
   height: 30px;     /* adjust to match desired size */
@@ -5,3 +10,11 @@
   font-size: 14px;
   text-align: center;
 }
+
+.flag-red {
+    color: red;
+  }
+  
+  .flag-green {
+    color:green;
+  }
