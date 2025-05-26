@@ -166,8 +166,8 @@ export class InvoiceAddComponent {
       console.log('Department Name:', this.userData.DEPARTMENT_ID);
       this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
       this.invoiceFormData.USER_ID = this.userData.USER_ID;
-      this.departmentName = this.userData.DEPARTMENT_NAME
-      console.log(this.departmentName,"DEPARTMENTNAME")
+      this.departmentName = this.userData.DEPARTMENT_NAME;
+      console.log(this.departmentName, 'DEPARTMENTNAME');
     } else {
       console.warn('No user data found in sessionStorage');
     }
@@ -565,8 +565,6 @@ export class InvoiceAddComponent {
     }
   }
 
-
-
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
       const rowIndex = e.row.rowIndex;
@@ -850,7 +848,6 @@ export class InvoiceAddComponent {
     }
   }
 
-
   @HostListener('document:keydown.enter', ['$event'])
   handleEnterKey(event: KeyboardEvent) {
     event.preventDefault();
@@ -872,7 +869,7 @@ export class InvoiceAddComponent {
           break;
         default:
           // fallback if none is focused
-          this.onConfirmPrint('Print & Preview');
+          this.onConfirmPrint('print');
       }
     }
   }
@@ -975,20 +972,22 @@ export class InvoiceAddComponent {
     // this.printInvoice();
   }
 
-  onConfirmPrint(action: 'Print & Preview' | 'no' | 'print') {
+  onConfirmPrint(action: 'print' | 'no' | 'Print & Preview') {
     this.printConfirmVisible = false; // close popup
 
-    if (action === 'Print & Preview') {
-      this.previewAndPrintInvoice(this.printData);
-    } else if (action === 'print') {
+    if (action === 'print') {
       this.onPrintDirectly(this.printData);
-    } else if (action === 'no') {
+    } 
+    else if(action === 'Print & Preview'){
+      this.previewAndPrintInvoice(this.printData);
+    }
+    else if (action === 'no') {
       notify('Print cancelled', 'warning', 2000);
     }
 
-        setTimeout(() => {
+    setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
-    }, 100); 
+    }, 100);
   }
 
   resetInvoiceForm() {
@@ -1084,7 +1083,7 @@ export class InvoiceAddComponent {
 
   previewAndPrintInvoice(data: any) {
     const printWindow = window.open('', '_blank', 'width=800,height=700');
-const htmlContent = `
+    const htmlContent = `
 <html>
   <head>
     <title>Hospital Bill</title>
@@ -1215,7 +1214,9 @@ const htmlContent = `
 
       <table class="totals">
         <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
-        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${
+      data.SCHEMA_AMOUNT
+    }</td></tr>
         <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
       </table>
     </div>
@@ -1223,15 +1224,14 @@ const htmlContent = `
 </html>
 `;
 
-
     if (printWindow) {
       printWindow.document.open();
       printWindow.document.write(htmlContent);
       printWindow.document.close();
     }
-        setTimeout(() => {
+    setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
-    }, 1500); 
+    }, 1500);
   }
 
   // onPrintDirectly() {
@@ -1239,20 +1239,24 @@ const htmlContent = `
   //   window.print();
   // }
 
-onPrintDirectly(data: any): void {
-  console.log('onPrintDirectly received data:', data); 
-  const printSection = document.getElementById('printSection');
-  if (!printSection) {
-    console.error('No printSection found');
-    return;
-  }
+  onPrintDirectly(data: any): void {
+    console.log('onPrintDirectly received data:', data);
+    const printSection = document.getElementById('printSection');
+    if (!printSection) {
+      console.error('No printSection found');
+      return;
+    }
 
-  printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
-  const printContent = printSection.innerHTML;
+    printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
+    const printContent = printSection.innerHTML;
 
-  const WindowPrt = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
-  if (WindowPrt) {
-    WindowPrt.document.write(`
+    const WindowPrt = window.open(
+      '',
+      '',
+      'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0'
+    );
+    if (WindowPrt) {
+      WindowPrt.document.write(`
       <html>
         <head>
           <title>Print Invoice</title>
@@ -1271,13 +1275,11 @@ onPrintDirectly(data: any): void {
         </script>
       </html>
     `);
+    }
   }
-}
 
-
-
-generatePrintContent(data: any): string {
-  return `
+  generatePrintContent(data: any): string {
+    return `
     <div class="bill-container">
       <div class="header">
         <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
@@ -1321,21 +1323,21 @@ generatePrintContent(data: any): string {
               <td>${item.UNIT_PRICE}</td>
               <td>${item.AMOUNT}</td>
             </tr>
-          `).join('')}
+          `
+          ).join('')}
         </tbody>
       </table>
 
       <table class="totals">
         <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
-        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${
+      data.SCHEMA_AMOUNT
+    }</td></tr>
         <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
       </table>
     </div>
   `;
-}
-
-
-
+  }
 
   preventNonNumeric(event: any): void {
     const input = event.event?.target as HTMLInputElement;

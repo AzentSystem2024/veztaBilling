@@ -112,6 +112,41 @@ export class SideNavigationMenuComponent
         },
       ],
     },
+        {
+      text: 'Report',
+      icon: 'fa fa-file-alt',
+      path: '',
+      items: [
+        {
+          text: 'Date Wise Summary',
+          path: '/datewise-summary',
+        },
+        {
+          text: 'Bill Wise Summary',
+          // path: '/invoice-entry',
+        },
+        {
+          text: 'Staff Wise Summary',
+          // path: '/invoice-entry',
+        },
+        {
+          text: 'Test Item Wise Summary',
+          // path: '/invoice-entry',
+        },
+        {
+          text: 'Scheme Wise Summary',
+          // path: '/invoice-entry',
+        },
+        {
+          text: 'Scheme Wise Bill wise Summary',
+          // path: '/invoice-entry',
+        },
+        {
+          text: 'Patiewnt Wise Summary',
+          // path: '/invoice-entry',
+        },
+      ],
+    },
   ];
 
   @Input()

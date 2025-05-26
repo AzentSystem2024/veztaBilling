@@ -22,6 +22,7 @@ import { DepartmentComponent } from './pages/MASTER PAGES/Departments/department
 import { ItemComponent } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent } from './pages/MASTER PAGES/schema/schema.component';
+import { DateWiseSummaryComponent } from './pages/REPORTS/dateWiseSummary/date-wise-summary/date-wise-summary.component';
 const routes: Routes = [
   {
     path: '',
@@ -100,6 +101,11 @@ const routes: Routes = [
       {
         path: 'invoice-entry',
         component: InvoiceAddComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'datewise-summary',
+        component: DateWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },
      
