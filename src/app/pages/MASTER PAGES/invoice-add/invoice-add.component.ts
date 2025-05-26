@@ -565,32 +565,7 @@ export class InvoiceAddComponent {
     }
   }
 
-  // onSexKeyDown(event: any): void {
-  //   if (event.event.key === 'Enter') {
-  //     setTimeout(() => {
-  //       const grid = this.itemsGridRef?.instance;
-  //       if (grid) {
-  //         // Ensure the grid is ready and data exists
-  //         const visibleRows = grid.getVisibleRows();
-  //         if (visibleRows.length > 0) {
-  //           grid.focus(); // Focus grid first
-  //           grid.editRow(0,0); // Start editing the first row
-  //           grid.editCell(0, 'ITEM_CODE'); // Then edit the specific cell
-  //         }
-  //       }
-  //     }, 100); // Increased timeout for stability after grid reset
-  //   }
-  // }
 
-  // onSexKeyDown(event: any): void {
-  //   if (event.event.key === 'Enter') {
-  //     // Focus on the grid and start editing the ITEM_CODE cell in the first row
-  //     setTimeout(() => {
-  //       this.itemsGridRef?.instance?.focus();
-  //       this.itemsGridRef?.instance?.editCell(0, 'ITEM_CODE');
-  //     }, 50);
-  //   }
-  // }
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -875,17 +850,6 @@ export class InvoiceAddComponent {
     }
   }
 
-  //   @HostListener('document:keydown.enter', ['$event'])
-  // handleEnterKey(event: KeyboardEvent) {
-  //   event.preventDefault();
-
-  //   if (this.confirmVisible && this.readyToConfirm) {
-  //     this.onConfirm(true);
-  //   } else if (this.printConfirmVisible) {
-  //     this.onConfirmPrint(true);
-  //     // this.printConfirmVisible = false;
-  //   }
-  // }
 
   @HostListener('document:keydown.enter', ['$event'])
   handleEnterKey(event: KeyboardEvent) {
