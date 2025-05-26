@@ -115,16 +115,20 @@
     [showCloseButton]="true"
     [width]="PopupWidth"
     >
-    <form [formGroup]="formsource" class="mt-3">
+    <dx-form [formGroup]="formsource" class="mt-3">
       
-      
-      <input dataField="HOSPITAL_NAME" formControlName="Hospital" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+      <dxi-item>
+      <dx-text-box formControlName="Hospital" label="Hospital Name" class=" form-control" type="text" labelMode="floating">
+      </dx-text-box>
+      </dxi-item>
 
+      <dxi-item>
           <div class="d-flex justify-content-end mt-4">
             <button  class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"   class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
-    </form>
+              </dxi-item>
+    </dx-form>
      
     </dx-popup>
     
@@ -139,9 +143,9 @@
         [shading]="false"
         [width]="PopupWidth"
       >
-        <form [formGroup]="formsource" class="mt-3">
+        <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <input formControlName="Hospital" label="Hospital" class=" form-control" type="text"  placeholder="Hospital name" >
+            <dx-text-box formControlName="Hospital" label="Hospital Name" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
           </dxi-item>
       
           <dxi-item>
@@ -160,6 +164,6 @@
             </button>
             <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
-        </form>
+        </dx-form>
       </dx-popup>
     

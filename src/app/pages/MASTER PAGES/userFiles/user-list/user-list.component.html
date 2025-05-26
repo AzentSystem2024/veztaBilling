@@ -120,28 +120,33 @@
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
-    <dxi-item [label]="{ text: 'UserName', showColon: false }">
-      <input
+    <dxi-item>
+      <dx-text-box
         type="text"
         formControlName="UserName"
         class="form-control mb-2"
         label="UserName"
-    /></dxi-item>
-    <dxi-item [label]="{ text: 'LoginName', showColon: false }">
-      <input
+        labelMode="floating"></dx-text-box>
+    </dxi-item>
+    <dxi-item>
+      <dx-text-box
         type="text"
         formControlName="LoginName"
         class="form-control mb-2"
-      />
+        label="LoginName"
+        labelMode="floating"
+      ></dx-text-box>
     </dxi-item>
 
 
     <dxi-item
-      [label]="{ text: 'Password', showColon: false }"
+
       [editorOptions]="{ mode: 'password' }"
     >
     <dx-text-box
         formControlName="LoginPassword"
+        label="Password"
+        labelMode="floating"
         class="form-control mb-2"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
@@ -164,13 +169,14 @@
     </dxi-item>
 
     <dxi-item
-      [label]="{ text: 'Confirm Password', showColon: false }"
       [editorOptions]="{ mode: 'password' }"
     >
     
       <dx-text-box
         [mode]="confirmPasswordMode"
         formControlName="ConfirmPassword"
+        label="Confirm Password"
+        labelMode="floating"
         class="form-control mb-2"
         [height]="35"
         [buttons]="[
@@ -194,10 +200,12 @@
 
     
     <!-- DROPDOWN ROLES -->
-    <dxi-item [label]="{ text: 'UserType',showColon:false}">
+    <dxi-item>
       <dx-select-box
         [items]="UserType"
         class="mt-2"
+        label="UserType"
+        labelMode="floating"
         alignment="center"
         [(value)]="selectedUserType"
         formControlName="UserType"
@@ -264,19 +272,20 @@
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
-    <dxi-item [label]="{ text: 'UserName', showColon: false }">
-      <dx-text-box formControlName="UserName" class="mb-2"></dx-text-box
+    <dxi-item >
+      <dx-text-box formControlName="UserName" class="mb-2" label="UserName" labelMode="floating"></dx-text-box
     ></dxi-item>
-    <dxi-item [label]="{ text: 'LoginName', showColon: false }">
-      <dx-text-box formControlName="LoginName" class="mb-2"></dx-text-box
+    <dxi-item>
+      <dx-text-box formControlName="LoginName" class="mb-2" label="LoginName" labelMode="floating"></dx-text-box
     ></dxi-item>
 
     <dxi-item
-      [label]="{ text: 'Password', showColon: false }"
       [editorOptions]="{ mode: 'password' }"
     >
     <dx-text-box
         formControlName="LoginPassword"
+        label="Password"
+        labelMode="floating"
         class="form-control mb-2"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
@@ -299,13 +308,14 @@
     </dxi-item>
 
    <dxi-item
-      [label]="{ text: 'Confirm Password', showColon: false }"
       [editorOptions]="{ mode: 'password' }"
     >
     
       <dx-text-box
         [mode]="confirmPasswordMode"
         formControlName="ConfirmPassword"
+        label="Confirm Password"
+        labelMode="floating"
         class="form-control mb-2"
         [height]="35"
         [buttons]="[
@@ -339,11 +349,13 @@
       </dxi-item>
 
     <!-- DROPDOWN ROLES -->
-    <dxi-item [label]="{ text: 'UserType',showColon:false }">
+    <dxi-item>
       <dx-select-box
         [items]="UserType"
         class="mt-2"
         alignment="center"
+        label="UserType"
+        labelMode="floating"
         [(value)]="user_Id_value"
         valueExpr="ID"
         displayExpr="DESCRIPTION"

@@ -19,6 +19,9 @@ export class DashboardComponent {
 
  
   constructor(private dataService: DataService) {}
+ngOnInit(): void {
+  console.log('Dashboard loaded!');
+}
 
   refresh = () => {
     this.dataGrid.instance.refresh();

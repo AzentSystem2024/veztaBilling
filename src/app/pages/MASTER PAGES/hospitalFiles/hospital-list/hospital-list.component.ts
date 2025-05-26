@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -62,7 +62,7 @@ openPopup(){
 constructor(private fb:FormBuilder ,private dataservice: DataService) {
  this.formsource=this.fb.group({
   Id: [null],
-  Hospital:["",[Validators.required]],
+  Hospital:[null,[Validators.required]],
   Inactive:[false,[Validators.required]]
 
  })
@@ -313,7 +313,7 @@ if(ID){
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule,CommonModule, DxTextBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxButtonModule,CommonModule,DxValidatorModule ,DxTextBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [HospitalListComponent],

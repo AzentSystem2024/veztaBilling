@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxValidatorModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -162,18 +162,6 @@ addData(){
     return; // Stop further execution
   }
 
-  // Check if Discount is out of valid range
-    if (Discount < 0 || Discount > 100) {
-      notify(
-        {
-          message: 'The discount must be between 0 and 100',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 500,
-        },
-        'error'
-      );
-      return; // Prevent saving
-    }
 
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
@@ -192,6 +180,21 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
     );
     return;
  }
+
+ const discountValue = parseFloat(this.formsource.Discount); // Convert to number
+
+  // Only show notify when out of range
+  if (discountValue < 0 || discountValue > 100) {
+    notify(
+      {
+        message: 'The discount must be between 0 and 100',
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 2000,
+        type: 'error',
+      }
+    );
+    return;
+  }
 
     if(Schema){
       console.log("function called");
@@ -292,7 +295,7 @@ this.get_Schema_List()
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule,DxValidatorModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxTextBoxModule ,DxButtonModule,DxValidatorModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [SchemaComponent],
