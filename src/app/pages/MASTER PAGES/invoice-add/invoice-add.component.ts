@@ -1017,7 +1017,7 @@ export class InvoiceAddComponent {
     if (action === 'Print & Preview') {
       this.previewAndPrintInvoice(this.printData);
     } else if (action === 'print') {
-      this.onPrintDirectly();
+      this.onPrintDirectly(this.printData);
     } else if (action === 'no') {
       notify('Print cancelled', 'warning', 2000);
     }
@@ -1275,9 +1275,16 @@ const htmlContent = `
   //   window.print();
   // }
 
-onPrintDirectly(): void {
-  const printContent = document.getElementById('printSection')?.innerHTML;
-  if (!printContent) return;
+onPrintDirectly(data: any): void {
+  console.log('onPrintDirectly received data:', data); 
+  const printSection = document.getElementById('printSection');
+  if (!printSection) {
+    console.error('No printSection found');
+    return;
+  }
+
+  printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
+  const printContent = printSection.innerHTML;
 
   const WindowPrt = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
   if (WindowPrt) {
@@ -1300,18 +1307,69 @@ onPrintDirectly(): void {
         </script>
       </html>
     `);
-// Adjust timing if needed
   }
 }
 
 
-generateInvoiceHTML(data: any): string {
+
+generatePrintContent(data: any): string {
   return `
-    <h2 style="text-align: center;">DEPARTMENT OF CARDIOLOGY</h2>
-    <p><strong>Name:</strong> ${data.name}</p>
-    <!-- Add your invoice structure here -->
+    <div class="bill-container">
+      <div class="header">
+        <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
+        <h4>MEDICAL COLLEGE, KOZHIKODE</h4>
+      </div>
+      <table class="info-table">
+        <tr>
+          <td><strong>Name:</strong> ${data.PATIENT_NAME}</td>
+          <td><strong>Age:</strong> ${data.PATIENT_AGE}</td>
+          <td><strong>Sex:</strong> ${data.PATIENT_SEX}</td>
+        </tr>
+        <tr>
+          <td><strong>UHID:</strong> ${data.UHID}</td>
+          <td><strong>Mobile:</strong> ${data.PATIENT_MOBILE}</td>
+          <td><strong>Date:</strong> ${data.INVOICE_DATE}</td>
+        </tr>
+        <tr>
+          <td><strong>Hospital:</strong> MCH KOZHIKODE</td>
+          <td><strong>Invoice No.:</strong> ${data.INVOICE_NO}</td>
+        </tr>
+      </table>
+
+      <div class="section-title">Invoice Items</div>
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price (₹)</th>
+            <th>Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.INVOICE_ENTRY.map(
+            (item, index) => `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${item.ITEM_NAME}</td>
+              <td>${item.QUANTITY}</td>
+              <td>${item.UNIT_PRICE}</td>
+              <td>${item.AMOUNT}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <table class="totals">
+        <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
+      </table>
+    </div>
   `;
 }
+
 
 
 
