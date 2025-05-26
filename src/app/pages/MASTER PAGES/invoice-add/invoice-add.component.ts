@@ -872,7 +872,7 @@ export class InvoiceAddComponent {
           break;
         default:
           // fallback if none is focused
-          this.onConfirmPrint('Print & Preview');
+          this.onConfirmPrint('print');
       }
     }
   }
