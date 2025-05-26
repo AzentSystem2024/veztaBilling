@@ -114,11 +114,7 @@ this.formsource.patchValue({
     this.isAddPop = false;
     this.isEditPop = false;
     this.formsource.reset({
-      ID: null,
-      DepartmentName: '',
-      Hospital: '',
-   
-      bill_prefix:''
+      hospital:null
     });
   }
   //====================Get department List=================

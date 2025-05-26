@@ -121,6 +121,7 @@
   [height]="370"
   [shading]="false"
   (onHiding)="closePopup()"
+
 >
   <form [formGroup]="formsource">
     <!-- Code -->
@@ -134,6 +135,12 @@
       label="Code"
       labelMode="floating"
     ></dx-text-box>
+<dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="Please select payment mode"
+                  ></dxi-validation-rule>
+                </dx-validator>
 
     <!-- Item Name -->
 
