@@ -3,6 +3,7 @@
     id="gridContainer"
     [dataSource]="departments"
     [remoteOperations]="true"
+    [remoteOperations]="true"
     [allowColumnReordering]="true"
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
@@ -101,7 +102,6 @@
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
 
-
   </dx-data-grid>
 </div>
 <!-- =========== Add the Department================ -->
@@ -124,16 +124,7 @@
     ></dx-text-box>
 
     <!-- Validation message under the textbox -->
-    <div
-      *ngIf="
-        formsource.get('DepartmentName')?.touched &&
-        formsource.get('DepartmentName')?.invalid
-      "
-    >
-      <small class="text-danger" style="margin-left: 90px; font-weight: 500"
-        >*This field is required</small
-      >
-    </div>
+ 
 
     <dx-select-box
       formControlName="Hospital"
@@ -149,16 +140,7 @@
     >
     </dx-select-box>
 
-    <div
-      *ngIf="
-        formsource.get('Hospital')?.touched &&
-        formsource.get('Hospital')?.invalid
-      "
-    >
-      <small class="text-danger" style="margin-left: 90px; font-weight: 500"
-        >*This field is required</small
-      >
-    </div>
+  
 
     <!-- Bill Prefix -->
 
@@ -226,16 +208,7 @@
       (onValueChanged)="onDepartmentChanged($event)"
     ></dx-text-box>
 
-    <div
-      *ngIf="
-        formsource.get('DepartmentName')?.touched &&
-        formsource.get('DepartmentName')?.invalid
-      "
-    >
-      <small class="text-danger" style="margin-left: 90px; font-weight: 500"
-        >*This field is required</small
-      >
-    </div>
+
 
     <dx-select-box
       style="margin-top: 20px"
@@ -248,16 +221,7 @@
     ></dx-select-box>
 
     <!-- Validation message -->
-    <div
-      *ngIf="
-        formsource.get('Hospital')?.touched &&
-        formsource.get('Hospital')?.invalid
-      "
-    >
-      <small class="text-danger" style="margin-left: 90px; font-weight: 500"
-        >*This field is required</small
-      >
-    </div>
+ 
     <div class="d-flex align-items-center justify-content-between mt-3">
       <!-- Bill Prefix -->
 

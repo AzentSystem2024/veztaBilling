@@ -61,7 +61,9 @@ formsource:FormGroup
   is_fixed_value: boolean;
   name_value: any;
   price_value: any;
-
+   readonly allowedPageSizes: any = [5, 10, 'all'];
+     displayMode: any = 'full';
+       showPageSizeSelector = true;
 
 
 constructor(private dataservice:DataService,private fb:FormBuilder){
