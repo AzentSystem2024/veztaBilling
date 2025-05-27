@@ -30,13 +30,16 @@
           [scrolling]="{ mode: 'virtual' }"
           rowAlternationInterval="2"
           [selection]="{ mode: 'single' }"
-          [editing]="{ mode: 'cell', allowUpdating: true }"
+     [editing]="{ mode: 'cell', allowUpdating: true }"
           (onEditorPreparing)="onEditorPreparing($event)"
           (onCellValueChanged)="onCellChanged($event)"
           (onContentReady)="onGridContentReady($event)"
           [editing]="{ mode: 'row', allowUpdating: true, allowDeleting: true, allowAdding: true, useIcons: true }"
+          
            (onRowRemoving)="onRowRemoving($event)"
            (onKeyDown)="handleGridKeyDown($event)"
+           (onCellPrepared)="onCellPrepared($event)"
+            (onRowValidating)="onRowValidating($event)"
         >
           <!-- <dxo-editing mode="row" [allowAdding]="true" [allowDeleting]="true"></dxo-editing> -->
           <dxo-load-panel [showPane]="false"></dxo-load-panel>
@@ -114,7 +117,7 @@
                     #departmentBoxRef
                     label="Department"
                     labelMode="floating"
-                    [(value)]="invoiceFormData.DEPARTMENT"
+                    [(value)]="departmentName"
                     [width]="200"
                     [readOnly]="true"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
@@ -131,6 +134,7 @@
                       labelMode="floating"
                       [(value)]="invoiceFormData.PATIENT_NAME"
                       [width]="300"
+                      (onInput)="onPatientNameInput($event)"
                       (onKeyDown)="onKeyDownHandler($event, 'mobileBoxRef')"
                     >
                       <dx-validator>
@@ -150,13 +154,15 @@
                     [width]="200"
                     [(value)]="invoiceFormData.PATIENT_MOBILE"
                     (onInput)="onMobileInput($event)"
-                    (onInput)="validateMobileNumber($event.event.target.value)"
-                    (onBlur)="validateMobileNumber(invoiceFormData.PATIENT_MOBILE)"
+                    (onBlur)="onMobileBlur()"
                     [isValid]="mobileValid"
+                    [validationStatus]="(mobileValid || !mobileTouched) ? 'valid' : 'invalid'"
                     [validationMessageMode]="'always'"
                     [validationError]="
-                      !mobileValid ? { message: 'Enter a valid number' } : null
+                      !mobileValid ? { message: 'Enter a 10 digit number' } : null
                     "
+                    [elementAttr]="{ maxlength: 10 }"
+                    (onKeyDown)="onKeyDownMobile($event)"
                     (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
                   >
                     <dx-validator>
@@ -228,7 +234,7 @@
                     [width]="100"
                     [dataSource]="sexOptions"
                     displayExpr="name"
-                    valueExpr="id"
+                    valueExpr="name"
                     (onKeyDown)="onSexKeyDown($event)"
                   >
                     <dx-validator>
@@ -453,3 +459,46 @@
 </div>
 
 </dx-popup>
+
+
+
+<!-- PRINT POPUP -->
+<dx-popup
+  [(visible)]="printConfirmVisible"
+  [showTitle]="true"
+  title="Print Invoice"
+  [width]="300"
+  [height]="170"
+  [dragEnabled]="false"
+  [showCloseButton]="false"
+  [closeOnOutsideClick]="false"
+>
+  <div class="popup-body">
+    <p>Do you want to print the invoice?</p>
+
+    <div class="popup-footer">
+      <dx-button
+        text="No"
+        type="normal"
+        stylingMode="outlined"
+        (onClick)="onConfirmPrint('no')"
+      ></dx-button>
+      <dx-button
+        text="Print"
+        type="default"
+        stylingMode="contained"
+        (onClick)="onConfirmPrint('print')"
+      ></dx-button>
+      <dx-button
+        text="Print & Preview"
+        type="default"
+        stylingMode="contained"
+        (onClick)="onConfirmPrint('Print & Preview')"
+      ></dx-button>
+      
+      
+    </div>
+   
+  </div>
+</dx-popup>
+

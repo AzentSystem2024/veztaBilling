@@ -36,11 +36,12 @@ import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/de
 import { ItemModule } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent, InsuranceModule } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schema.component';
+import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staff-wise-summary/staff-wise-summary.component';
 
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, StaffWiseSummaryComponent],
   imports: [
     TaskListModule,
     BrowserModule,

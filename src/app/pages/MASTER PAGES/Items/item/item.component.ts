@@ -201,7 +201,7 @@ items_list() {
 
 addData() {
   console.log('===========ad data=======');
-  
+   this.formsource.markAllAsTouched();
   console.log(this.formsource);
 
   // Check if required fields are filled
