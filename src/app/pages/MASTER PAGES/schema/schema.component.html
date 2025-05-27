@@ -117,7 +117,7 @@
       <dx-popup
     [(visible)]="addPopup"
     [width]="400"
-    [height]="280"
+    [height]="300"
     title="Schema"
     [shading]="false"
     [showCloseButton]="true"
@@ -127,7 +127,7 @@
       
       <dxi-item>
         <dx-text-box
-        formControlName="Schema Name" label="SchemaName" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
+        formControlName="Schema" label="SchemaName" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
       <!-- </input> -->
       </dxi-item>
      
@@ -140,10 +140,12 @@
 </dx-number-box>
       </dxi-item>
 
+      <dxi-item>
           <div class="d-flex justify-content-end mt-4">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)='closePop()'>Cancel</button>
             <dx-button text="Save"  class="equal-button" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
               </div>
+        </dxi-item>
     </dx-form>
      
     </dx-popup>
@@ -154,7 +156,7 @@
         [title]="'Edit Schema'"
         [(visible)]="editPopup"
         [width]="400"
-        [height]="280"
+        [height]="350"
         [closeOnOutsideClick]="true"
         [showCloseButton]="true"
         [shading]="false"
