@@ -29,6 +29,9 @@ import {
   DxoLookupModule,
   DxiItemModule,
   DxiGroupModule,
+  DxoPageSizeModule,
+  DxoPagerModule,
+  DxoPagingModule,
 } from 'devextreme-angular/ui/nested';
 import {
   ExportingEvent,
@@ -42,6 +45,13 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./department.component.scss'],
 })
 export class DepartmentComponent {
+   readonly allowedPageSizes: any = [5, 10, 'all'];
+  displayMode: any = 'full';
+  showPageSizeSelector = true;
+  showHeaderFilter: true;
+  showFilterRow = true;
+  isFilterOpened = false;
+  GridSource: any;
   formsource: FormGroup;
   isAddPop: boolean = false;
   isEditPop: boolean = false;
@@ -346,7 +356,10 @@ if (isDuplicate) {
     DxiGroupModule,
     DxNumberBoxModule,
     ReactiveFormsModule,
-    DxTooltipModule 
+    DxTooltipModule ,
+    DxoPageSizeModule,
+    DxoPagerModule,
+    DxoPagingModule
   ],
   providers: [],
   declarations: [DepartmentComponent],
