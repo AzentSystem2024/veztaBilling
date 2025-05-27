@@ -66,6 +66,7 @@ constructor(private fb:FormBuilder ,private dataservice: DataService) {
   Inactive:[false,[Validators.required]]
 
  })
+ 
    this.get_Hospital_List()
 }
 
