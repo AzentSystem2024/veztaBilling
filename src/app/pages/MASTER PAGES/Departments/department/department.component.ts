@@ -1,6 +1,9 @@
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import notify from 'devextreme/ui/notify';
+import { Router, NavigationStart } from '@angular/router';
+
+import { Subscription } from 'rxjs';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   DxSelectBoxModule,
@@ -41,7 +44,9 @@ import { DataService } from 'src/app/services';
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.scss'],
 })
-export class DepartmentComponent {
+export class DepartmentComponent  {
+    private routerSubscription!: Subscription;
+
     departments: any = [];
   formsource: FormGroup;
   isAddPop: boolean = false;
@@ -54,10 +59,10 @@ selected_Data:any
   hospital_Dropdown_list: any=[]
   bill_prefix_value: any;
   id_Value: any;
-   readonly allowedPageSizes: any = [5, 10, 'all'];
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
      displayMode: any = 'full';
        showPageSizeSelector = true;
-  constructor(private fb: FormBuilder, private dataservice: DataService) {
+  constructor(private fb: FormBuilder, private dataservice: DataService,private router: Router) {
     this.formsource = this.fb.group({
       ID: [null],
       DepartmentName:  ['', Validators.required],
@@ -76,6 +81,21 @@ this.formsource.patchValue({
     this.getDepartment_list();
     this.hospital_Dropdown()
   }
+
+  ngOnInit() {
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isAddPop = false; // ✅ Close popup on route change
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+  
   
   //=========================onEditingStart=========================
 
