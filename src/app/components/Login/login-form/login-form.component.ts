@@ -81,7 +81,13 @@ async onSubmit(event: Event) {
 
       if (response.flag === 1) {
         // Save user data once
-        localStorage.setItem('userData', JSON.stringify(response));
+localStorage.setItem('userData', JSON.stringify(response));
+
+const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+console.log('Saved userData:', savedUserData);
+
+sessionStorage.setItem('savedUserData', JSON.stringify(savedUserData));
+
 
         // Navigate to dashboard
         this.router.navigate(['/dashboard']).then(() => {

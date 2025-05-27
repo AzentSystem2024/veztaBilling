@@ -114,7 +114,7 @@ export class InvoiceAddComponent {
   invoiceFormData: any = {
     INVOICE_NO: '',
     INVOICE_DATE: new Date(),
-    DEPARTMENT_ID: '1',
+    DEPARTMENT_ID: '',
     USER_ID: '1',
     UHID: '',
     PATIENT_NAME: '',
@@ -151,10 +151,27 @@ export class InvoiceAddComponent {
   printData: any;
   hasQuantityError: boolean = false;
   printConfirmVisible = false;
+  userData: any;
+  departmentName: any;
 
   constructor(private dataService: DataService) {}
 
   ngOnInit() {
+    const storedData = sessionStorage.getItem('savedUserData');
+    if (storedData) {
+      this.userData = JSON.parse(storedData);
+      console.log('User Data in InvoiceComponent:', this.userData);
+
+      // Example: Accessing department name
+      console.log('Department Name:', this.userData.DEPARTMENT_ID);
+      this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+      this.invoiceFormData.USER_ID = this.userData.USER_ID;
+      this.departmentName = this.userData.DEPARTMENT_NAME
+      console.log(this.departmentName,"DEPARTMENTNAME")
+    } else {
+      console.warn('No user data found in sessionStorage');
+    }
+
     this.getInvoiceNo();
     this.invoiceFormData.INVOICE_DATE = new Date();
     this.formattedInvoiceDate = this.getFormattedDateTime(
@@ -548,32 +565,7 @@ export class InvoiceAddComponent {
     }
   }
 
-  // onSexKeyDown(event: any): void {
-  //   if (event.event.key === 'Enter') {
-  //     setTimeout(() => {
-  //       const grid = this.itemsGridRef?.instance;
-  //       if (grid) {
-  //         // Ensure the grid is ready and data exists
-  //         const visibleRows = grid.getVisibleRows();
-  //         if (visibleRows.length > 0) {
-  //           grid.focus(); // Focus grid first
-  //           grid.editRow(0,0); // Start editing the first row
-  //           grid.editCell(0, 'ITEM_CODE'); // Then edit the specific cell
-  //         }
-  //       }
-  //     }, 100); // Increased timeout for stability after grid reset
-  //   }
-  // }
 
-  // onSexKeyDown(event: any): void {
-  //   if (event.event.key === 'Enter') {
-  //     // Focus on the grid and start editing the ITEM_CODE cell in the first row
-  //     setTimeout(() => {
-  //       this.itemsGridRef?.instance?.focus();
-  //       this.itemsGridRef?.instance?.editCell(0, 'ITEM_CODE');
-  //     }, 50);
-  //   }
-  // }
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -709,8 +701,7 @@ export class InvoiceAddComponent {
 
               if (currentRows < maxRows) {
                 grid.addRow();
-              }
-               else {
+              } else {
                 this.schemaSelect.instance.focus();
                 this.schemaSelect.instance.open();
               }
@@ -859,11 +850,30 @@ export class InvoiceAddComponent {
     }
   }
 
+
   @HostListener('document:keydown.enter', ['$event'])
   handleEnterKey(event: KeyboardEvent) {
+    event.preventDefault();
+
     if (this.confirmVisible && this.readyToConfirm) {
-      event.preventDefault();
       this.onConfirm(true);
+    } else if (this.printConfirmVisible) {
+      const activeElementId = document.activeElement?.id;
+
+      switch (activeElementId) {
+        case 'btn-no':
+          this.onConfirmPrint('no');
+          break;
+        case 'btn-yes':
+          this.onConfirmPrint('Print & Preview');
+          break;
+        case 'btn-print':
+          this.onConfirmPrint('print');
+          break;
+        default:
+          // fallback if none is focused
+          this.onConfirmPrint('print');
+      }
     }
   }
 
@@ -950,7 +960,7 @@ export class InvoiceAddComponent {
           },
           'success'
         );
-        this.printInvoice(); 
+        this.printConfirmVisible = true;
       } else {
         notify(
           {
@@ -960,47 +970,66 @@ export class InvoiceAddComponent {
           'error'
         );
       }
-      this.invoiceFormData = {
-        INVOICE_NO: '',
-        INVOICE_DATE: new Date().toISOString(),
-        DEPARTMENT_ID: '1',
-        USER_ID: '1',
-        UHID: '',
-        PATIENT_NAME: '',
-        PATIENT_AGE: '',
-        PATIENT_SEX: '',
-        PATIENT_MOBILE: '',
-        WARD: '',
-        UNIT: '',
-        GROSS_AMOUNT: '',
-        SCHEMA_ID: '',
-        SCHEMA_PERCENT: '',
-        SCHEMA_AMOUNT: '',
-        NET_AMOUNT: '',
-        PAYMENT_MODE: '',
-        INSURANCE_ID: '',
-        INVOICE_ENTRY: [
-          {
-            ITEM_ID: '',
-
-            QUANTITY: '',
-            UNIT_PRICE: '',
-            AMOUNT: '',
-          },
-        ],
-      };
-
-      this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
-      this.getInvoiceNo();
-      this.invoiceFormGroup.instance.reset();
-
-      // Focus on ward field
-      setTimeout(() => {
-        this.wardBoxRef?.instance?.focus();
-      }, 100);
     });
-
+    this.resetInvoiceForm();
     // this.printInvoice();
+  }
+
+  onConfirmPrint(action: 'Print & Preview' | 'no' | 'print') {
+    this.printConfirmVisible = false; // close popup
+
+    if (action === 'Print & Preview') {
+      this.previewAndPrintInvoice(this.printData);
+    } else if (action === 'print') {
+      this.onPrintDirectly(this.printData);
+    } else if (action === 'no') {
+      notify('Print cancelled', 'warning', 2000);
+    }
+
+        setTimeout(() => {
+      this.wardBoxRef?.instance?.focus();
+    }, 100); 
+  }
+
+  resetInvoiceForm() {
+    this.invoiceFormData = {
+      INVOICE_NO: '',
+      INVOICE_DATE: new Date().toISOString(),
+      DEPARTMENT_ID: '1',
+      USER_ID: '1',
+      UHID: '',
+      PATIENT_NAME: '',
+      PATIENT_AGE: '',
+      PATIENT_SEX: '',
+      PATIENT_MOBILE: '',
+      WARD: '',
+      UNIT: '',
+      GROSS_AMOUNT: '',
+      SCHEMA_ID: '',
+      SCHEMA_PERCENT: '',
+      SCHEMA_AMOUNT: '',
+      NET_AMOUNT: '',
+      PAYMENT_MODE: '',
+      INSURANCE_ID: '',
+      INVOICE_ENTRY: [
+        {
+          ITEM_ID: '',
+
+          QUANTITY: '',
+          UNIT_PRICE: '',
+          AMOUNT: '',
+        },
+      ],
+    };
+
+    this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
+    this.getInvoiceNo();
+    this.invoiceFormGroup.instance.reset();
+
+    // Focus on ward field
+    setTimeout(() => {
+      this.wardBoxRef?.instance?.focus();
+    }, 100);
   }
 
   cancel() {
@@ -1053,94 +1082,266 @@ export class InvoiceAddComponent {
     return value !== 0 && value !== '0'; // ensure age is not zero (number or string)
   };
 
-  printInvoice() {
-    const data = this.printData;
-    console.log(this.printData, '==========//////////');
-    if (!data) {
-      alert('No invoice data to print!');
-      return;
-    }
+  previewAndPrintInvoice(data: any) {
+    const printWindow = window.open('', '_blank', 'width=800,height=700');
+const htmlContent = `
+<html>
+  <head>
+    <title>Hospital Bill</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 30px;
+        font-size: 14px;
+        color: #000;
+        background-color: #f9f9f9;
+      }
+      .bill-container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 25px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      .header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .header h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .header h4 {
+        margin: 4px 0 0;
+        font-size: 16px;
+        font-weight: normal;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .info-table, .totals, .invoice-table {
+        width: 100%;
+        margin-top: 15px;
+        border-collapse: collapse;
+      }
+      .info-table td {
+        padding: 6px 10px;
+        vertical-align: top;
+      }
+      .info-table .label {
+        font-weight: bold;
+      }
+      .section-title {
+        font-weight: bold;
+        margin-top: 20px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #000;
+        font-size: 16px;
+      }
+      .invoice-table th, .invoice-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 13px;
+      }
+      .invoice-table th {
+        background-color: #f0f0f0;
+      }
+      .invoice-table th.numeric, .invoice-table td.numeric,
+      .totals td {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .totals td {
+        padding: 4px 8px;
+      }
+    </style>
+  </head>
+  <body onload="window.print(); window.close();">
+    <div class="bill-container">
+      
 
-    const headersHtml = `
-    <div style="text-align:center; margin-bottom: 20px;">
-      <h3 style="margin: 0;">${data.DEPARTMENT || ''}</h3>
+      <div class="header">
+        <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
+        <h4>MEDICAL COLLEGE, KOZHIKODE</h4>
+      </div>
+
+      <table class="info-table">
+        <tr>
+          <td><span class="label">Name:</span> ${data.PATIENT_NAME}</td>
+          <td><span class="label">Age:</span> ${data.PATIENT_AGE}</td>
+          <td><span class="label">Sex:</span> ${data.PATIENT_SEX}</td>
+        </tr>
+        <tr>
+          <td><span class="label">UHID:</span> ${data.UHID}</td>
+          <td><span class="label">Mobile:</span> ${data.PATIENT_MOBILE}</td>
+          <td><span class="label">Date:</span> ${data.INVOICE_DATE}</td>
+        </tr>
+        <tr>
+          <td><span class="label">Hospital:</span> MCH KOZHIKODE</td>
+          <td><span class="label">Invoice No.:</span> ${data.INVOICE_NO}</td>
+        </tr>
+      </table>
+
+      <div class="section-title">Invoice Items</div>
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th class="numeric">Quantity</th>
+            <th class="numeric">Unit Price (₹)</th>
+            <th class="numeric">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.INVOICE_ENTRY.map(
+            (item, index) => `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${item.ITEM_NAME}</td>
+              <td class="numeric">${item.QUANTITY}</td>
+              <td class="numeric">${item.UNIT_PRICE}</td>
+              <td class="numeric">${item.AMOUNT}</td>
+            </tr>
+          `
+          ).join('')}
+        </tbody>
+      </table>
+
+      <table class="totals">
+        <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
+      </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
-      <tr>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Patient Name:</strong> ${
-          data.PATIENT_NAME || ''
-        }</td>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Age / Sex:</strong> ${
-          data.PATIENT_AGE || ''
-        } / ${data.PATIENT_SEX || ''}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Mobile:</strong> ${
-          data.PATIENT_MOBILE || ''
-        }</td>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>UHID:</strong> ${
-          data.UHID || ''
-        }</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Date:</strong> ${new Date(
-          data.INVOICE_DATE
-        ).toLocaleString()}</td>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Invoice No:</strong> ${
-          data.INVOICE_NO || 'N/A'
-        }</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Ward:</strong> ${
-          data.WARD || ''
-        }</td>
-        <td style="padding: 5px; border: 1px solid #ccc;"><strong>Unit:</strong> ${
-          data.UNIT || ''
-        }</td>
-      </tr>
-    </table>
-    <hr />
-  `;
+  </body>
+</html>
+`;
 
-    const popupWin = window.open('', '_blank', 'width=800,height=900');
-    if (!popupWin) {
-      alert('Popup blocked! Please allow popups for this site.');
-      return;
+
+    if (printWindow) {
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
     }
-
-    popupWin.document.open();
-    popupWin.document.write(`
-    <html>
-      <head>
-        <title>Print Invoice</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          h3 { margin: 0; text-align: center; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
-          td { border: 1px solid #ccc; padding: 5px; }
-          hr { margin: 20px 0; }
-        </style>
-      </head>
-      <body>
-        ${headersHtml}
-      </body>
-    </html>
-  `);
-    popupWin.document.close();
-    popupWin.focus();
-
-    setTimeout(() => {
-      popupWin.print();
-      popupWin.close();
-    }, 500);
+        setTimeout(() => {
+      this.wardBoxRef?.instance?.focus();
+    }, 1500); 
   }
+
+  // onPrintDirectly() {
+  //   console.log('ONLY PRINT NO PREVIEW');
+  //   window.print();
+  // }
+
+onPrintDirectly(data: any): void {
+  console.log('onPrintDirectly received data:', data); 
+  const printSection = document.getElementById('printSection');
+  if (!printSection) {
+    console.error('No printSection found');
+    return;
+  }
+
+  printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
+  const printContent = printSection.innerHTML;
+
+  const WindowPrt = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+  if (WindowPrt) {
+    WindowPrt.document.write(`
+      <html>
+        <head>
+          <title>Print Invoice</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid black; padding: 5px; text-align: left; }
+          </style>
+        </head>
+        <body>${printContent}</body>
+        <script>
+          window.onload = function() {
+            window.print();
+            window.close();
+          };
+        </script>
+      </html>
+    `);
+  }
+}
+
+
+
+generatePrintContent(data: any): string {
+  return `
+    <div class="bill-container">
+      <div class="header">
+        <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
+        <h4>MEDICAL COLLEGE, KOZHIKODE</h4>
+      </div>
+      <table class="info-table">
+        <tr>
+          <td><strong>Name:</strong> ${data.PATIENT_NAME}</td>
+          <td><strong>Age:</strong> ${data.PATIENT_AGE}</td>
+          <td><strong>Sex:</strong> ${data.PATIENT_SEX}</td>
+        </tr>
+        <tr>
+          <td><strong>UHID:</strong> ${data.UHID}</td>
+          <td><strong>Mobile:</strong> ${data.PATIENT_MOBILE}</td>
+          <td><strong>Date:</strong> ${data.INVOICE_DATE}</td>
+        </tr>
+        <tr>
+          <td><strong>Hospital:</strong> MCH KOZHIKODE</td>
+          <td><strong>Invoice No.:</strong> ${data.INVOICE_NO}</td>
+        </tr>
+      </table>
+
+      <div class="section-title">Invoice Items</div>
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price (₹)</th>
+            <th>Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.INVOICE_ENTRY.map(
+            (item, index) => `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${item.ITEM_NAME}</td>
+              <td>${item.QUANTITY}</td>
+              <td>${item.UNIT_PRICE}</td>
+              <td>${item.AMOUNT}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <table class="totals">
+        <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
+      </table>
+    </div>
+  `;
+}
+
+
+
 
   preventNonNumeric(event: any): void {
     const input = event.event?.target as HTMLInputElement;
     if (input) {
       input.value = input.value.replace(/[^0-9]/g, '');
     }
-    
   }
 }
 

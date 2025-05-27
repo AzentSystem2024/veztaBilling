@@ -150,7 +150,7 @@ addData(){
   const Discount = this.formsource.value.Discount
   const Inactive =this.formsource.value.Inactive
 
-  if (!Schema || !Discount) {
+   if (!Schema || !Discount) {
     notify(
       {
         message: 'Please fill the field.',
@@ -167,7 +167,7 @@ addData(){
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
   
 const isDuplicate = this.dataSource.some((data:any)=>{
-return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase() 
+return data.SCHEMA_NAME?.toLowerCase() === Schema.toLowerCase() 
 })
  if(isDuplicate){
     notify(
@@ -196,7 +196,7 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
     return;
   }
 
-    if(Schema){
+    if(Schema && Discount){
       console.log("function called");
       
       this.dataservice.Insert_SchemaData_Api(Schema,Discount,isInactiveBoolean).subscribe((response:any)=>{
@@ -213,8 +213,10 @@ return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()
       this.addPopup=false;
       this.get_Schema_List()
     })
-  } 
+  }
 }
+
+
 editData(){
 const ID = this.formsource.value.Id
 const Schema = this.formsource.value.Schema
