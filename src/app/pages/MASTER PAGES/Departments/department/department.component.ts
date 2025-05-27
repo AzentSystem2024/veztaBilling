@@ -42,7 +42,6 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./department.component.scss'],
 })
 export class DepartmentComponent {
-  
   formsource: FormGroup;
   isAddPop: boolean = false;
   isEditPop: boolean = false;
@@ -54,6 +53,13 @@ selected_Data:any
   hospital_Dropdown_list: any=[]
   bill_prefix_value: any;
   id_Value: any;
+    readonly allowedPageSizes: any = [5, 10, 'all'];
+  displayMode: any = 'full';
+  showPageSizeSelector = true;
+  showHeaderFilter: true;
+  showFilterRow = true;
+  isFilterOpened = false;
+  GridSource: any;
   constructor(private fb: FormBuilder, private dataservice: DataService) {
     this.formsource = this.fb.group({
       ID: [null],
