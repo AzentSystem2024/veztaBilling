@@ -1,1 +1,309 @@
-<p>invoice-view works!</p>
+<div
+  id="invoiceToPrint"
+  class="invoice-wrapper"
+  style="
+ 
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+  "
+>
+  <div class="salary-grid-wrapper" style="padding: 0 10px; margin-bottom: 60px;">
+    <div class="grid-container">
+      <dx-data-grid
+        #itemsGridRef
+        [dataSource]="invoiceEntry"
+        [showBorders]="true"
+        [columnAutoWidth]="false"
+        [wordWrapEnabled]="false"
+        [rowAlternationEnabled]="true"
+        [headerFilter]="{ visible: true }"
+        [allowColumnReordering]="true"
+        [showColumnHeaders]="true"
+        [columnAutoWidth]="true"
+        [allowColumnResizing]="true"
+        [height]="'65vh'"
+        [columnResizingMode]="'nextColumn'"
+        [headerFilter]="{ visible: true }"
+        [scrolling]="{ mode: 'virtual' }"
+        rowAlternationInterval="2"
+        [selection]="{ mode: 'single' }"
+      >
+        <!-- <dxo-editing mode="row" [allowAdding]="true" [allowDeleting]="true"></dxo-editing> -->
+        <dxo-load-panel [showPane]="false"></dxo-load-panel>
+        <!-- <dxo-scrolling mode="standard"></dxo-scrolling> -->
+        <dxo-filter-builder [allowHierarchicalFields]="true">
+        </dxo-filter-builder>
+        <dxo-toolbar>
+          <dxi-item location="before" locateInMenu="auto">
+            <div
+              class="stacked-toolbar-group"
+              style="display: flex; flex-direction: column; gap: 2px"
+            >
+              <!-- Date Field -->
+              <dx-text-box
+                label="Date & Time"
+                labelMode="floating"
+                [(value)]="formattedInvoiceDate"
+                [width]="205"
+                [readOnly]="true"
+              ></dx-text-box>
+
+              <!-- Ward and Unit Row (Each half width of Date) -->
+              <div style="display: flex; gap: 5px">
+                <!-- Ward -->
+                <dx-text-box
+                  label="Ward"
+                  labelMode="floating"
+                  [(value)]="invoiceData.WARD"
+                  [width]="100"
+                  [readOnly]="true"
+                ></dx-text-box>
+
+                <!-- Unit -->
+                <dx-text-box
+                  label="Unit"
+                  labelMode="floating"
+                  [(value)]="invoiceData.UNIT"
+                  [width]="100"
+                  [readOnly]="true"
+                ></dx-text-box>
+              </div>
+            </div>
+          </dxi-item>
+
+          <dxi-item location="before" locateInMenu="auto">
+            <div
+              class="stacked-toolbar-group"
+              style="display: flex; flex-direction: column; gap: 5px"
+            >
+              <!-- Row: Bill No. and Department -->
+              <div style="display: flex; gap: 5px">
+                <!-- Bill No. -->
+                <dx-text-box
+                  label="Bill No."
+                  [(value)]="invoiceData.INVOICE_NO"
+                  labelMode="floating"
+                  [width]="300"
+                  [readOnly]="true"
+                ></dx-text-box>
+
+                <!-- ✅ Department Field -->
+                <dx-text-box
+                  label="Department"
+                  [(value)]="invoiceData.DEPARTMENT"
+                  labelMode="floating"
+                  [width]="200"
+                  [readOnly]="true"
+                ></dx-text-box>
+              </div>
+
+              <!-- Row: Patient Name and Mobile No. -->
+              <div style="display: flex; gap: 5px; align-items: flex-start">
+                <!-- Patient Name -->
+                <div style="display: flex; gap: 5px; width: 300px">
+                  <dx-text-box
+                    label="Patient Name"
+                    [(value)]="invoiceData.PATIENT_NAME"
+                    labelMode="floating"
+                    [width]="300"
+                    [readOnly]="true"
+                  >
+                  </dx-text-box>
+                </div>
+
+                <!-- Mobile No. -->
+                <dx-text-box
+                  label="Mobile No."
+                  [(value)]="invoiceData.PATIENT_MOBILE"
+                  labelMode="floating"
+                  [width]="200"
+                  [readOnly]="true"
+                >
+                </dx-text-box>
+              </div>
+            </div>
+          </dxi-item>
+
+          <dxi-item location="after" locateInMenu="auto">
+            <div class="stacked-toolbar-group"></div>
+          </dxi-item>
+          <dxi-item location="after" locateInMenu="auto">
+            <div
+              class="stacked-toolbar-group"
+              style="display: flex; flex-direction: column; gap: 5px"
+            >
+              <!-- Date Box -->
+              <dx-text-box
+                label="UHID"
+                [(value)]="invoiceData.UHID"
+                [readOnly]="true"
+                labelMode="floating"
+                [width]="205"
+              >
+              </dx-text-box>
+
+              <!-- Ward and Unit below, with gap -->
+              <div style="display: flex; gap: 5px">
+                <dx-number-box
+                  label="Age"
+                  [(value)]="invoiceData.PATIENT_AGE"
+                  [min]="0"
+                  labelMode="floating"
+                  [width]="100"
+                  [readOnly]="true"
+                >
+                </dx-number-box>
+
+                <dx-text-box
+                  label="Sex"
+                  labelMode="floating"
+                  [(value)]="invoiceData.PATIENT_SEX"
+                  [width]="100"
+                  [readOnly]="true"
+                >
+                </dx-text-box>
+              </div>
+            </div>
+          </dxi-item>
+        </dxo-toolbar>
+        <dxi-column dataField="ITEM_NAME" caption="Item Name"></dxi-column>
+        <dxi-column
+          dataField="QUANTITY"
+          caption="Quantity"
+          alignment="right"
+        ></dxi-column>
+        <dxi-column
+          dataField="UNIT_PRICE"
+          caption="Unit Price"
+          alignment="right"
+        ></dxi-column>
+        <dxi-column
+          dataField="AMOUNT"
+          caption="Amount"
+          alignment="right"
+        ></dxi-column>
+
+        <dxo-summary>
+          <dxi-total-item
+            name=""
+            column="AMOUNT"
+            summaryType="sum"
+            displayFormat="Gross Amount: {0}"
+            alignment="right"
+            showInColumn="AMOUNT"
+          >
+          </dxi-total-item>
+        </dxo-summary>
+      </dx-data-grid>
+
+      <div
+        style="display: flex; flex-direction: column; gap: 5px; margin-top: 5px"
+      >
+        <!-- Row 1: Schema + Schema % | Scheme Amount + Net Amount -->
+        <div style="display: flex; justify-content: space-between; gap: 10px">
+          <!-- Left -->
+          <div style="display: flex; gap: 5px">
+            <dx-text-box
+              label="Schema"
+              labelMode="floating"
+              [(value)]="invoiceData.SCHEMA_NAME"
+              [readOnly]="true"
+              [width]="200"
+            ></dx-text-box>
+            <dx-text-box
+              label="Schema%"
+              [(value)]="invoiceData.SCHEMA_PERCENT"
+              labelMode="floating"
+              [width]="100"
+              [readOnly]="true"
+            ></dx-text-box>
+          </div>
+          <!-- Right -->
+          <div style="display: flex; gap: 5px">
+            <dx-text-box
+              [readOnly]="true"
+              label="Schema Amount"
+              [(value)]="invoiceData.SCHEMA_AMOUNT"
+              labelMode="floating"
+              [readOnly]="true"
+              [width]="200"
+            ></dx-text-box>
+            <dx-number-box
+              label="Net Amount"
+              [(value)]="invoiceData.NET_AMOUNT"
+              labelMode="floating"
+              [width]="200"
+              [format]="{
+                type: 'fixedPoint',
+                precision: 2,
+                useGrouping: true
+              }"
+              [readOnly]="true"
+              [inputAttr]="{
+                style: 'font-weight: bold; font-size: 18px; text-align: right;'
+              }"
+            ></dx-number-box>
+          </div>
+        </div>
+
+        <!-- Row 2: Payment Options + Insurance | Buttons -->
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-end;
+          "
+        >
+          <!-- Left side: payment + insurance -->
+          <div style="display: flex; gap: 10px">
+            <dx-text-box
+              label="Payment Options"
+              labelMode="floating"
+              [(value)]="invoiceData.PAYMENT_MODE_NAME"
+              [width]="200"
+              [readOnly]="true"
+            >
+            </dx-text-box>
+
+            <div
+              *ngIf="invoiceData.PAYMENT_MODE_NAME === 'Credit'"
+              style="display: flex; gap: 12px; margin-top: 8px"
+            >
+              <dx-text-box
+                label="Insurance"
+                labelMode="floating"
+                [(value)]="invoiceData.INSURANCE_NAME"
+                [width]="200"
+                [readOnly]="true"
+              ></dx-text-box>
+
+              <dx-text-box
+                label="Insurance ID"
+                labelMode="floating"
+        
+                [width]="200"
+                [readOnly]="true"
+              ></dx-text-box>
+            </div>
+          </div>
+
+          <!-- Right side: Buttons -->
+          <div style="display: flex; gap: 10px">
+            <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
+            <dx-button
+              text="Cancel"
+              stylingMode="outlined"
+              type="normal"
+              [elementAttr]="{
+                style: 'background-color: #cccccc; color: red;'
+              }"
+            ></dx-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

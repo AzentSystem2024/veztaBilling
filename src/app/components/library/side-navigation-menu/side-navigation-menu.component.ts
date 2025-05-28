@@ -107,7 +107,7 @@ export class SideNavigationMenuComponent
           path: '/invoice',
         },
         {
-          text: 'Invoice',
+          text: 'New Invoice',
           path: '/invoice-entry',
         },
       ],

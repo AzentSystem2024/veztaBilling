@@ -35,7 +35,7 @@
           (onCellValueChanged)="onCellChanged($event)"
           (onContentReady)="onGridContentReady($event)"
           [editing]="{ mode: 'row', allowUpdating: true, allowDeleting: true, allowAdding: true, useIcons: true }"
-          
+          (onInitNewRow)="onInitNewRow($event)"
            (onRowRemoving)="onRowRemoving($event)"
            (onKeyDown)="handleGridKeyDown($event)"
            (onCellPrepared)="onCellPrepared($event)"
@@ -43,7 +43,7 @@
         >
           <!-- <dxo-editing mode="row" [allowAdding]="true" [allowDeleting]="true"></dxo-editing> -->
           <dxo-load-panel [showPane]="false"></dxo-load-panel>
-          <dxo-scrolling mode="standard"></dxo-scrolling>
+          <!-- <dxo-scrolling mode="standard"></dxo-scrolling> -->
           <dxo-filter-builder [allowHierarchicalFields]="true">
           </dxo-filter-builder>
           <dxo-toolbar>
@@ -248,7 +248,7 @@
               </div>
             </dxi-item>
           </dxo-toolbar>
-          <dxi-column dataField="ITEM_ID" caption="Item Code">
+          <dxi-column dataField="ITEM_ID" caption="Item">
             <dxo-lookup
               [dataSource]="items"
               displayExpr="DESCRIPTION"
@@ -400,13 +400,22 @@
                 [(value)]="invoiceFormData.INSURANCE_ID"
                 [width]="200"
               ></dx-select-box>
+              <dx-text-box
+                *ngIf="selectedPaymentModeId === creditModeId"
+                #insuranceSelect
+                label="Insurance ID"
+                labelMode="floating"
+          
+       
+                [width]="200"
+              ></dx-text-box>
             </div>
 
             <!-- Right side: Buttons -->
             <div style="display: flex; gap: 10px">
               <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
               <dx-button
-                text="Cancel"
+                text="Clear"
                 stylingMode="outlined"
                 type="normal"
                 (onClick)="cancel()"

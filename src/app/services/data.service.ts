@@ -110,6 +110,10 @@ export class DataService {
   getWardAndUnit(data: any): Observable<any> {
     return this.http.post(`${BASE_URL}invoice/getWardnUnit`, data);
   }
+selectInvoice(id: number) {
+  return this.http.post(`${BASE_URL}invoice/select/${id}`, {});
+
+}
 
   //SCHEMA-LIST
 
