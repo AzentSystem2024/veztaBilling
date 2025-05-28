@@ -4,6 +4,7 @@ import {
   ElementRef,
   HostListener,
   NgModule,
+  NgZone,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -154,7 +155,9 @@ export class InvoiceAddComponent {
   userData: any;
   departmentName: any;
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit() {
     const storedData = sessionStorage.getItem('savedUserData');
@@ -1229,6 +1232,12 @@ const htmlContent = `
       printWindow.document.write(htmlContent);
       printWindow.document.close();
     }
+
+        printWindow.onbeforeunload = () => {
+      this.ngZone.run(() => {
+        this.printConfirmVisible = false;
+      });
+    };
         setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
     }, 1500); 

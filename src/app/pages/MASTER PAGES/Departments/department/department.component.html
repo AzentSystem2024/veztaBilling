@@ -14,19 +14,8 @@
     [height]="'85vh'"
     (onRowRemoving)="delete_Department_Data($event)"
     id="dataGrid"
-  
+ 
   >
-  
-  
-     <dxo-paging [pageSize]="10"></dxo-paging>
-     <dxo-pager
-        [visible]="true"
-        [allowedPageSizes]="allowedPageSizes"
-        [displayMode]="displayMode"
-        [showPageSizeSelector]="showPageSizeSelector"
-        [showInfo]="true"
-        [showNavigationButtons]="true"
-      ></dxo-pager>
     <dxo-scrolling mode="standard"></dxo-scrolling>
     <dxo-filter-row [visible]="true"></dxo-filter-row>
     <dxo-editing
@@ -36,7 +25,15 @@
       [useIcons]="true"
       editIcon="edit"
     ></dxo-editing>
-
+    <dxo-paging [pageSize]="10"></dxo-paging>
+<dxo-pager
+        [visible]="true"
+        [allowedPageSizes]="allowedPageSizes"
+        [displayMode]="displayMode"
+        [showPageSizeSelector]="showPageSizeSelector"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+      ></dxo-pager>
     <dxo-toolbar>
       <dxi-item
         location="before"
