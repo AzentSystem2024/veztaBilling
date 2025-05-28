@@ -87,6 +87,11 @@ export class DataService {
     return this.http.post(`${BASE_URL}dropdown/`, reqBodyData);
   }
 
+  getDropdownItemsofDepartment(data: any): Observable<any> {
+    // const reqBodyData = { name: data };
+    return this.http.post(`${BASE_URL}Items/dropDownData`, data);
+  }
+
   getInvoiceList(data: any): Observable<any> {
     return this.http.post(`${BASE_URL}invoice/list`, data);
   }
