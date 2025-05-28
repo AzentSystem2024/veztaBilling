@@ -36,12 +36,19 @@ import { DepartmentModule } from './pages/MASTER PAGES/Departments/department/de
 import { ItemModule } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent, InsuranceModule } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schema.component';
-import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staff-wise-summary/staff-wise-summary.component';
+import { DateWiseSummaryComponent, DateWiseSummaryModule } from './pages/REPORTS/dateWiseSummary/date-wise-summary/date-wise-summary.component';
+import { BillWiseSummaryComponent, BillWiseSummaryModule } from './pages/REPORTS/billWiseSummary/bill-wise-summary/bill-wise-summary.component';
+import { StaffWiseSummaryComponent, StaffWiseSummaryModule } from './pages/REPORTS/staffWiseSummary/staff-wise-summary/staff-wise-summary.component';
+import { SchemeWiseSummaryComponent, SchemeWiseSummaryModule } from './pages/REPORTS/schemeWiseSummary/scheme-wise-summary/scheme-wise-summary.component';
+import { SchemeWiseBillSummaryComponent, SchemeWiseBillSummaryModule } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
+import { PatientWiseSummaryComponent, PatientWiseSummaryModule } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
+import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+
 
 
 
 @NgModule({
-  declarations: [AppComponent, StaffWiseSummaryComponent],
+  declarations: [AppComponent],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -62,6 +69,13 @@ import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staf
     ItemModule,
     InsuranceModule,
     SchemaModule,
+    DateWiseSummaryModule,
+    BillWiseSummaryModule,
+    StaffWiseSummaryModule,
+    SchemeWiseSummaryModule,
+    SchemeWiseBillSummaryModule,
+    PatientWiseSummaryModule,
+    TestItemWiseSummaryModule
 
   ],
   providers: [

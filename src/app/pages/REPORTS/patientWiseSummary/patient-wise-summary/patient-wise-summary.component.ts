@@ -4,14 +4,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { DxSelectBoxModule, DxTextAreaModule, DxDateBoxModule, DxFormModule, DxTextBoxModule, DxCheckBoxModule, DxRadioGroupModule, DxFileUploaderModule, DxDataGridModule, DxButtonModule, DxValidatorModule, DxProgressBarModule, DxPopupModule, DxDropDownBoxModule, DxToolbarModule, DxTabPanelModule, DxTabsModule, DxNumberBoxModule, DxValidationGroupModule, DxAutocompleteModule } from 'devextreme-angular';
 import { DxoItemModule, DxoFormItemModule, DxoLookupModule, DxiItemModule, DxiGroupModule } from 'devextreme-angular/ui/nested';
 import { FormTextboxModule } from 'src/app/components';
-import { DateWiseSummaryComponent } from '../../dateWiseSummary/date-wise-summary/date-wise-summary.component';
+import { SchemeWiseBillSummaryComponent } from '../../schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 
 @Component({
-  selector: 'app-staff-wise-summary',
-  templateUrl: './staff-wise-summary.component.html',
-  styleUrls: ['./staff-wise-summary.component.scss']
+  selector: 'app-patient-wise-summary',
+  templateUrl: './patient-wise-summary.component.html',
+  styleUrls: ['./patient-wise-summary.component.scss']
 })
-export class StaffWiseSummaryComponent {
+export class PatientWiseSummaryComponent {
 
 }
 
@@ -49,8 +49,8 @@ export class StaffWiseSummaryComponent {
     DxAutocompleteModule,
   ],
   providers: [],
-  declarations: [StaffWiseSummaryComponent],
-  exports: [StaffWiseSummaryComponent],
+  declarations: [PatientWiseSummaryComponent],
+  exports: [PatientWiseSummaryComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class StaffWiseSummaryModule {}
+export class PatientWiseSummaryModule {}

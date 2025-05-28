@@ -30,11 +30,7 @@
       [selection]="{ mode: 'single' }"
       focusStateEnabled="false"
     >
-<!-- <dxo-editing
-        mode="popup"
-        [allowUpdating]="true"
-        [allowDeleting]="true"
-      ></dxo-editing> -->
+
       <dxo-paging [pageSize]="10"></dxo-paging>
       <dxo-pager
         [visible]="true"
@@ -74,18 +70,33 @@
   caption="Date" 
   dataType="date"
   format="dd-MM-yyyy hh:mm a"></dxi-column>
+  <dxi-column type="buttons" [width]="100">
+  <dxi-button
+    hint="View"
+    icon="eyeopen"  
+    text="View"
+[onClick]="onViewClick.bind(this)"
+  ></dxi-button>
+</dxi-column>
+
 </dx-data-grid>
     </div>
 </div>
 
-
-
 <dx-popup
-  [(visible)]="addInvoicePopupOpened"
-  [width]="'60vw'"
-  [height]="'80vh'"
-  title="User"
+  [(visible)]="isEditPopupVisible"
+  [width]="'55vw'"
+  [height]="'48vh'"
+  title="New Account"
   (onHiding)="handleClose()"
 >
+  <app-invoice-view
+    *ngIf="isEditPopupVisible"
+    [invoiceData]="selectedInvoice"
+    (popupClosed)="handleClose()"
+  ></app-invoice-view>
 </dx-popup>
+
+
+
 

@@ -4,6 +4,7 @@ import {
   ElementRef,
   HostListener,
   NgModule,
+  NgZone,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -55,6 +56,17 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./invoice-add.component.scss'],
 })
 export class InvoiceAddComponent {
+    formatInvoiceDate(dateString: string): string {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()} ${hours}:${minutes} ${ampm}`;
+  }
   @ViewChild('invoiceFormGroup') invoiceFormGroup: DxValidationGroupComponent;
   @ViewChild('itemsGridRef') itemsGridRef: any;
   @ViewChild('departmentBoxRef', { static: false })
@@ -140,6 +152,7 @@ export class InvoiceAddComponent {
       },
     ],
   };
+  amountInWords: string = '';
   billNo: any;
   itemData: { ITEM_ID: number; DEPARTMENT_ID: number };
   selectedItem: any;
@@ -153,10 +166,14 @@ export class InvoiceAddComponent {
   printConfirmVisible = false;
   userData: any;
   departmentName: any;
+  itemsOfDepartment: any;
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService,
+    private ngZone: NgZone
+  ) {}
 
   ngOnInit() {
+    
     const storedData = sessionStorage.getItem('savedUserData');
     if (storedData) {
       this.userData = JSON.parse(storedData);
@@ -166,8 +183,8 @@ export class InvoiceAddComponent {
       console.log('Department Name:', this.userData.DEPARTMENT_ID);
       this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
       this.invoiceFormData.USER_ID = this.userData.USER_ID;
-      this.departmentName = this.userData.DEPARTMENT_NAME
-      console.log(this.departmentName,"DEPARTMENTNAME")
+      this.departmentName = this.userData.DEPARTMENT_NAME;
+      console.log(this.departmentName, 'DEPARTMENTNAME');
     } else {
       console.warn('No user data found in sessionStorage');
     }
@@ -183,6 +200,8 @@ export class InvoiceAddComponent {
     this.getInsuranceOptions();
     this.getItems();
     this.getWardAndUnit();
+     this.updateAmountInWords();
+     this.getItemsOfDepartment()
   }
   private timerId: any;
   ngAfterViewInit(): void {
@@ -225,27 +244,45 @@ export class InvoiceAddComponent {
             } else {
               this.saveButton?.instance?.focus();
 
-              // Listen for Enter key on save button
-              //          const saveBtnElement = this.saveButtonElementRef?.nativeElement;
-
-              //           if (saveBtnElement) {
-              //   saveBtnElement.addEventListener('keydown', (event: KeyboardEvent) => {
-              //     if (event.key === 'Enter') {
-              //       this.submitForm();
-              //     }
-              //   });
-              // }
             }
           }, 50);
         }
       });
     }
   }
+
+  validateUhid = (e: any) => {
+  const value = e.value;
+  if (!value) return false;
+
+  // Check length = 11
+  if (value.length !== 11) return false;
+
+  // Check all digits
+  if (!/^\d{11}$/.test(value)) return false;
+
+  // Check first 4 digits are a valid year
+  const year = parseInt(value.slice(0, 4), 10);
+  const currentYear = new Date().getFullYear();
+
+  // Accept years from 2000 up to current year (adjust if needed)
+  if (year < 2000 || year > currentYear) return false;
+
+  return true;
+};
+
   getSchema() {
     this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
       this.schemaOptions = data;
       // console.log(this.schemaOptions, 'SCHEMAOPTIONS');
     });
+  }
+
+  getItemsOfDepartment(){
+    this.dataService.getDropdownItemsofDepartment(this.Department).subscribe((response: any) => {
+      this.itemsOfDepartment = response;
+      console.log(this.itemsOfDepartment,"ITEMSOFDEPARTMENT")
+    })
   }
 
   getWardAndUnit() {
@@ -331,7 +368,8 @@ export class InvoiceAddComponent {
 
   getItems() {
     this.dataService.getDropdownData('ITEMS').subscribe((data) => {
-      this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+      // this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+      this.items = data;
       // console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
     });
   }
@@ -339,7 +377,7 @@ export class InvoiceAddComponent {
   getSelectedItemsData(rowIndex: number) {
     this.itemData = {
       ITEM_ID: this.selectedItem.ID,
-      DEPARTMENT_ID: 1,
+      DEPARTMENT_ID: this.userData.DEPARTMENT_ID,
     };
     this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
       if (response?.data?.length) {
@@ -564,8 +602,6 @@ export class InvoiceAddComponent {
       }, 100); // Let any form reset/focus finish
     }
   }
-
-
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -850,7 +886,6 @@ export class InvoiceAddComponent {
     }
   }
 
-
   @HostListener('document:keydown.enter', ['$event'])
   handleEnterKey(event: KeyboardEvent) {
     event.preventDefault();
@@ -876,6 +911,17 @@ export class InvoiceAddComponent {
       }
     }
   }
+
+  @HostListener('document:keydown.esc', ['$event'])
+@HostListener('document:keydown.Escape', ['$event']) // support both
+handleEscapeKey(event: KeyboardEvent) {
+  if (this.printConfirmVisible) {
+    event.preventDefault();
+    this.onConfirmPrint('no'); // cancel print
+    notify('Print cancelled', 'warning', 2000);
+  }
+}
+
 
   focusYesButton() {
     setTimeout(() => {
@@ -975,20 +1021,24 @@ export class InvoiceAddComponent {
     // this.printInvoice();
   }
 
-  onConfirmPrint(action: 'Print & Preview' | 'no' | 'print') {
+  onConfirmPrint(action: 'print' | 'no' | 'Print & Preview') {
     this.printConfirmVisible = false; // close popup
 
-    if (action === 'Print & Preview') {
-      this.previewAndPrintInvoice(this.printData);
-    } else if (action === 'print') {
+    if (action === 'print') {
       this.onPrintDirectly(this.printData);
-    } else if (action === 'no') {
+    } 
+    else if(action === 'Print & Preview'){
+      this.previewAndPrintInvoice(this.printData);
+    }
+    else if (action === 'no') {
       notify('Print cancelled', 'warning', 2000);
+      this.resetInvoiceForm();
+      
     }
 
-        setTimeout(() => {
+    setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
-    }, 100); 
+    }, 100);
   }
 
   resetInvoiceForm() {
@@ -1082,156 +1132,200 @@ export class InvoiceAddComponent {
     return value !== 0 && value !== '0'; // ensure age is not zero (number or string)
   };
 
+updateAmountInWords(): void {
+  const amount = this.invoiceFormData.NET_AMOUNT;
+  if (amount && !isNaN(amount)) {
+    this.amountInWords = this.convertNumberToWords(Number(amount));
+  } else {
+    this.amountInWords = '';
+  }
+}
+convertNumberToWords(amount: number): string {
+  // You can enhance this for large amounts
+  const ones = [
+    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+    'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+    'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+  ];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  if (amount === 0) return 'Zero Rupees Only';
+
+  const numToWords = (num: number): string => {
+    if (num < 20) return ones[num];
+    if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 ? ' ' + ones[num % 10] : '');
+    if (num < 1000) return ones[Math.floor(num / 100)] + ' Hundred ' + (num % 100 ? numToWords(num % 100) : '');
+    if (num < 100000) return numToWords(Math.floor(num / 1000)) + ' Thousand ' + (num % 1000 ? numToWords(num % 1000) : '');
+    if (num < 10000000) return numToWords(Math.floor(num / 100000)) + ' Lakh ' + (num % 100000 ? numToWords(num % 100000) : '');
+    return numToWords(Math.floor(num / 10000000)) + ' Crore ' + (num % 10000000 ? numToWords(num % 10000000) : '');
+  };
+
+  return numToWords(Math.floor(amount)) + ' Rupees Only';
+}
+
+
+
+
   previewAndPrintInvoice(data: any) {
+    console.log(data,"DATA")
+      const amount = Number(data.NET_AMOUNT);
+  const amountInWords = this.convertNumberToWords(amount);
     const printWindow = window.open('', '_blank', 'width=800,height=700');
-const htmlContent = `
+    const htmlContent = `
 <html>
   <head>
-    <title>Hospital Bill</title>
+    <title>Credit Bill</title>
     <style>
       body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding: 30px;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
         font-size: 14px;
+        padding: 20px;
+        background-color: #fff;
         color: #000;
-        background-color: #f9f9f9;
       }
+
       .bill-container {
-        max-width: 800px;
-        margin: auto;
-        background: #fff;
-        padding: 25px;
-        border: 1px solid #ccc;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      }
-      .header {
-        text-align: center;
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-      }
-      .header h2 {
-        margin: 0;
-        font-size: 24px;
-      }
-      .header h4 {
-        margin: 4px 0 0;
-        font-size: 16px;
-        font-weight: normal;
-      }
-      .logo {
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      .info-table, .totals, .invoice-table {
         width: 100%;
-        margin-top: 15px;
-        border-collapse: collapse;
-      }
-      .info-table td {
-        padding: 6px 10px;
-        vertical-align: top;
-      }
-      .info-table .label {
-        font-weight: bold;
-      }
-      .section-title {
-        font-weight: bold;
-        margin-top: 20px;
-        padding-bottom: 6px;
-        border-bottom: 1px solid #000;
-        font-size: 16px;
-      }
-      .invoice-table th, .invoice-table td {
+        margin: auto;
+        padding: 20px;
         border: 1px solid #000;
-        padding: 8px;
-        font-size: 13px;
       }
-      .invoice-table th {
-        background-color: #f0f0f0;
+
+      .header-table, .info-table, .invoice-table, .scheme-table, .footer-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
       }
-      .invoice-table th.numeric, .invoice-table td.numeric,
-      .totals td {
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-        font-family: 'Courier New', Courier, monospace;
-      }
-      .totals td {
+
+      .header-table td, .info-table td {
         padding: 4px 8px;
       }
+
+      .invoice-table th, .invoice-table td,
+      .scheme-table th, .scheme-table td {
+        border: 1px solid #000;
+        padding: 6px;
+        text-align: center;
+      }
+
+      .label {
+        font-weight: bold;
+      }
+
+      .right-align {
+        text-align: right;
+      }
+
+      .amount-in-words {
+        margin-top: 30px;
+        font-weight: bold;
+      }
+
     </style>
   </head>
   <body onload="window.print(); window.close();">
     <div class="bill-container">
-      
 
-      <div class="header">
-        <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
-        <h4>MEDICAL COLLEGE, KOZHIKODE</h4>
-      </div>
-
-      <table class="info-table">
+      <!-- Header -->
+      <table class="header-table">
         <tr>
-          <td><span class="label">Name:</span> ${data.PATIENT_NAME}</td>
-          <td><span class="label">Age:</span> ${data.PATIENT_AGE}</td>
-          <td><span class="label">Sex:</span> ${data.PATIENT_SEX}</td>
-        </tr>
-        <tr>
-          <td><span class="label">UHID:</span> ${data.UHID}</td>
-          <td><span class="label">Mobile:</span> ${data.PATIENT_MOBILE}</td>
-          <td><span class="label">Date:</span> ${data.INVOICE_DATE}</td>
-        </tr>
-        <tr>
-          <td><span class="label">Hospital:</span> MCH KOZHIKODE</td>
-          <td><span class="label">Invoice No.:</span> ${data.INVOICE_NO}</td>
+          <td><strong>CREDIT BILL</strong></td>
+          <td style="text-align: center;"><strong>BILLED BY:</strong> ABC</td>
+          <td style="text-align: right;"><strong>COMPANY NAME:</strong></td>
         </tr>
       </table>
 
-      <div class="section-title">Invoice Items</div>
+      <!-- Patient Info -->
+      <table class="info-table">
+        <tr>
+          <td><span class="label">UHID:</span> ${data.UHID}</td>
+          <td><span class="label">RECEIPT NUMBER:</span> ${data.INVOICE_NO}</td>
+        </tr>
+        <tr>
+          <td><span class="label">PATIENT NAME:</span> ${data.PATIENT_NAME}</td>
+          <td><span class="label">AGE:</span> ${data.PATIENT_AGE}</td>
+          <td><span class="label">RECEIPT DATE:</span> ${data.INVOICE_DATE}</td>
+        </tr>
+      </table>
+
+      <!-- Invoice Items -->
       <table class="invoice-table">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Item</th>
-            <th class="numeric">Quantity</th>
-            <th class="numeric">Unit Price (₹)</th>
-            <th class="numeric">Amount (₹)</th>
+            <th>SL NO.</th>
+            <th>SERVICE NAME</th>
+            <th>QUANTITY</th>
+            <th>RATE PER ITEM</th>
+            <th>DISCOUNT</th>
+            <th>NET AMOUNT</th>
           </tr>
         </thead>
         <tbody>
-          ${data.INVOICE_ENTRY.map(
-            (item, index) => `
+          ${data.INVOICE_ENTRY.map((item, index) => `
             <tr>
               <td>${index + 1}</td>
               <td>${item.ITEM_NAME}</td>
-              <td class="numeric">${item.QUANTITY}</td>
-              <td class="numeric">${item.UNIT_PRICE}</td>
-              <td class="numeric">${item.AMOUNT}</td>
+              <td>${item.QUANTITY}</td>
+              <td>${item.UNIT_PRICE}</td>
+              <td>${item.DISCOUNT || 0}</td>
+              <td>${item.AMOUNT}</td>
             </tr>
-          `
-          ).join('')}
+          `).join('')}
         </tbody>
       </table>
 
-      <table class="totals">
-        <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
-        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
-        <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
+      <!-- Scheme Section -->
+      <table class="scheme-table">
+        <thead>
+          <tr>
+            <th>SCHEME:</th>
+            <th>scheme account no:</th>
+            <th>amount in scheme</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${data.SCHEMA_NAME || 'ABC'}</td>
+            <td>${data.SCHEMA_ACCOUNT_NO || '123'}</td>
+            <td>${data.SCHEMA_AMOUNT || '1000'}</td>
+          </tr>
+        </tbody>
       </table>
+
+      <!-- Footer -->
+      <table class="footer-table">
+        <tr>
+          <td class="right-align"><strong>RECEIPT AMOUNT:</strong> ₹${data.GROSS_AMOUNT}</td>
+        </tr>
+        <tr>
+          <td class="right-align"><strong>CREDIT AMOUNT:</strong> ₹${data.NET_AMOUNT}</td>
+        </tr>
+      </table>
+
+        <div class="amount-in-words">
+          AMOUNT IN WORDS: ${amountInWords}
+        </div>
+
     </div>
   </body>
 </html>
-`;
 
+`;
 
     if (printWindow) {
       printWindow.document.open();
       printWindow.document.write(htmlContent);
       printWindow.document.close();
     }
+
+        printWindow.onbeforeunload = () => {
+      this.ngZone.run(() => {
+        this.printConfirmVisible = false;
+      });
+    };
         setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
-    }, 1500); 
+    }, 1500);
   }
 
   // onPrintDirectly() {
@@ -1239,20 +1333,24 @@ const htmlContent = `
   //   window.print();
   // }
 
-onPrintDirectly(data: any): void {
-  console.log('onPrintDirectly received data:', data); 
-  const printSection = document.getElementById('printSection');
-  if (!printSection) {
-    console.error('No printSection found');
-    return;
-  }
+  onPrintDirectly(data: any): void {
+    console.log('onPrintDirectly received data:', data);
+    const printSection = document.getElementById('printSection');
+    if (!printSection) {
+      console.error('No printSection found');
+      return;
+    }
 
-  printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
-  const printContent = printSection.innerHTML;
+    printSection.innerHTML = this.generatePrintContent(data); // inject HTML into DOM
+    const printContent = printSection.innerHTML;
 
-  const WindowPrt = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
-  if (WindowPrt) {
-    WindowPrt.document.write(`
+    const WindowPrt = window.open(
+      '',
+      '',
+      'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0'
+    );
+    if (WindowPrt) {
+      WindowPrt.document.write(`
       <html>
         <head>
           <title>Print Invoice</title>
@@ -1271,13 +1369,11 @@ onPrintDirectly(data: any): void {
         </script>
       </html>
     `);
+    }
   }
-}
 
-
-
-generatePrintContent(data: any): string {
-  return `
+  generatePrintContent(data: any): string {
+    return `
     <div class="bill-container">
       <div class="header">
         <h2>DEPARTMENT OF ${this.departmentName || 'HOSPITAL'}</h2>
@@ -1321,21 +1417,21 @@ generatePrintContent(data: any): string {
               <td>${item.UNIT_PRICE}</td>
               <td>${item.AMOUNT}</td>
             </tr>
-          `).join('')}
+          `
+          ).join('')}
         </tbody>
       </table>
 
       <table class="totals">
         <tr><td><strong>Gross Amount:</strong> ₹${data.GROSS_AMOUNT}</td></tr>
-        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${data.SCHEMA_AMOUNT}</td></tr>
+        <tr><td><strong>Discount (${data.SCHEMA_NAME || 'N/A'}):</strong> ₹${
+      data.SCHEMA_AMOUNT
+    }</td></tr>
         <tr><td><strong>Net Amount:</strong> ₹${data.NET_AMOUNT}</td></tr>
       </table>
     </div>
   `;
-}
-
-
-
+  }
 
   preventNonNumeric(event: any): void {
     const input = event.event?.target as HTMLInputElement;

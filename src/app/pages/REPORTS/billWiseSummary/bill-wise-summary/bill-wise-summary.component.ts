@@ -7,13 +7,14 @@ import { FormTextboxModule } from 'src/app/components';
 import { DateWiseSummaryComponent } from '../../dateWiseSummary/date-wise-summary/date-wise-summary.component';
 
 @Component({
-  selector: 'app-staff-wise-summary',
-  templateUrl: './staff-wise-summary.component.html',
-  styleUrls: ['./staff-wise-summary.component.scss']
+  selector: 'app-bill-wise-summary',
+  templateUrl: './bill-wise-summary.component.html',
+  styleUrls: ['./bill-wise-summary.component.scss']
 })
-export class StaffWiseSummaryComponent {
+export class BillWiseSummaryComponent {
 
 }
+
 
 @NgModule({
   imports: [
@@ -49,8 +50,8 @@ export class StaffWiseSummaryComponent {
     DxAutocompleteModule,
   ],
   providers: [],
-  declarations: [StaffWiseSummaryComponent],
-  exports: [StaffWiseSummaryComponent],
+  declarations: [BillWiseSummaryComponent],
+  exports: [BillWiseSummaryComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class StaffWiseSummaryModule {}
+export class BillWiseSummaryModule {}

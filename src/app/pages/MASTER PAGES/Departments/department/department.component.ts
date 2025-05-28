@@ -1,6 +1,9 @@
 import { Component, NgModule } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import notify from 'devextreme/ui/notify';
+import { Router, NavigationStart } from '@angular/router';
+
+import { Subscription } from 'rxjs';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   DxSelectBoxModule,
@@ -41,7 +44,10 @@ import { DataService } from 'src/app/services';
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.scss'],
 })
-export class DepartmentComponent {
+export class DepartmentComponent  {
+    private routerSubscription!: Subscription;
+
+    departments: any = [];
   formsource: FormGroup;
   isAddPop: boolean = false;
   isEditPop: boolean = false;
@@ -53,7 +59,10 @@ selected_Data:any
   hospital_Dropdown_list: any=[]
   bill_prefix_value: any;
   id_Value: any;
-  constructor(private fb: FormBuilder, private dataservice: DataService) {
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
+     displayMode: any = 'full';
+       showPageSizeSelector = true;
+  constructor(private fb: FormBuilder, private dataservice: DataService,private router: Router) {
     this.formsource = this.fb.group({
       ID: [null],
       DepartmentName:  ['', Validators.required],
@@ -72,6 +81,21 @@ this.formsource.patchValue({
     this.getDepartment_list();
     this.hospital_Dropdown()
   }
+
+  ngOnInit() {
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isAddPop = false; // ✅ Close popup on route change
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+  
   
   //=========================onEditingStart=========================
 
@@ -103,7 +127,7 @@ this.formsource.patchValue({
     this.isAddPop = true;
  
   }
-  departments: any = [];
+
 
   formatStatus(data: any) {
     return data.IS_INACTIVE ? 'Inactive' : 'Active';
@@ -172,7 +196,25 @@ addData() {
   this.formsource.markAllAsTouched();
 
   console.log(this.formsource.value);
+  if (!this.formsource.value.DepartmentName || !this.formsource.value.Hospital ) {
+    let errorMessage = 'Please fill all required fields: ';
+    const missingFields = [];
+    
+    if (!this.formsource.value.DepartmentName) missingFields.push('Department Name');
+    if (!this.formsource.value.Hospital) missingFields.push('Hospital');
+    
+    errorMessage += missingFields.join(', ');
 
+    notify(
+      {
+        message: errorMessage,
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 3000,
+      },
+      'error'
+    );
+    return;
+  }
   const department = this.formsource.value.DepartmentName;
   const Hospital = this.formsource.value.Hospital;
   const is_Inactive = this.formsource.value.IS_INACTIVE;
@@ -270,12 +312,44 @@ if (Bill_prefix && Bill_prefix.length > 3) {
   }
   //===========================Update Department Data=========================
   update_Department_Data() {
+    
 const id=this.id_Value
  const department=this.department_Value
      const Hospital=this.hospital_value
       const is_Inactive=this.status_value
       const Bill_prefix=this.bill_prefix_value
+ if (!this.department_Value || !this.hospital_value) 
+   {
+    let errorMessage = 'Please fill all required fields: ';
+    const missingFields = [];
+    
+    if (!this.department_Value) missingFields.push('Department Name');
+    if (!this.hospital_value) missingFields.push('Hospital');
+    
+    errorMessage += missingFields.join(', ');
 
+    notify(
+      {
+        message: errorMessage,
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 3000,
+      },
+      'error'
+    );
+    return;
+  }
+  
+if (Bill_prefix && Bill_prefix.length > 3) {
+  notify(
+    {
+      message: 'Bill prefix can be maximum 3 characters.',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1000,
+    },
+    'error'
+  );
+  return; // Stop further execution
+}
 const isDuplicate = this.departments.some((item: any) => {
   // Skip the current record being edited
   if (item.ID === id) return false;

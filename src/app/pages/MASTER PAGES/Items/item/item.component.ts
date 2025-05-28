@@ -1,6 +1,7 @@
 import { Component, NgModule } from '@angular/core';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, NavigationStart } from '@angular/router';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ValidatorFn, AbstractControl } from '@angular/forms';
@@ -37,13 +38,14 @@ import {
 
 import { FormTextboxModule } from 'src/app/components';
 import { DataService } from 'src/app/services';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
 export class ItemComponent {
-
+ private routerSubscription!: Subscription;
 items_source:any
 isAddPop:boolean=false
 isEditPop:boolean=false
@@ -61,10 +63,12 @@ formsource:FormGroup
   is_fixed_value: boolean;
   name_value: any;
   price_value: any;
+   readonly allowedPageSizes: any = [5, 10, 'all'];
+     displayMode: any = 'full';
+       showPageSizeSelector = true;
 
 
-
-constructor(private dataservice:DataService,private fb:FormBuilder){
+constructor(private dataservice:DataService,private fb:FormBuilder,private router: Router){
   this.formsource=this.fb.group({
     code:[''],
     item_name:[''],
@@ -80,6 +84,19 @@ constructor(private dataservice:DataService,private fb:FormBuilder){
 
 }
 
+  ngOnInit() {
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isAddPop = false; // ✅ Close popup on route change
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
 
 
 openPopup(){
@@ -119,10 +136,12 @@ this.isEditPop=true
 console.log(event)
 this.select_list_data(event)
 }
-
+closebtn(){
+  this.isEditPop=false
+}
 closePopup(){
   this.isAddPop=false
-  this.isEditPop=false
+  // this.isEditPop=false
   this.formsource.reset()
    this.formsource.reset({
     IS_INACTIVE: false,

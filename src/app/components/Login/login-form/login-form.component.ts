@@ -93,6 +93,7 @@ sessionStorage.setItem('savedUserData', JSON.stringify(savedUserData));
         this.router.navigate(['/dashboard']).then(() => {
           console.log('Navigation to dashboard successful');
           window.location.reload();
+          console.log('Saved userData:', savedUserData);
         }).catch(err => {
           console.error('Navigation failed:', err);
         });
