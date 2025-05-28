@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DxSelectBoxModule, DxTextAreaModule, DxDateBoxModule, DxFormModule, DxTextBoxModule, DxCheckBoxModule, DxRadioGroupModule, DxFileUploaderModule, DxDataGridModule, DxButtonModule, DxValidatorModule, DxProgressBarModule, DxPopupModule, DxDropDownBoxModule, DxToolbarModule, DxTabPanelModule, DxTabsModule, DxNumberBoxModule, DxValidationGroupModule, DxAutocompleteModule } from 'devextreme-angular';
 import { DxoItemModule, DxoFormItemModule, DxoLookupModule, DxiItemModule, DxiGroupModule } from 'devextreme-angular/ui/nested';
-// import { FormTextboxModule } from 'src/app/components';
+import { FormTextboxModule } from 'src/app/components';
 import { InvoiceAddComponent } from '../../invoice-add/invoice-add.component';
 
 @Component({
@@ -36,7 +36,7 @@ printConfirmVisible: boolean = false;
     DxDateBoxModule,
     DxFormModule,
     DxTextBoxModule,
-    // FormTextboxModule,
+    FormTextboxModule,
     DxCheckBoxModule,
     DxRadioGroupModule,
     DxFileUploaderModule,

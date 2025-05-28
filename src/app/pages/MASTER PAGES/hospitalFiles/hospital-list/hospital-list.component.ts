@@ -66,6 +66,7 @@ constructor(private fb:FormBuilder ,private dataservice: DataService) {
   Inactive:[false,[Validators.required]]
 
  })
+ 
    this.get_Hospital_List()
 }
 
@@ -240,7 +241,7 @@ const isDuplicate = this.dataSource.some((data:any)=>{
     this.get_Hospital_List()
       notify(
         {
-          message: 'Data already exists',
+          message: 'Hospital already exists',
           position: { at: 'top right', my: 'top right' },
           displayTime: 500,
         },
