@@ -49,8 +49,8 @@
 
     <dxo-editing
       mode="popup"
-      [allowUpdating]="true"
-      [allowDeleting]="true"
+      [allowUpdating]="isDeleteIconVisible"
+      [allowDeleting]="isDeleteIconVisible"
       [allowAdding]="true"
       [useIcons]="true"
     >
@@ -91,6 +91,7 @@
     </dxi-column>
     <dxi-column dataField="USER_NAME" caption="User Name"></dxi-column>
     <dxi-column dataField="LOGIN_NAME" caption="Login Name"></dxi-column>
+    
     <dxi-column
       dataField="IS_INACTIVE"
       caption="Status"
@@ -111,7 +112,7 @@
 <dx-popup
   [(visible)]="addPopup"
   [width]="600"
-  height="600"
+  height="580"
   title="New User"
   [shading]="false"
   [showCloseButton]="true"
@@ -216,6 +217,7 @@
       </dx-select-box
     ></dxi-item>
 
+
     <!-- DROPDOWN HOSPITAL -->
 
     <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) -->
@@ -240,20 +242,40 @@
       </dx-tag-box>
     </dxi-item>
 
+    <dxi-item class="checkbox-row">
+
+      <dx-check-box
+        class="mt-2"
+        formControlName="AddInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+<label for="checboxadd" class="me-3" >Add Invoice</label>
+      
+      <dx-check-box
+        class="mt-2"
+        formControlName="ViewInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+<label for="checboxadd" class="me-3" >View Invoice</label>
+      
+      <dx-check-box
+        class="mt-2"
+        formControlName="CancelInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-3" >Cancel Invoice</label>
+      </dxi-item>
+
     <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-3">
-      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
-        Cancel
-      </button>
-      <dx-button
-        [width]="60"
-        text="Save"
-        class="me-1"
-        type="default"
-        stylingMode="contained"
-        (onClick)="addData()"
-      ></dx-button>
-    </dxi-item>
+   <dxi-item class="d-flex justify-content-end mt-3">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Save" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
+          </dxi-item>
   </dx-form>
 </dx-popup>
 
@@ -262,7 +284,7 @@
   [title]="'Edit User'"
   [(visible)]="editPopup"
   [width]="600"
-  height="600"
+  height="620"
   [closeOnOutsideClick]="false"
   [showCloseButton]="true"
   [shading]="false"
@@ -385,19 +407,42 @@
       </dx-tag-box>
     </dxi-item>
 
+    
+    <dxi-item class="checkbox-row">
+
+      <dx-check-box
+        class="mt-2"
+        formControlName="AddInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-3" >Add Invoice</label>
+
+      
+      <dx-check-box
+        class="mt-2"
+        formControlName="ViewInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-3" >View Invoice</label>
+
+      
+      <dx-check-box
+        class="mt-2"
+        formControlName="CancelInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-3" >Cancel Invoice</label>
+      </dxi-item>
+
     <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-3">
-      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
-        Cancel
-      </button>
-      <dx-button
-        [width]="60"
-        text="Save"
-        class="me-1"
-        type="default"
-        stylingMode="contained"
-        (onClick)="editData()"
-      ></dx-button>
-    </dxi-item>
+     <dxi-item class="d-flex justify-content-end mt-3">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
+          </dxi-item>
   </dx-form>
 </dx-popup>
