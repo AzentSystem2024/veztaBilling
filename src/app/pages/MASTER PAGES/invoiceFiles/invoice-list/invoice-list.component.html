@@ -85,9 +85,10 @@
 
 <dx-popup
   [(visible)]="isEditPopupVisible"
-  [width]="'55vw'"
-  [height]="'48vh'"
-  title="New Account"
+  [width]="'95vw'"
+  [height]="'100vh'"
+  [maxHeight]="'98vh'"
+  title="Invoice"
   (onHiding)="handleClose()"
 >
   <app-invoice-view

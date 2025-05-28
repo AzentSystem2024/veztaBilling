@@ -5,6 +5,7 @@ import {
   HostListener,
   NgModule,
   NgZone,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -146,7 +147,7 @@ export class InvoiceAddComponent {
       {
         ITEM_ID: '',
 
-        QUANTITY: '',
+        QUANTITY: '1.00',
         UNIT_PRICE: '',
         AMOUNT: '',
       },
@@ -171,6 +172,9 @@ export class InvoiceAddComponent {
   constructor(private dataService: DataService,
     private ngZone: NgZone
   ) {}
+
+
+
 
   ngOnInit() {
     
@@ -198,10 +202,11 @@ export class InvoiceAddComponent {
     this.getSchemaList();
     this.getPaymentMode();
     this.getInsuranceOptions();
-    this.getItems();
+    // this.getItems();
     this.getWardAndUnit();
      this.updateAmountInWords();
-     this.getItemsOfDepartment()
+     this.getItemsOfDepartment();
+
   }
   private timerId: any;
   ngAfterViewInit(): void {
@@ -278,12 +283,7 @@ export class InvoiceAddComponent {
     });
   }
 
-  getItemsOfDepartment(){
-    this.dataService.getDropdownItemsofDepartment(this.Department).subscribe((response: any) => {
-      this.itemsOfDepartment = response;
-      console.log(this.itemsOfDepartment,"ITEMSOFDEPARTMENT")
-    })
-  }
+
 
   getWardAndUnit() {
     const department = this.Department;
@@ -366,12 +366,19 @@ export class InvoiceAddComponent {
     });
   }
 
-  getItems() {
-    this.dataService.getDropdownData('ITEMS').subscribe((data) => {
-      // this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
-      this.items = data;
-      // console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
-    });
+  // getItems() {
+  //   this.dataService.getDropdownData('ITEMS').subscribe((data) => {
+  //     // this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
+  //     this.items = data;
+  //     console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
+  //   });
+  // }
+
+    getItemsOfDepartment(){
+    this.dataService.getDropdownItemsofDepartment(this.Department).subscribe((response: any) => {
+      this.items = response;
+      console.log(this.itemsOfDepartment,"ITEMSOFDEPARTMENT")
+    })
   }
 
   getSelectedItemsData(rowIndex: number) {
@@ -602,6 +609,11 @@ export class InvoiceAddComponent {
       }, 100); // Let any form reset/focus finish
     }
   }
+
+onInitNewRow(e: any): void {
+  console.log('onInitNewRow called'); // Check if this logs
+  e.data.QUANTITY = 1.00;
+}
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -1065,7 +1077,7 @@ handleEscapeKey(event: KeyboardEvent) {
         {
           ITEM_ID: '',
 
-          QUANTITY: '',
+          QUANTITY: '1.00',
           UNIT_PRICE: '',
           AMOUNT: '',
         },
@@ -1244,7 +1256,7 @@ convertNumberToWords(amount: number): string {
         <tr>
           <td><span class="label">PATIENT NAME:</span> ${data.PATIENT_NAME}</td>
           <td><span class="label">AGE:</span> ${data.PATIENT_AGE}</td>
-          <td><span class="label">RECEIPT DATE:</span> ${data.INVOICE_DATE}</td>
+          <td><span class="label">RECEIPT DATE:</span> ${this.formattedInvoiceDate}</td>
         </tr>
       </table>
 
