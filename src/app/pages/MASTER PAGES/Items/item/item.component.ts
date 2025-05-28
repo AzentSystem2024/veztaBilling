@@ -136,10 +136,12 @@ this.isEditPop=true
 console.log(event)
 this.select_list_data(event)
 }
-
+closebtn(){
+  this.isEditPop=false
+}
 closePopup(){
   this.isAddPop=false
-  this.isEditPop=false
+  // this.isEditPop=false
   this.formsource.reset()
    this.formsource.reset({
     IS_INACTIVE: false,

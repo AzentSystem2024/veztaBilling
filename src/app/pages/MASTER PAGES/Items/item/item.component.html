@@ -12,7 +12,6 @@
     [height]="'85vh'"
     (onRowRemoving)="delete_Items_Data($event)"
     id="dataGrid"
-   
   >
     <dxo-scrolling mode="standard"></dxo-scrolling>
 
@@ -114,10 +113,9 @@
   [title]="'Item'"
   [(visible)]="isAddPop"
   [width]="360"
-  [height]="370"
+  [height]="380"
   [shading]="false"
   (onHiding)="closePopup()"
-
 >
   <form [formGroup]="formsource">
     <!-- Code -->
@@ -130,13 +128,14 @@
       formControlName="code"
       label="Code"
       labelMode="floating"
+      style="margin-top: 20px"
     ></dx-text-box>
-<dx-validator>
-                  <dxi-validation-rule
-                    type="required"
-                    message="Please select payment mode"
-                  ></dxi-validation-rule>
-                </dx-validator>
+    <dx-validator>
+      <dxi-validation-rule
+        type="required"
+        message="Please select payment mode"
+      ></dxi-validation-rule>
+    </dx-validator>
 
     <!-- Item Name -->
 
@@ -148,6 +147,7 @@
       formControlName="item_name"
       label="Item Name"
       labelMode="floating"
+      style="margin-top: 20px"
     >
     </dx-text-box>
 
@@ -163,6 +163,7 @@
       [multiline]="false"
       [searchEnabled]="true"
       formControlName="department_id"
+      style="margin-top: 20px"
       width="100%"
       label="Department"
       labelMode="floating"
@@ -170,25 +171,25 @@
     </dx-tag-box>
 
     <!-- Price -->
-   <div style="display: flex; align-items: center; margin-bottom: 16px">
-    <dx-radio-group
-      [items]="select_option"
-      [valueExpr]="'value'"
-      [displayExpr]="'text'"
-      layout="horizontal"
-      formControlName="is_fixed"
-    >
-    </dx-radio-group>
-    <dx-number-box
-      valueChangeEvent="input"
-      [inputAttr]="{ style: 'text-align: right;' }"
-      style="margin-left: 10px; width: 100px"
-      formControlName="price"
-      label="Price"
-      labelMode="floating"
-    >
-    </dx-number-box>
-</div>
+    <div style="display: flex; align-items: center; margin-bottom: 20px">
+      <dx-radio-group
+        [items]="select_option"
+        [valueExpr]="'value'"
+        [displayExpr]="'text'"
+        layout="horizontal"
+        formControlName="is_fixed"
+      >
+      </dx-radio-group>
+      <dx-number-box
+        valueChangeEvent="input"
+        [inputAttr]="{ style: 'text-align: right;' }"
+        style="margin-left: 10px; width: 100px"
+        formControlName="price"
+        label="Price"
+        labelMode="floating"
+      >
+      </dx-number-box>
+    </div>
     <!-- Inactive Checkbox -->
     <!-- <div style="display: flex; align-items: center; margin-bottom: 16px;">
       <label style="width: 120px;">Inactive</label>
@@ -200,7 +201,7 @@
     </div> -->
 
     <!-- Action Buttons -->
-    <div class="d-flex justify-content-end mt-4">
+    <div class="d-flex justify-content-end mt-5">
       <button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
@@ -224,58 +225,57 @@
   [title]="' Item'"
   [(visible)]="isEditPop"
   [width]="360"
-  [height]="380"
+  [height]="395"
   [shading]="false"
-  (onHiding)="closePopup()"
+ 
 >
   <form>
     <!-- Code -->
-   
-      <dx-text-box
-        type="text"
-        name="Code"
-        width="150px"
-        class="form-control"
-        [(value)]="code_value"
-           label="Code"
-                            labelMode="floating"
-      ></dx-text-box>
-    
+
+    <dx-text-box
+      type="text"
+      name="Code"
+      width="150px"
+      class="form-control"
+      [(value)]="code_value"
+      style="margin-top: 20px"
+      label="Code"
+      labelMode="floating"
+    ></dx-text-box>
 
     <!-- Item Name -->
-      <dx-text-box
-        type="text"
-        name="Item Name"
-        width="100%"
-        class="form-control"
-           label="Item Name"
-                            labelMode="floating"
-        [(value)]="name_value"
-      ></dx-text-box>
-  
+    <dx-text-box
+      type="text"
+      name="Item Name"
+      width="100%"
+      class="form-control"
+      label="Item Name"
+      labelMode="floating"
+      style="margin-top: 20px"
+      [(value)]="name_value"
+    ></dx-text-box>
 
     <!-- Department -->
- 
-      <dx-tag-box
-        [showClearButton]="true"
-        [showSelectionControls]="true"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        applyValueMode="instantly"
-        [searchEnabled]="true"
-        [(value)]="department_id_value"
-        [items]="department_list"
-        [multiline]="false"
-        width="100%"
-           label="Department"
-                            labelMode="floating"
-      >
-      </dx-tag-box>
-  
+
+    <dx-tag-box
+      [showClearButton]="true"
+      style="margin-top: 20px"
+      [showSelectionControls]="true"
+      valueExpr="ID"
+      displayExpr="DESCRIPTION"
+      applyValueMode="instantly"
+      [searchEnabled]="true"
+      [(value)]="department_id_value"
+      [items]="department_list"
+      [multiline]="false"
+      width="100%"
+      label="Department"
+      labelMode="floating"
+    >
+    </dx-tag-box>
 
     <!-- Price -->
     <div style="display: flex; align-items: center; margin-bottom: 16px">
-      
       <dx-radio-group
         [items]="select_option"
         [valueExpr]="'value'"
@@ -288,14 +288,14 @@
         [inputAttr]="{ style: 'text-align: right;' }"
         style="margin-left: 10px; width: 100px"
         [(value)]="price_value"
-           label="Price"
-                            labelMode="floating"
+        label="Price"
+        labelMode="floating"
       >
       </dx-number-box>
     </div>
 
     <!-- Inactive Checkbox -->
-    <div style="display: flex; align-items: center; margin-bottom: 16px">
+    <div style="display: flex; align-items: center; margin-bottom: 26px">
       <label style="width: 60px">Inactive</label>
       <dx-check-box
         [(value)]="is_inactve_value"
@@ -304,13 +304,15 @@
       ></dx-check-box>
     </div>
 
-    <div class="d-flex justify-content-end mt-4">
-  <button
+    <div class="d-flex justify-content-end mt-5">
+  <!-- Cancel Button -->
+      <button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
       >
         Cancel
       </button>
+
 
       <!-- Save Button -->
       <dx-button
