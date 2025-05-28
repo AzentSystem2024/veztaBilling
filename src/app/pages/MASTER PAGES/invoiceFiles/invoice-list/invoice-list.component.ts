@@ -7,6 +7,7 @@ import { UserListComponent, UserListModule } from '../../userFiles/user-list/use
 // import { UserListComponent } from '../../userFiles/user-list/user-list.component';
 import { InvoiceAddModule } from '../../invoice-add/invoice-add.component';
 import { DataService } from 'src/app/services';
+import { InvoiceViewModule } from '../invoice-view/invoice-view.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -28,18 +29,13 @@ export class InvoiceListComponent {
     Department: any = {
     DEPARTMENT_ID: 1,
   };
-  // component.ts
-invoices = [
-  { Department: 'Cardiology', UHID: 'UH12345', patientName: 'John Doe' },
-  { Department: 'Neurology', UHID: 'UH12346', patientName: 'Jane Smith' },
-  { Department: 'Orthopedics', UHID: 'UH12347', patientName: 'Alice Johnson' },
-  { Department: 'Pediatrics', UHID: 'UH12348', patientName: 'Bob Brown' }
-];
+
 dateTimeFormat = {
   type: "datetime",
   format: "dd-MM-yyyy hh:mm tt"
 };
-
+isEditPopupVisible = false;
+selectedInvoice: any = null;
 
   addInvoicePopupOpened: boolean = false;
   invoiceList: any;
@@ -79,6 +75,12 @@ dateTimeFormat = {
     // this.getPayrollList();
   }
 
+onViewClick(e: any) {
+  console.log("POPUP OPENED")
+  this.selectedInvoice = e.row?.data;
+  this.isEditPopupVisible = true;
+}
+
 }
 
 @NgModule({
@@ -98,7 +100,8 @@ dateTimeFormat = {
     DxPopupModule,
 
     UserListModule,
-    InvoiceAddModule
+    InvoiceAddModule,
+    InvoiceViewModule
 
   ],
   providers: [],

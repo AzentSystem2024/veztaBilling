@@ -37,11 +37,12 @@ import { ItemModule } from './pages/MASTER PAGES/Items/item/item.component';
 import { InsuranceComponent, InsuranceModule } from './pages/MASTER PAGES/insurance/insurance.component';
 import { SchemaComponent, SchemaModule } from './pages/MASTER PAGES/schema/schema.component';
 import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staff-wise-summary/staff-wise-summary.component';
+import { InvoiceViewComponent, InvoiceViewModule } from './pages/MASTER PAGES/invoiceFiles/invoice-view/invoice-view.component';
 
 
 
 @NgModule({
-  declarations: [AppComponent, StaffWiseSummaryComponent],
+  declarations: [AppComponent],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -62,6 +63,7 @@ import { StaffWiseSummaryComponent } from './pages/REPORTS/staffWiseSummary/staf
     ItemModule,
     InsuranceModule,
     SchemaModule,
+    InvoiceViewModule
 
   ],
   providers: [
