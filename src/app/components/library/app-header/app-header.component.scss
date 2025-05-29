@@ -42,3 +42,9 @@ header {
     }
   }
 }
+.dx-dialog-buttons {
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 10px !important;
+  margin-left: auto !important;
+}

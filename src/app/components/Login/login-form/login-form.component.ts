@@ -64,91 +64,69 @@ export class LoginFormComponent {
   // async onSubmit(event: Event) {
   //   event.preventDefault(); // Prevent default form submission
 
-async onSubmit(event: Event) {
-  event.preventDefault();
+  async onSubmit(event: Event) {
+    event.preventDefault();
 
-  if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
-    alert('Please enter login name and password');
-    return;
+    if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
+      alert('Please enter login name and password');
+      return;
+    }
+
+    this.loading = true;
+
+    this.authService
+      .logIn(this.formData.LOGIN_NAME, this.formData.PASSWORD)
+      .subscribe(
+        (response) => {
+          this.loading = false;
+          console.log('Login response:', response);
+
+          if (response.flag === 1) {
+            // Save user data once
+            localStorage.setItem('userData', JSON.stringify(response));
+
+            const savedUserData = JSON.parse(
+              localStorage.getItem('userData') || '{}'
+            );
+            console.log('Saved userData:', savedUserData);
+
+            sessionStorage.setItem(
+              'savedUserData',
+              JSON.stringify(savedUserData)
+            );
+// const redirectPath = savedUserData.ADD_INVOICE ? '/invoice-entry' : 'null';
+const redirectPath =
+  savedUserData.USER_TYPE_ID === 3
+    ? '/invoice-entry'
+    : (savedUserData.USER_TYPE_ID === 1 || savedUserData.USER_TYPE_ID === 2)
+    ? '/invoice'
+    : null;
+
+            // Navigate to dashboard
+        this.router.navigate([redirectPath]).then(() => {
+          console.log('Navigation to dashboard successful');
+    window.location.reload();
+    
+  })
+  .catch((err) => {
+    console.error('Navigation failed:', err);
+  });
+          } else {
+            notify({
+              message: response.Message || 'Login failed',
+              type: 'error',
+              position: { my: 'top right', at: 'top right', of: window },
+            });
+          }
+        },
+        (error) => {
+          this.loading = false;
+          console.error('Login error:', error);
+          alert('Login failed. Please check your credentials.');
+        }
+      );
   }
 
-  this.loading = true;
-
-  this.authService.logIn(this.formData.LOGIN_NAME, this.formData.PASSWORD).subscribe(
-    (response) => {
-      this.loading = false;
-      console.log('Login response:', response);
-
-      if (response.flag === 1) {
-        // Save user data once
-localStorage.setItem('userData', JSON.stringify(response));
-
-const savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-console.log('Saved userData:', savedUserData);
-
-sessionStorage.setItem('savedUserData', JSON.stringify(savedUserData));
-
-
-        // Navigate to dashboard
-        this.router.navigate(['/dashboard']).then(() => {
-          console.log('Navigation to dashboard successful');
-          window.location.reload();
-          console.log('Saved userData:', savedUserData);
-        }).catch(err => {
-          console.error('Navigation failed:', err);
-        });
-      } else {
-        notify({
-          message: response.Message || 'Login failed',
-          type: 'error',
-          position: { my: 'top right', at: 'top right', of: window }
-        });
-      }
-    },
-    (error) => {
-      this.loading = false;
-      console.error('Login error:', error);
-      alert('Login failed. Please check your credentials.');
-    }
-  );
-}
-
-
-  // async onSubmit(event: Event) {
-
-  //  async onSubmit(event: Event) {
-  //   event.preventDefault(); // Prevent default form submission
-
-  //   if (!this.formData.LOGIN_NAME || !this.formData.PASSWORD) {
-  //     alert('Please enter login name and password');
-  //     return;
-  //   }
-
-  //   this.loading = true;
-
-  //   // Simulate successful login data
-  //   const mockUserData = {
-  //     USER_TYPE: 3, // or 4 or any type you'd expect
-  //     RESELLER_ID: 123, // if USER_TYPE === 3
-  //     CUST_ID: 456,     // if USER_TYPE === 4
-  //     LOGIN_NAME: this.formData.LOGIN_NAME
-  //   };
-
-  //   // Store mock user data
-  //   localStorage.setItem('userData', JSON.stringify(mockUserData));
-  //   localStorage.setItem('USER_TYPE', mockUserData.USER_TYPE.toString());
-
-  //   if (mockUserData.USER_TYPE === 3) {
-  //     localStorage.setItem('RESELLER_ID', mockUserData.RESELLER_ID.toString());
-  //   } else if (mockUserData.USER_TYPE === 4) {
-  //     localStorage.setItem('CUST_ID', mockUserData.CUST_ID.toString());
-  //   }
-
-  //   // Navigate to dashboard
-  //   await this.router.navigate(['/dashboard']);
-  //   window.location.reload();
-  //   this.loading = false;
-  // }
 }
 @NgModule({
   imports: [

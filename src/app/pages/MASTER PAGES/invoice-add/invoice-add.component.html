@@ -192,12 +192,19 @@
                   [(value)]="invoiceFormData.UHID"
                   [width]="205"
                   (onKeyDown)="onKeyDownHandler($event, 'ageBoxRef')"
+                  (onInput)="restrictUHIDLength($event)"
                 >
                   <dx-validator>
                     <dxi-validation-rule
                       type="required"
                       message="UHID is required"
                     ></dxi-validation-rule>
+                        <!-- <dxi-validation-rule
+      type="custom"
+      [validationCallback]="validateUhid"
+      message="UHID must be 11 digits and start with a valid year (e.g. 2025)"
+    ></dxi-validation-rule> -->
+
                   </dx-validator>
                 </dx-text-box>
 
@@ -321,7 +328,9 @@
                 displayExpr="SCHEMA_NAME"
                 [(value)]="invoiceFormData.SCHEMA_ID"
                 valueExpr="ID"
+                [searchEnabled]="true"
                 [width]="200"
+                [showClearButton]="true"
                 (onValueChanged)="onSchemaChanged($event)"
               ></dx-select-box>
               <dx-text-box
@@ -378,6 +387,7 @@
                 valueExpr="ID"
                 [(value)]="invoiceFormData.PAYMENT_MODE"
                 [width]="200"
+                [searchEnabled]="true"
                 [(value)]="selectedPaymentModeId"
                 (onValueChanged)="onPaymentModeChange($event)"
               >
@@ -492,12 +502,12 @@
         stylingMode="outlined"
         (onClick)="onConfirmPrint('no')"
       ></dx-button>
-      <dx-button
+      <!-- <dx-button
         text="Print"
         type="default"
         stylingMode="contained"
         (onClick)="onConfirmPrint('print')"
-      ></dx-button>
+      ></dx-button> -->
       <dx-button
         text="Print & Preview"
         type="default"

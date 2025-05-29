@@ -115,6 +115,11 @@ selectInvoice(id: number) {
 
 }
 
+cancelBill(data: any): Observable<any> {
+    return this.http.post(`${BASE_URL}invoice/cancel`, data);
+  }
+
+
   //SCHEMA-LIST
 
   getSchema(): Observable<any> {

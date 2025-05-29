@@ -2,14 +2,13 @@
   id="invoiceToPrint"
   class="invoice-wrapper"
   style="
- 
     display: flex;
     flex-direction: column;
 
     box-sizing: border-box;
   "
 >
-  <div class="salary-grid-wrapper" style="padding: 0 10px; margin-bottom: 60px;">
+  <div class="salary-grid-wrapper" style="padding: 0 10px; margin-bottom: 60px">
     <div class="grid-container">
       <dx-data-grid
         #itemsGridRef
@@ -283,7 +282,6 @@
               <dx-text-box
                 label="Insurance ID"
                 labelMode="floating"
-        
                 [width]="200"
                 [readOnly]="true"
               ></dx-text-box>
@@ -291,16 +289,28 @@
           </div>
 
           <!-- Right side: Buttons -->
+           <div (keydown)="handleKeyEvents($event)" tabindex="0">
           <div style="display: flex; gap: 10px">
             <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
             <dx-button
+              text="Reprint"
+              stylingMode="outlined"
+              type="default"
+              (onClick)="previewAndPrintInvoice()"
+              
+            ></dx-button>
+            <dx-button
+              *ngIf="userData.CANCEL_INVOICE !== false"
               text="Cancel Invoice"
               stylingMode="outlined"
               type="normal"
+              (onClick)="cancelBillPrint()"
+              [disabled]="invoiceData?.STATUS === 'Cancelled'"
               [elementAttr]="{
-                style: 'background-color: #cccccc; color: red;'
+                style: 'background-color: red; color: white;'
               }"
             ></dx-button>
+          </div>
           </div>
         </div>
       </div>

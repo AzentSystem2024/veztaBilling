@@ -45,12 +45,11 @@ export class SideNavigationMenuComponent
   selectedItemKeys: any;
   userType:any
 
+
+  
+
   items = [
-    // {
-    //   text: 'Dashboard',
-    //   icon: 'chart',
-    //   path: '/dashboard',
-    // },
+
 
     {
       text: 'settings',
@@ -112,41 +111,41 @@ export class SideNavigationMenuComponent
         },
       ],
     },
-        {
-      text: 'Report',
-      icon: 'fa fa-file-alt',
-      path: '',
-      items: [
-        {
-          text: 'Date Wise Summary',
-          path: '/datewise-summary',
-        },
-        {
-          text: 'Bill Wise Summary',
-          path: '/billwise-summary',
-        },
-        {
-          text: 'Staff Wise Summary',
-          path: '/staffwise-summary',
-        },
-        {
-          text: 'Test Item Wise Summary',
-          path: '/testitemwise-summary',
-        },
-        {
-          text: 'Scheme Wise Summary',
-          path: '/schemewise-summary',
-        },
-        {
-          text: 'Scheme Wise Bill Summary',
-          path: '/schemewise-bill-summary',
-        },
-        {
-          text: 'Patient Wise Summary',
-          path: '/patientwise-summary',
-        },
-      ],
-    },
+    //     {
+    //   text: 'Report',
+    //   icon: 'fa fa-file-alt',
+    //   path: '',
+    //   items: [
+    //     {
+    //       text: 'Date Wise Summary',
+    //       path: '/datewise-summary',
+    //     },
+    //     {
+    //       text: 'Bill Wise Summary',
+    //       path: '/billwise-summary',
+    //     },
+    //     {
+    //       text: 'Staff Wise Summary',
+    //       path: '/staffwise-summary',
+    //     },
+    //     {
+    //       text: 'Test Item Wise Summary',
+    //       path: '/testitemwise-summary',
+    //     },
+    //     {
+    //       text: 'Scheme Wise Summary',
+    //       path: '/schemewise-summary',
+    //     },
+    //     {
+    //       text: 'Scheme Wise Bill Summary',
+    //       path: '/schemewise-bill-summary',
+    //     },
+    //     {
+    //       text: 'Patient Wise Summary',
+    //       path: '/patientwise-summary',
+    //     },
+    //   ],
+    // },
   ];
 
   @Input()
@@ -191,42 +190,90 @@ export class SideNavigationMenuComponent
       this.refreshMenu();
     });
     this.refreshMenu();
-    // Hide "Reseller" menu if user type is 3
-    // if (userType === '3') {
-    //   this.items = this.items.map((menu) => ({
-    //     ...menu,
-    //     items:
-    //       menu.items?.filter(
-    //         (submenu) => submenu.text !== 'Reseller' && submenu.text !== 'User'
-    //       ) || [],
-    //   }));
-    // } else if (userType === '4') {
-    //   this.items = this.items.map((menu) => ({
-    //     ...menu,
-    //     items:
-    //       menu.items?.filter(
-    //         (submenu) =>
-    //           submenu.text !== 'Customer' &&
-    //           submenu.text !== 'Reseller' &&
-    //           submenu.text !== 'User' 
-    //           // submenu.text !== 'Sales'
-    //       ) || [],
-    //   }));
-    // }
+  
     // Load the navigation data from localStorage
     this.navigation = JSON.parse(localStorage.getItem('sidemenuItems') || '[]');
 
     this.cdr.detectChanges(); // Force UI to update
   }
 
-  refreshMenu() {
-    const userType = localStorage.getItem('USER_TYPE');
-    console.log(userType, 'USERTYPE');
-  
-    // Your existing menu filtering logic...
-    
-    this.cdr.detectChanges(); // Force UI refresh
+refreshMenu() {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+  const isAdmin = userData?.USER_TYPE_ID === 1;
+  const canViewInvoice = userData?.VIEW_INVOICE === true;
+  const canAddInvoice = userData?.ADD_INVOICE === true;
+
+  this.items = [];
+
+  // Settings (Admin only)
+  if (isAdmin) {
+    this.items.push({
+      text: 'settings',
+      icon: 'preferences',
+      path: '/dashboard',
+      items: [
+        { text: 'Basic Settings' },
+        { text: 'User', path: '/user' },
+      ],
+    });
   }
+
+  // Masters (Admin only)
+  if (isAdmin) {
+    this.items.push({
+      text: 'Masters',
+      icon: 'user',
+      path: '',
+      items: [
+        { text: 'Hospital', path: '/hospital' },
+        { text: 'Department', path: '/department' },
+        { text: 'Item', path: '/item' },
+        { text: 'Insurance', path: '/insurance' },
+        { text: 'Schema', path: '/schema' },
+      ],
+    });
+  }
+
+  // Invoice items (based on permissions or Admin)
+  const invoiceItems = [];
+  if (isAdmin || canViewInvoice) {
+    invoiceItems.push({ text: 'Invoice List', path: '/invoice' });
+  }
+  if (isAdmin || canAddInvoice) {
+    invoiceItems.push({ text: 'New Invoice', path: '/invoice-entry' });
+  }
+
+  if (invoiceItems.length > 0) {
+    this.items.push({
+      text: 'Invoice',
+      icon: 'money',
+      path: '',
+      items: invoiceItems,
+    });
+  }
+
+  // Reports (Visible to all, or restrict if needed)
+  // this.items.push({
+  //   text: 'Report',
+  //   icon: 'fa fa-file-alt',
+  //   path: '',
+  //   items: [
+  //     { text: 'Date Wise Summary', path: '/datewise-summary' },
+  //     { text: 'Bill Wise Summary', path: '/billwise-summary' },
+  //     { text: 'Staff Wise Summary', path: '/staffwise-summary' },
+  //     { text: 'Test Item Wise Summary', path: '/testitemwise-summary' },
+  //     { text: 'Scheme Wise Summary', path: '/schemewise-summary' },
+  //     { text: 'Scheme Wise Bill Summary', path: '/schemewise-bill-summary' },
+  //     { text: 'Patient Wise Summary', path: '/patientwise-summary' },
+  //   ],
+  // });
+
+  // Optional: Save to localStorage if used elsewhere
+  localStorage.setItem('sidemenuItems', JSON.stringify(this.items));
+}
+
+
 
   setSelectedItem() {
     if (!this.menu.instance) {
@@ -251,25 +298,7 @@ export class SideNavigationMenuComponent
     events.off(this.elementRef.nativeElement, 'dxclick');
   }
 
-  // Transform the flat JSON data into a nested structure
-  // private transformMenuData(menuItems: any[]): any[] {
-  //   const lookup: { [key: string]: any } = {};
-  //   const rootMenus: any[] = [];
-
-  //   menuItems.forEach((item) => {
-  //     lookup[item.id] = { ...item, items: [] }; // Initialize with items as an empty array
-
-  //     if (item.GroupID === '0') {
-  //       rootMenus.push(lookup[item.id]);
-  //     } else {
-  //       if (lookup[item.GroupID]) {
-  //         lookup[item.GroupID].items.push(lookup[item.id]);
-  //       }
-  //     }
-  //   });
-
-  //   return rootMenus;
-  // }
+ 
 }
 
 @NgModule({
