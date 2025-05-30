@@ -189,6 +189,16 @@ selectInvoice(id: number) {
 
     return this.http.post(`${BASE_URL}dropdown`, reqBody);
   }
+
+  get_dropdowndepartment_api(type: any,hos_ID:any) {
+    const reqBody = {
+  "NAME": "DEPARTMENT_BY_HOSPITAL",
+  "HOSPITAL_ID":hos_ID
+}
+
+    return this.http.post(`${BASE_URL}dropdown`, reqBody);
+  }
+
   //HOSPITAL
   get_HospitalData_List() {
     return this.http.post(`${BASE_URL}hospital/list`, {});

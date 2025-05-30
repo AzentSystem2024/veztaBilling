@@ -46,7 +46,8 @@ user: any;
 confirmPasswordValue: any;
   userData: any;
   passwordForm: any;
-  department_list: any[];
+  department_list: any;
+  hospital_list : any [];
   usertype_list:any[];
   user_Id_value: any;
  
@@ -73,9 +74,11 @@ formData = { IS_INACTIVE: false,pwd:''};
   CANCEL_INVOICE: boolean = false;
   showHeaderFilter = true;
   editPopup: boolean = false;
+  isGridDisabled = false
   editUserData: any;
   selectedUserType: any;
-  selectedDepartmentId: any[] = []; 
+  selectedDepartmentId: any; 
+  selectedHospitalId:any[] = [];
   selectedStatus: any;
   popupWidth = 400;
   userHospital: any;
@@ -90,6 +93,7 @@ formData = { IS_INACTIVE: false,pwd:''};
   LOGIN_NAME: any;
   PASSWORD: any;
   DEPARTMENT_ID: any;
+  HOSPITAL_ID : any;
 
   departments: any;
   userId: any;
@@ -99,6 +103,8 @@ formData = { IS_INACTIVE: false,pwd:''};
   Inactive_Value: any;
   UserType_Value: any
   changePasswordMode: any;
+  Department_Data: any;
+  hos_ID: any;
 
 closePop() {
   this.addPopup = false;
@@ -139,6 +145,7 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
       ConfirmPassword: [null,Validators.required],
       Inactive: [false], // Boolean default false
      DepartmentId: [null,[Validators.required]],
+     HospitalId : [null,[Validators.required]],
       UserType: ['', [Validators.required]],
       AddInvoice: [false],
       ViewInvoice: [false],
@@ -147,8 +154,10 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
     })
 
    this.department_dropdown_list();
+   this.hospital_dropdown_list();
    this.get_User_List();
    this.usertype_dropdown_list();
+   this.getDepartment_list()
 }
 
   statusCellTemplate = (cellElement: any, cellInfo: any) => {
@@ -182,12 +191,6 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   refreshData() {
     this.dataGrid.instance.refresh();
   }
-
-  // onExporting(event: any) {
-  //   const fileName = 'file-name';
-  //   this.service.exportDataGrid(event, fileName);
-  // }
-
 
     ngOnDestroy() {
     window.removeEventListener('resize', this.setPopupWidth.bind(this));
@@ -257,12 +260,49 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
 
   //=======DROPDOWN=========
   department_dropdown_list(){
-  this.dataservice.get_dropdown_department_api(name).subscribe((res:any)=>{
+  this.dataservice.get_dropdowndepartment_api(name,this.hos_ID).subscribe((res:any)=>{
     console.log(res,'=========department_dropdown_list========');
    this.department_list=res
    
   })
+  }
+
+  getDepartment_list() {
+  this.dataservice.get_department_List().subscribe((res: any) => {
+    console.log(res);
+
+    // Add SlNo to each department item
+    this.Department_Data = res.Data.map((item: any, index: number) => ({
+      ...item,
+      SlNo: index + 1
+    }))
+
+    console.log(this.Department_Data, '======Department list with SlNo======');
+
+    //  // Filter based on selectedHospitalId or hos_ID
+    // this.department_list = this.Department_Data.filter(
+    //   (item) => item.HOSPITAL_ID == this.selectedHo );
+
+    console.log(this.selectedHospitalId, 'Selected Hospital ID');
+    console.log(this.department_list, 'Filtered Department List');
+    console.log(this.selectedHospitalId);
+    console.log( this.Department_Data.filter((item=>item.HOSPITAL_ID==this.hos_ID)));
+    
+
+    
+  });
 }
+
+
+
+
+hospital_dropdown_list(){
+  this.dataservice.get_dropdown_hospital_api(name).subscribe((res:any)=>{
+console.log(res,'==============hospital dropdown list=======')
+   this.hospital_list = res
+  })
+}
+
 onUserTypeChange(event: any) {
   console.log(event,'onUserTypeChange');
   this.selectedUserType = event.value;
@@ -277,6 +317,13 @@ onUserTypeChange(event: any) {
   })
 }
 
+onHospitalValue(event:any){
+  this.selectedHospitalId=event.value
+  this.hos_ID=event.value
+ this.department_dropdown_list()
+  console.log(this.hos_ID,'=============Hospital I D=======');
+  
+}
  get_User_List(){
   console.log('get_User_List');
   
@@ -294,12 +341,9 @@ this.dataservice.get_UserData_List_Api().subscribe((response:any)=>{
 }
 
 addData(){
- this.validation = true;
-//  // Step 1: Trigger DevExtreme internal validation (especially for compare rule)
-//   const result = this.dxFormInstance.instance.validate();
 
-  // Step 2: Angular form validation
-  // this.formsource.markAllAsTouched();
+
+ this.validation = true;
 
     console.log("Button Clicked");
     console.log(this.formsource,'reset');
@@ -307,22 +351,27 @@ addData(){
   const User_name = this.formsource.get('UserName')?.value;
   const Login_password = this.formsource.get('LoginPassword')?.value;
  const Is_Inactive = this.formsource.get('Inactive')?.value === true;
-  const Department_Id = this.selectedDepartmentId.join(',');
+  const Department_Id = this.selectedDepartmentId.toString();
+  // const Department_Id = this.selectedDepartmentId?.toString() || '';
+  // const Department_Id = this.selectedDepartmentId ?? null; // null or number
+
+  const Hospital_Id = this.selectedHospitalId;
   const Usertype = this.formsource.get('UserType')?.value;
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
   const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
   const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
-  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Usertype,Add_invoice,View_invoice,Cancel_invoice,'add data');
+  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Hospital_Id,Usertype,Add_invoice,View_invoice,Cancel_invoice,'add data');
 
   
 const payload = { // or dynamic: this.loggedInUser
-   user: 'admin', // ✅ Add this line
+  //  user: 'admin', // ✅ Add this line
   USER_NAME: User_name,
   LOGIN_NAME: Login_name,
   LOGIN_PWD: Login_password,
   USER_TYPE: Usertype,
   IS_INACTIVE: Is_Inactive,
-  DEPARTMENT_ID: Department_Id,
+  DEPARTMENT_ID: Department_Id ,
+  HOSPITAL_ID :  Hospital_Id ?? 0  ,
   ADD_INVOICE : Add_invoice,
   VIEW_INVOICE : View_invoice,
   CANCEL_INVOICE : Cancel_invoice,
@@ -403,7 +452,7 @@ openPopup() {
     AddInvoice:"",
     ViewInvoice:"",
     CancelInvoice:""
-    
+     
   });
     
 }
@@ -419,14 +468,15 @@ editData() {
   const User_name = this.formsource.get('UserName')?.value?.trim();
   const Login_password = this.formsource.get('LoginPassword')?.value?.trim();
   const Is_Inactive = this.formsource.get('Inactive')?.value === true;
-  const Department_Id = this.selectedDepartmentId?.join(',') || '';
+  const Department_Id = this.selectedDepartmentId.toString();
+  const Hospital_Id = this.selectedHospitalId;
   const Usertype = this.user_Id_value;
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
   const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
   const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
 
   // Debug log
-  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Usertype , Add_invoice, View_invoice, Cancel_invoice }, 'Edit Data Payload');
+  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Hospital_Id ,Usertype , Add_invoice, View_invoice, Cancel_invoice }, 'Edit Data Payload');
 
   // Prepare payload
   const payload = {
@@ -439,6 +489,7 @@ editData() {
     USER_TYPE: Usertype,
     IS_INACTIVE: Is_Inactive,
     DEPARTMENT_ID: Department_Id,
+    HOSPITAL_ID : Hospital_Id,
     ADD_INVOICE: Add_invoice,
     VIEW_INVOICE: View_invoice,
     CANCEL_INVOICE: Cancel_invoice,
@@ -512,10 +563,15 @@ editData() {
  select_User_Data(e:any){
   console.log(e);
   const ID = e.data.ID;
+  
   this.dataservice.Select_UserData_Api(ID).subscribe((res:any)=>{
     console.log(res,"result");
 
     this.selectedData=res.Data
+    console.log(this.selectedData,'============selected data===================');
+    
+this.selectedDepartmentId =Number(this.selectedData.DEPARTMENT_ID)
+console.log(this.selectedDepartmentId,'selectedDepartmentId');
 
 
     console.log(this.selectedData,'selected data');
@@ -531,6 +587,7 @@ editData() {
   ConfirmPassword:res.Data.LOGIN_PWD,// Set the Discount value from your data
   Inactive: res.Data.IS_INACTIVE,
   DepartmentId: res.Data.DEPARTMENT_ID,
+  HospitalId :res.Data.HOSPITAL_ID,
   UserType: res.Data.USER_TYPE,
   AddInvoice :res.Data.ADD_INVOICE,
   ViewInvoice : res.Data.VIEW_INVOICE,
@@ -546,8 +603,9 @@ editData() {
 
 console.log(this.user_Id_value,'user============================================');
 
-this.selectedDepartmentId = e.data.DEPARTMENT_ID.split(',').map(id => +id);
-console.log(this.selectedDepartmentId,'selectedDepartmentId');
+
+this.selectedHospitalId = (e.data.HOSPITAL_ID)
+console.log(this.selectedHospitalId, 'selectedHospitalId');
 
   
 }
