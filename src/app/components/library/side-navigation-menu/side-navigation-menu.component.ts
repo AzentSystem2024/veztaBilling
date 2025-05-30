@@ -254,20 +254,20 @@ refreshMenu() {
   }
 
   // Reports (Visible to all, or restrict if needed)
-  // this.items.push({
-  //   text: 'Report',
-  //   icon: 'fa fa-file-alt',
-  //   path: '',
-  //   items: [
-  //     { text: 'Date Wise Summary', path: '/datewise-summary' },
-  //     { text: 'Bill Wise Summary', path: '/billwise-summary' },
-  //     { text: 'Staff Wise Summary', path: '/staffwise-summary' },
-  //     { text: 'Test Item Wise Summary', path: '/testitemwise-summary' },
-  //     { text: 'Scheme Wise Summary', path: '/schemewise-summary' },
-  //     { text: 'Scheme Wise Bill Summary', path: '/schemewise-bill-summary' },
-  //     { text: 'Patient Wise Summary', path: '/patientwise-summary' },
-  //   ],
-  // });
+  this.items.push({
+    text: 'Report',
+    icon: 'fa fa-file-alt',
+    path: '',
+    items: [
+      { text: 'Date Wise Summary', path: '/datewise-summary' },
+      { text: 'Bill Wise Summary', path: '/billwise-summary' },
+      { text: 'Staff Wise Summary', path: '/staffwise-summary' },
+      { text: 'Test Item Wise Summary', path: '/testitemwise-summary' },
+      { text: 'Scheme Wise Summary', path: '/schemewise-summary' },
+      { text: 'Scheme Wise Bill Summary', path: '/schemewise-bill-summary' },
+      { text: 'Patient Wise Summary', path: '/patientwise-summary' },
+    ],
+  });
 
   // Optional: Save to localStorage if used elsewhere
   localStorage.setItem('sidemenuItems', JSON.stringify(this.items));

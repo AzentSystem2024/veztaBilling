@@ -109,42 +109,42 @@ const routes: Routes = [
         component: InvoiceAddComponent,
         canActivate: [AuthGuardService],
       },
-      // {
-      //   path: 'datewise-summary',
-      //   component: DateWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
-      // {
-      //   path: 'billwise-summary',
-      //   component: BillWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
-      // {
-      //   path: 'staffwise-summary',
-      //   component: StaffWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
-      // {
-      //   path: 'schemewise-summary',
-      //   component: SchemeWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
-      // {
-      //   path: 'schemewise-bill-summary',
-      //   component: SchemeWiseBillSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
-      // {
-      //   path: 'patientwise-summary',
-      //   component: PatientWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
+      {
+        path: 'datewise-summary',
+        component: DateWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'billwise-summary',
+        component: BillWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'staffwise-summary',
+        component: StaffWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'schemewise-summary',
+        component: SchemeWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'schemewise-bill-summary',
+        component: SchemeWiseBillSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'patientwise-summary',
+        component: PatientWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
 
-      // {
-      //   path: 'testitemwise-summary',
-      //   component: TestItemWiseSummaryComponent,
-      //   canActivate: [AuthGuardService],
-      // },
+      {
+        path: 'testitemwise-summary',
+        component: TestItemWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
      
       // {
       //   path: '**',
