@@ -57,6 +57,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./invoice-add.component.scss'],
 })
 export class InvoiceAddComponent {
+  USER: any;
     formatInvoiceDate(dateString: string): string {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
@@ -129,7 +130,7 @@ export class InvoiceAddComponent {
     INVOICE_DATE: new Date(),
     DEPARTMENT_ID: '',
     USER_ID: '1',
-    UHID: '',
+    UHID: new Date().getFullYear().toString(),
     PATIENT_NAME: '',
     PATIENT_AGE: '',
     PATIENT_SEX: '',
@@ -143,6 +144,8 @@ export class InvoiceAddComponent {
     NET_AMOUNT: '',
     PAYMENT_MODE: '',
     INSURANCE_ID: '',
+    STATUS: '',
+    CANCEL_TIME: '',
     INVOICE_ENTRY: [
       {
         ITEM_ID: '',
@@ -182,7 +185,7 @@ export class InvoiceAddComponent {
     if (storedData) {
       this.userData = JSON.parse(storedData);
       console.log('User Data in InvoiceComponent:', this.userData);
-
+this.USER = this.userData.USER_TYPE_NAME;
       // Example: Accessing department name
       console.log('Department Name:', this.userData.DEPARTMENT_ID);
       this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
@@ -276,6 +279,15 @@ export class InvoiceAddComponent {
   return true;
 };
 
+restrictUHIDLength(e: any): void {
+  const inputElement = e.event?.target as HTMLInputElement;
+  if (inputElement && inputElement.value.length > 11) {
+    inputElement.value = inputElement.value.slice(0, 11);
+    this.invoiceFormData.UHID = inputElement.value;
+  }
+}
+
+
   getSchema() {
     this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
       this.schemaOptions = data;
@@ -298,6 +310,7 @@ export class InvoiceAddComponent {
     // Get the summary total for the AMOUNT column
     const summary = e.component.getTotalSummaryValue('AMOUNT');
     this.invoiceFormData.GROSS_AMOUNT = summary?.toFixed(2) ?? '0.00';
+    this.invoiceFormData.NET_AMOUNT = this.invoiceFormData.GROSS_AMOUNT;
   }
 
   getSchemaList() {
@@ -321,16 +334,6 @@ export class InvoiceAddComponent {
     }
     this.calculateSchemaAmount();
   }
-
-  // onSchemaChanged(e: any) {
-  //   const selectedId = e.value;
-  //   if (selectedId === 1) {
-  //     this.invoiceFormData.SCHEMA_PERCENT = '10';
-  //   } else {
-  //     this.invoiceFormData.SCHEMA_PERCENT = '25';
-  //   }
-  //   this.calculateSchemaAmount();
-  // }
 
   updateNetAmount() {
     const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
@@ -756,34 +759,7 @@ onInitNewRow(e: any): void {
             }, 100);
           }
 
-          //           if(key === 'Tab'){
-
-          //                         setTimeout(() => {
-          //               const grid = this.itemsGridRef?.instance;
-
-          //               // Ensure QUANTITY is not empty before adding a new row
-          //               const quantityValue = grid.cellValue(rowIndex, 'QUANTITY');
-          //               const itemIdValue = grid.cellValue(rowIndex, 'ITEM_ID');
-
-          //               if (
-          //                 itemIdValue &&
-          //                 quantityValue != null &&
-          //                 quantityValue !== ''
-          //               ) {
-          //                 // Optional: commit any changes
-          //                 grid.saveEditData();
-
-          //                 // Add a new row
-          //                 // grid.addRow();
-          // // else {
-          //                   // Optional: show some notification about max rows reached
-          //                   console.warn('Maximum row limit reached');
-          //                   this.schemaSelect.instance.focus();
-          //                   this.schemaSelect.instance.open();
-          //                 // }
-          //               }
-          //             }, 100);
-          //           }
+         
           if (key === 'ArrowLeft') {
             // event.event.preventDefault(); // Optional: prevent default left arrow behavior
             this.itemsGridRef?.instance?.editCell(rowIndex, 'ITEM_ID');
@@ -919,7 +895,7 @@ onInitNewRow(e: any): void {
           break;
         default:
           // fallback if none is focused
-          this.onConfirmPrint('print');
+          this.onConfirmPrint('Print & Preview');
       }
     }
   }
@@ -1059,7 +1035,7 @@ handleEscapeKey(event: KeyboardEvent) {
       INVOICE_DATE: new Date().toISOString(),
       DEPARTMENT_ID: '1',
       USER_ID: '1',
-      UHID: '',
+      UHID: new Date().getFullYear().toString(),
       PATIENT_NAME: '',
       PATIENT_AGE: '',
       PATIENT_SEX: '',
@@ -1073,6 +1049,8 @@ handleEscapeKey(event: KeyboardEvent) {
       NET_AMOUNT: '',
       PAYMENT_MODE: '',
       INSURANCE_ID: '',
+          STATUS: '',
+    CANCEL_TIME: '',
       INVOICE_ENTRY: [
         {
           ITEM_ID: '',
@@ -1087,7 +1065,7 @@ handleEscapeKey(event: KeyboardEvent) {
     this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
     this.getInvoiceNo();
     this.invoiceFormGroup.instance.reset();
-
+this.invoiceFormData.UHID = new Date().getFullYear().toString()
     // Focus on ward field
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -1096,18 +1074,32 @@ handleEscapeKey(event: KeyboardEvent) {
 
   cancel() {
     // Reset form
-    this.invoiceFormData = {
-      PATIENT_NAME: '',
-      UHID: '',
-      PATIENT_AGE: '',
+this.invoiceFormData = {
+      INVOICE_NO: '',
       INVOICE_DATE: new Date().toISOString(),
-      PATIENT_MOBILE: '',
+      DEPARTMENT_ID: '1',
+      USER_ID: '1',
+      UHID: new Date().getFullYear().toString(),
+      PATIENT_NAME: '',
+      PATIENT_AGE: '',
       PATIENT_SEX: '',
+      PATIENT_MOBILE: '',
+      WARD: '',
+      UNIT: '',
+      GROSS_AMOUNT: '',
+      SCHEMA_ID: '',
+      SCHEMA_PERCENT: '',
+      SCHEMA_AMOUNT: '',
+      NET_AMOUNT: '',
+      PAYMENT_MODE: '',
+      INSURANCE_ID: '',
+          STATUS: '',
+    CANCEL_TIME: '',
       INVOICE_ENTRY: [
         {
           ITEM_ID: '',
 
-          QUANTITY: '',
+          QUANTITY: '1.00',
           UNIT_PRICE: '',
           AMOUNT: '',
         },
@@ -1116,7 +1108,7 @@ handleEscapeKey(event: KeyboardEvent) {
     this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
     this.getInvoiceNo();
     this.invoiceFormGroup.instance.reset();
-
+this.invoiceFormData.UHID = new Date().getFullYear().toString()
     this.getInvoiceNo();
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -1171,8 +1163,17 @@ convertNumberToWords(amount: number): string {
     if (num < 10000000) return numToWords(Math.floor(num / 100000)) + ' Lakh ' + (num % 100000 ? numToWords(num % 100000) : '');
     return numToWords(Math.floor(num / 10000000)) + ' Crore ' + (num % 10000000 ? numToWords(num % 10000000) : '');
   };
+ const rupees = Math.floor(amount);
+  const paise = Math.round((amount - rupees) * 100);
 
-  return numToWords(Math.floor(amount)) + ' Rupees Only';
+  let words = numToWords(rupees) + ' Rupees';
+
+  if (paise > 0) {
+    words += ' and ' + paise + ' Paise';
+  }
+
+  return words;
+  // return numToWords(Math.floor(amount)) + ' Rupees Only';
 }
 
 
@@ -1186,8 +1187,17 @@ convertNumberToWords(amount: number): string {
     const htmlContent = `
 <html>
   <head>
-    <title>Credit Bill</title>
+    <title>${this.printData.SCHEMA_NAME ? 'CREDIT BILL' : 'CASH BILL'}</title>
+
+
     <style>
+      * {
+    box-sizing: border-box;
+  }
+
+  @page {
+    margin: 10mm 5mm;
+  }
       body {
         font-family: 'Segoe UI', Tahoma, sans-serif;
         font-size: 14px;
@@ -1197,6 +1207,7 @@ convertNumberToWords(amount: number): string {
       }
 
       .bill-container {
+      max-width: 900px;
         width: 100%;
         margin: auto;
         padding: 20px;
@@ -1241,22 +1252,22 @@ convertNumberToWords(amount: number): string {
       <!-- Header -->
       <table class="header-table">
         <tr>
-          <td><strong>CREDIT BILL</strong></td>
-          <td style="text-align: center;"><strong>BILLED BY:</strong> ABC</td>
-          <td style="text-align: right;"><strong>COMPANY NAME:</strong></td>
+          <td><strong>${(!data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()) ? 'CASH BILL' : 'CREDIT BILL'}</strong></td>
+<td style="text-align: center;"><strong>BILLED BY:</strong> ${(this.USER)}</td>
+          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(data.DEPARTMENT)}</td>
         </tr>
       </table>
 
       <!-- Patient Info -->
       <table class="info-table">
         <tr>
-          <td><span class="label">UHID:</span> ${data.UHID}</td>
+
           <td><span class="label">RECEIPT NUMBER:</span> ${data.INVOICE_NO}</td>
         </tr>
         <tr>
           <td><span class="label">PATIENT NAME:</span> ${data.PATIENT_NAME}</td>
           <td><span class="label">AGE:</span> ${data.PATIENT_AGE}</td>
-          <td><span class="label">RECEIPT DATE:</span> ${this.formattedInvoiceDate}</td>
+          <td style="text-align: right;"><span class="label">RECEIPT DATE:</span> ${this.formattedInvoiceDate}</td>
         </tr>
       </table>
 
@@ -1287,22 +1298,26 @@ convertNumberToWords(amount: number): string {
       </table>
 
       <!-- Scheme Section -->
-      <table class="scheme-table">
-        <thead>
-          <tr>
-            <th>SCHEME:</th>
-            <th>scheme account no:</th>
-            <th>amount in scheme</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>${data.SCHEMA_NAME || 'ABC'}</td>
-            <td>${data.SCHEMA_ACCOUNT_NO || '123'}</td>
-            <td>${data.SCHEMA_AMOUNT || '1000'}</td>
-          </tr>
-        </tbody>
-      </table>
+     ${
+        data.SCHEMA_NAME ? `
+          <table class="scheme-table">
+            <thead>
+              <tr>
+                <th>SCHEME:</th>
+                <th>scheme account no:</th>
+                <th>amount in scheme</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${data.SCHEMA_NAME}</td>
+                <td>${data.SCHEMA_ACCOUNT_NO || ''}</td>
+                <td>${data.SCHEMA_AMOUNT || ''}</td>
+              </tr>
+            </tbody>
+          </table>
+        ` : ''
+      }
 
       <!-- Footer -->
       <table class="footer-table">
@@ -1398,7 +1413,7 @@ convertNumberToWords(amount: number): string {
           <td><strong>Sex:</strong> ${data.PATIENT_SEX}</td>
         </tr>
         <tr>
-          <td><strong>UHID:</strong> ${data.UHID}</td>
+     
           <td><strong>Mobile:</strong> ${data.PATIENT_MOBILE}</td>
           <td><strong>Date:</strong> ${data.INVOICE_DATE}</td>
         </tr>

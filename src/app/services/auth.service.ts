@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Token } from '@angular/compiler';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import notify from 'devextreme/ui/notify';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 export interface IUser {
@@ -37,7 +38,9 @@ export const defaultUser: IUser = {
 export class AuthService {
   private loggedin = new BehaviorSubject<boolean>(false);
   private menuData = new BehaviorSubject<any>(null);
+private idleTimeoutInMs = 15 * 60 * 1000; // 15 minute in milliseconds
 
+private idleTimer: any;
   private _loginName: string;
 
   SideMenu: any;
@@ -48,7 +51,7 @@ export class AuthService {
   constructor(
     private router: Router,
     private http: HttpClient,
-
+private ngZone: NgZone
 
   ) {}
 
@@ -74,7 +77,25 @@ export class AuthService {
     }
   }
   
-  
+    startWatchingUserActivity(): void {
+    ['mousemove', 'keydown', 'click', 'scroll'].forEach(event => {
+      window.addEventListener(event, () => this.resetTimer());
+    });
+
+    this.resetTimer(); // Start initial timer
+  }
+
+    resetTimer(): void {
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer);
+    }
+
+    this.idleTimer = setTimeout(() => {
+      this.ngZone.run(() => {
+        this.logoutDueToInactivity();
+      });
+    }, this.idleTimeoutInMs);
+  }
   
   logout(): void {
     localStorage.removeItem('userData');
@@ -82,7 +103,12 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
   
-  
+    logoutDueToInactivity(): void {
+    localStorage.clear();
+    sessionStorage.clear();
+    notify('You have been logged out due to inactivity.', 'warning', 3000);
+    this.router.navigate(['/auth/login']);
+  }
 
 
   // Getter for loginName that retrieves it from session storage
@@ -143,6 +169,7 @@ export class AuthService {
   }
 
   logOut() {
+
     const API_URL = `${BaseURL}user/logout`;
     const token = JSON.parse(localStorage.getItem('logData') || '{}').Token;
     const ReqBody = { Token: token };
@@ -237,6 +264,7 @@ export class AuthGuardService implements CanActivate {
       this.router.navigate(['/auth/login']);
       return false; // Block navigation
     }
+    
 
     return true; // Allow navigation if logged in
   }

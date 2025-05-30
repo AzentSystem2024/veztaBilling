@@ -1,1 +1,161 @@
-<p>scheme-wise-summary works!</p>
+<div class="salary-grid-wrapper" style="padding: 0 10px">
+  <div class="form-flex-wrapper">
+    <div class="form-item">
+      <dx-select-box
+        [(value)]="selectedRange"
+        [dataSource]="dateRanges"
+        displayExpr="label"
+        valueExpr="value"
+        label="Date Range"
+        labelMode="floating"
+        [width]="200"
+        (onValueChanged)="onDateRangeChange($event)"
+      ></dx-select-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="DepartmentData"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Department"
+        labelMode="floating"
+        [(value)]="Departmens_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="250"
+      ></dx-tag-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="staff_Data"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Staff"
+        labelMode="floating"
+        [(value)]="staff_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="200"
+      ></dx-tag-box>
+    </div>
+
+    <div class="form-item applybtn">
+      <dx-button
+        text="Apply"
+        type="default"
+        icon="todo"
+        stylingMode="contained"
+        [width]="100"
+        class="mt-2"
+        (onClick)="get_DataSource()"
+      ></dx-button>
+    </div>
+  </div>
+  <div class="grid-container">
+    <dx-data-grid
+      [dataSource]="schemawisedData"
+      width="100%"
+      height="85vh"
+      [showBorders]="true"
+      [columnAutoWidth]="true"
+      [wordWrapEnabled]="false"
+      [rowAlternationEnabled]="true"
+      [rowAlternationEnabled]="true"
+      rowAlternationInterval="2"
+      [allowColumnReordering]="true"
+      [filterRow]="{ visible: false }"
+      id="dataGrid"
+      [headerFilter]="{ visible: false }"
+      [columnFixing]="{
+        enabled: true,
+        texts: { fix: 'Freeze', unfix: 'Unfreeze' }
+      }"
+      (onExporting)="onExporting($event)"
+      [summary]="summaryColumnsData"
+    >
+      <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
+      <dxo-toolbar>
+        <dxi-item location="before">
+          <div class="grid-header" style="font-weight: 600 ;font-size: 20px; margin-left: 12px;">
+            Schema Wise Summary
+          </div>
+        </dxi-item>
+    
+        <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
+
+       
+      </dxo-toolbar>
+      <dxi-column
+        dataField="SCHEMA_NAME"
+        caption="Scheme Name"
+        data-type="string"
+      ></dxi-column>
+       <dxi-column
+        dataField="DEPARTMENT_NAME"
+        caption="Department Name"
+        data-type="string"
+        width="200"
+      ></dxi-column>
+           <dxi-column
+        dataField="NO_OF_BILLS"
+        caption="Number of Bills"
+        data-type="number"
+      ></dxi-column>
+      <dxi-column
+        dataField="GROSS_AMOUNT"
+        caption="Gross Amount"
+        data-type="number"
+        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+      ></dxi-column>
+   
+ 
+      <dxi-column
+        dataField="SCHEMA_AMOUNT"
+        caption="Scheme Amount"
+        data-type="number"
+         [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+      ></dxi-column>
+         <dxi-column
+        dataField="NET_AMOUNT"
+        caption="Net Amount"
+        data-type="number"
+       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
+</div>
+
+<!-- =================header filter======================== -->
+<dx-popup
+  [(visible)]="isCustomDatePopupVisible"
+  [width]="'400px'"
+  title="Select Custom Date Range"
+  [showCloseButton]="true"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+  [height]="'250px'"
+>
+  <div class="p-3">
+    <dx-date-box
+      [(value)]="fromDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="From Date"
+    >
+    </dx-date-box>
+
+    <dx-date-box
+      [(value)]="toDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="To Date"
+    >
+    </dx-date-box>
+
+    <button class="custom-apply-btn" (click)="applyCustomDate()">Apply</button>
+  </div>
+</dx-popup>

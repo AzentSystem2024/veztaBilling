@@ -71,10 +71,12 @@ selectedInvoice: any = null;
     this.addInvoicePopupOpened = true;
   }
 
-  handleClose() {
-    this.addInvoicePopupOpened = false;
-    // this.getPayrollList();
-  }
+handleClose() {
+  this.isEditPopupVisible = false;  // **Important**: hide the popup
+  this.addInvoicePopupOpened = false; // if this is related, keep it
+  this.getInvoiceList(); // reload list or any other action
+}
+
 
 onViewClick(e: any) {
   console.log("POPUP OPENED")

@@ -1,1 +1,190 @@
-<p>test-item-wise-summary works!</p>
+<div class="salary-grid-wrapper" style="padding: 0 10px">
+  
+  <div class="form-flex-wrapper">
+    <div class="form-item">
+      <dx-select-box
+        [(value)]="selectedRange"
+        [dataSource]="dateRanges"
+        displayExpr="label"
+        valueExpr="value"
+        label="Date Range"
+        labelMode="floating"
+        [width]="200"
+        (onValueChanged)="onDateRangeChange($event)"
+      ></dx-select-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="DepartmentData"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Department"
+        labelMode="floating"
+        [(value)]="Departmens_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="250"
+      ></dx-tag-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="staff_Data"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Staff"
+        labelMode="floating"
+        [(value)]="staff_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="200"
+      ></dx-tag-box>
+    </div>
+
+    <div class=" form-item applybtn">
+      <dx-button
+        text="Apply"
+        type="default"
+        icon="todo"
+        stylingMode="contained"
+        [width]="100"
+        class="mt-2"
+       
+        (onClick)="get_DataSource()"
+      ></dx-button>
+    </div>
+  </div>
+  <div class="grid-container">
+    <dx-data-grid
+      [dataSource]="itemWiseSummaryData"
+      width="100%"
+      height="85vh"
+      width="100%"
+      height="85vh"
+      [showBorders]="true"
+      [columnAutoWidth]="true"
+      [wordWrapEnabled]="false"
+      [rowAlternationEnabled]="true"
+      [rowAlternationEnabled]="true"
+      rowAlternationInterval="2"
+      [allowColumnReordering]="true"
+      [filterRow]="{ visible: false }"
+      id="dataGrid"
+      [headerFilter]="{ visible: false }"
+      [columnFixing]="{
+        enabled: true,
+        texts: { fix: 'Freeze', unfix: 'Unfreeze' }
+      }"
+      (onExporting)="onExporting($event)"
+      [summary]="summaryColumnsData"
+    >
+      <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"  style="padding-right: 15px;"> </dxo-export>
+      <dxo-toolbar>
+        <dxi-item location="before">
+          <div class="grid-header" style="font-weight: 600 ;font-size: 20px; margin-left: 12px;">
+            Item Wise Summary
+          </div>
+        </dxi-item>
+       
+
+     
+
+        <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
+
+      </dxo-toolbar>
+      
+<style>
+  ::ng-deep .my-toolbar {
+    background-color: #a3262696 !important; 
+    border: 1px solid #7e6363 !important; 
+    border-radius: 5px !important;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) !important;
+  }
+</style>
+      <dxo-sorting mode="none"></dxo-sorting>
+      <dxo-filter-row visible="true"></dxo-filter-row>
+      <dxo-header-filter visible="true"></dxo-header-filter>
+      <dxo-paging page-size="10"></dxo-paging>
+      <dxo-pager
+        show-page-size-selector="true"
+        show-info="true"
+        show-navigator="true"
+      ></dxo-pager>
+      <dxi-column
+        dataField="ITEM_NAME"
+        caption="Item Name"
+        data-type="string"
+        width="200"
+      ></dxi-column>
+        <dxi-column
+        dataField="DEPARTMENT_NAME"
+        caption="Department Name"
+        data-type="string"
+        width="200"
+      ></dxi-column>
+      <dxi-column
+        dataField="QUANTITY"
+        caption="Quantity"
+        data-type="number"
+        width="100"
+      ></dxi-column>
+      <dxi-column
+        dataField="NO_OF_BILLS"
+        caption="No. of Bills"
+        data-type="number"
+        width="120"
+      ></dxi-column>
+      <dxi-column
+        dataField="AMOUNT"
+        caption="Amount"
+        data-type="number"
+      [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+        width="120"
+      ></dxi-column>
+      <dxo-summary>
+            <dxi-total-item
+              column="AMOUNT"
+              summaryType="sum"
+              displayFormat="Gross Amount: {0}"
+              alignment="right"
+              showInColumn="AMOUNT"
+            >
+            </dxi-total-item>
+          </dxo-summary>
+    </dx-data-grid>
+  </div>
+</div>
+
+<!-- =================header filter======================== -->
+<dx-popup
+  [(visible)]="isCustomDatePopupVisible"
+  [width]="'400px'"
+  title="Select Custom Date Range"
+  [showCloseButton]="true"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+  [height]="'250px'"
+>
+  <div class="p-3">
+    <dx-date-box
+      [(value)]="fromDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="From Date"
+    >
+    </dx-date-box>
+
+    <dx-date-box
+      [(value)]="toDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="To Date"
+    >
+    </dx-date-box>
+
+    <button class="custom-apply-btn" (click)="applyCustomDate()">Apply</button>
+  </div>
+</dx-popup>

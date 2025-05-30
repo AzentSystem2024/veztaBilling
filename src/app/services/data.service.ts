@@ -4,7 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { formatDate } from '@angular/common';
-
+import { jsPDF } from 'jspdf';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver-es';
+import { exportDataGrid as exportDataGridToPdf } from 'devextreme/pdf_exporter';
+import { exportDataGrid as exportDataGridToXLSX } from 'devextreme/excel_exporter';
 const BASE_URL = environment.VEZTA_BILLING_API_BASE_URL;
 
 const Token = JSON.parse(localStorage.getItem('Token'));
@@ -114,6 +118,11 @@ selectInvoice(id: number) {
   return this.http.post(`${BASE_URL}invoice/select/${id}`, {});
 
 }
+
+cancelBill(data: any): Observable<any> {
+    return this.http.post(`${BASE_URL}invoice/cancel`, data);
+  }
+
 
   //SCHEMA-LIST
 
@@ -429,5 +438,108 @@ Delete_User_Api(ID:any){
   const getEndpoint = BASE_URL+`User/delete/${ID}`;
   return this.http.post(getEndpoint,{});
 }
+
+//=====================Report Api==========================
+Get_user_Details_Api(user_id:any) {
+
+  const reqBody = {
+    USER_ID:user_id
+  }
+  const getEndpoint = BASE_URL + `Report/initdatas`;
+  return this.http.post(getEndpoint, reqBody);
+}
+
+search_paramers_Api() {
+  const  reqBody={
+    
+  }
+}
+
+Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any) {
+  const reqBody = {
+    
+  "REPORT_ID": "DATEWISESUMMARY",
+  "FROM_DATE": fromDate,
+  "TO_DATE": ToDate,
+  "DEPARTMENT_ID": departmentId,
+  "USER_ID": staffId,
+  "SL_FROM": 0,
+  "SL_TO": 0
+  }
+  const getEndpoint = BASE_URL+`Report/datewise`;
+  return this.http.post(getEndpoint,reqBody);
+}
+Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+    const reqBody = {
+    
+  "REPORT_ID": "SCHEMAWISESUMMARY",
+  "FROM_DATE": fromDate,
+  "TO_DATE": ToDate,
+  "DEPARTMENT_ID": departmentId,
+  "USER_ID": staffId,
+  "SL_FROM": 0,
+  "SL_TO": 0
+  }
+  const getEndpoint = BASE_URL+`Report/schemawise`;
+  return this.http.post(getEndpoint,reqBody);
+}
+
+Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+ const reqBody = {
+    
+  "REPORT_ID": "BILLWISESUMMARY",
+  "FROM_DATE": fromDate,
+  "TO_DATE": ToDate,
+  "DEPARTMENT_ID": departmentId,
+  "USER_ID": staffId,
+  "SL_FROM": 0,
+  "SL_TO": 0
+  }
+ const getEndpoint = BASE_URL+`Report/billwise`;
+  return this.http.post(getEndpoint,reqBody);
+}
+item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+  const reqBody = {
+    
+  "REPORT_ID": "ITEMWISESUMMARY",
+  "FROM_DATE": fromDate,
+  "TO_DATE": ToDate,
+  "DEPARTMENT_ID": departmentId,
+  "USER_ID":staffId ,
+  "SL_FROM": 0,
+  "SL_TO": 0
+}
+
+ const getEndpoint = BASE_URL+`Report/itemwise`;
+  return this.http.post(getEndpoint,reqBody);
+}
+
+ exportDataGridReport(e: any, fileName: any) {
+    if (e.format === 'pdf') {
+      const doc = new jsPDF();
+      exportDataGridToPdf({
+        jsPDFDocument: doc,
+        component: e.component,
+      }).then(() => {
+        doc.save(`${fileName}.pdf`);
+      });
+    } else {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet(`${fileName}`);
+      exportDataGridToXLSX({
+        component: e.component,
+        worksheet,
+        autoFilterEnabled: true,
+      }).then(() => {
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          saveAs(
+            new Blob([buffer], { type: 'application/octet-stream' }),
+            `${fileName}.xlsx`
+          );
+        });
+      });
+      e.cancel = true;
+    }
+  }
 }
 

@@ -1,0 +1,35 @@
+.form-flex-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* spacing between fields */
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+
+}
+
+.form-item {
+  flex: 0 0 auto;
+}
+.applybtn{
+  // margin-top: 50px; /* space above the button */
+  margin-left: 190px;
+}
+
+   /* Set popup height */
+.custom-date-popup .dx-popup-content {
+  height: 250px; /* or any height you want */
+}
+
+/* Style the Apply button */
+.custom-apply-btn {
+  background-color: #007bff; /* Bootstrap primary blue */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.custom-apply-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
