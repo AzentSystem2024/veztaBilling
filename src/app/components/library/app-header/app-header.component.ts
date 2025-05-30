@@ -18,6 +18,7 @@ import { ThemeSwitcherModule } from 'src/app/components/library/theme-switcher/t
 import { DevExtremeModule, DxDropDownBoxComponent, DxDropDownBoxModule, DxDropDownButtonModule, DxTooltipModule } from 'devextreme-angular';
 import { Route, Router } from '@angular/router';
 import { CustomReuseStrategy } from 'src/app/custom-reuse-strategy';
+import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'app-header',
@@ -28,7 +29,7 @@ import { CustomReuseStrategy } from 'src/app/custom-reuse-strategy';
 export class AppHeaderComponent implements OnInit {
   @Output()
   menuToggle = new EventEmitter<boolean>();
-
+loggedInUserName = '';
   @Input()
   menuToggleEnabled = false;
 
@@ -80,6 +81,7 @@ export class AppHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+     this.loggedInUserName = this.authService.loginName; 
     // Fetch the user and set the loginName
     // this.authService.getUser().then((response) => {
     //   if (response.isOk && response.data) {
@@ -103,18 +105,49 @@ export class AppHeaderComponent implements OnInit {
     this.menuToggle.emit();
   };
 
+  // logout() {
+  //   // Remove only user-specific data
+  //   localStorage.removeItem('userData');
+  //   localStorage.removeItem('LOGIN_NAME');
+  //   // Remove any other user-related keys if needed
+  
+  //   this.router.navigate(['/auth/login']).then(() => {
+  //     // window.location.reload(); // Reload to reflect the changes
+  //   });
+  // }
+  
   logout() {
-    // Remove only user-specific data
-    localStorage.removeItem('userData');
-    localStorage.removeItem('LOGIN_NAME');
-    // Remove any other user-related keys if needed
-  
-    this.router.navigate(['/auth/login']).then(() => {
-      // window.location.reload(); // Reload to reflect the changes
-    });
-  }
-  
-  
+    const confirmDialog: any = confirm;
+  const result = confirmDialog({
+    title: 'Confirm Logout',
+    message: 'Are you sure you want to log out?',
+    buttons: [
+      {
+        text: 'Cancel',
+        onClick: () => false,
+        type: 'normal',
+        stylingMode: 'outlined'
+      },
+      {
+        text: 'Logout',
+        onClick: () => true,
+        type: 'default',
+        stylingMode: 'contained'
+      }
+    ]
+  });
+
+  result.then((dialogResult) => {
+    if (dialogResult) {
+      // Remove only user-specific data
+      localStorage.removeItem('userData');
+      localStorage.removeItem('LOGIN_NAME');
+      // Navigate to login
+      this.router.navigate(['/auth/login']);
+    }
+  });
+}
+
 
   handleUserMenuClick(event: any) {
     setTimeout(() => {

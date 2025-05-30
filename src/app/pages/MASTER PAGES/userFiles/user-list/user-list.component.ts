@@ -68,6 +68,9 @@ formData = { IS_INACTIVE: false,pwd:''};
   addPopup: boolean = false;
   formsource: FormGroup;
   IS_INACTIVE: boolean = false;
+  ADD_INVOICE: boolean = false;
+  VIEW_INVOICE: boolean = false;
+  CANCEL_INVOICE: boolean = false;
   showHeaderFilter = true;
   editPopup: boolean = false;
   editUserData: any;
@@ -137,6 +140,10 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
       Inactive: [false], // Boolean default false
      DepartmentId: [null,[Validators.required]],
       UserType: ['', [Validators.required]],
+      AddInvoice: [false],
+      ViewInvoice: [false],
+      CancelInvoice: [false],
+
     })
 
    this.department_dropdown_list();
@@ -201,9 +208,6 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
     return e.value === this.formData.pwd;
   };
   
-//  passwordComparison = () => {
-//     return this.formsource.get('LoginPassword')?.value;
-//   };
 
  togglePasswordVisibility = () => {
     this.passwordMode = this.passwordMode === 'password' ? 'text' : 'password';
@@ -231,11 +235,18 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
   };
 
 
-
+ isDeleteIconVisible({ row }: { row: any }): boolean {
+    return row.data.ID !== 1;
+  }
 
   onEditingStart(event:any){  
     console.log(event,'onEditingStart');
-    
+    this.formsource.reset({
+    Inactive: "",
+    AddInvoice:"",
+    ViewInvoice:"",
+    CancelInvoice:""
+    })
      event.cancel = true;
     this.editUserData = event.data;
     this.editPopup = true;
@@ -298,16 +309,23 @@ addData(){
  const Is_Inactive = this.formsource.get('Inactive')?.value === true;
   const Department_Id = this.selectedDepartmentId.join(',');
   const Usertype = this.formsource.get('UserType')?.value;
-  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Usertype,'add data');
+  const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
+  const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
+  const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
+  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Usertype,Add_invoice,View_invoice,Cancel_invoice,'add data');
 
   
 const payload = { // or dynamic: this.loggedInUser
+   user: 'admin', // ✅ Add this line
   USER_NAME: User_name,
   LOGIN_NAME: Login_name,
   LOGIN_PWD: Login_password,
   USER_TYPE: Usertype,
   IS_INACTIVE: Is_Inactive,
-  DEPARTMENT_ID: Department_Id
+  DEPARTMENT_ID: Department_Id,
+  ADD_INVOICE : Add_invoice,
+  VIEW_INVOICE : View_invoice,
+  CANCEL_INVOICE : Cancel_invoice,
 };
 
  if (!User_name || !Login_name || !Login_password || !Usertype) {
@@ -380,8 +398,13 @@ const payload = { // or dynamic: this.loggedInUser
 openPopup() {
  this.addPopup = true;
  this.validation = false;
-    this.formsource.reset();
-    console.log(this.formsource,'reset');
+    this.formsource.reset({
+    Inactive: "",
+    AddInvoice:"",
+    ViewInvoice:"",
+    CancelInvoice:""
+    
+  });
     
 }
 
@@ -398,12 +421,16 @@ editData() {
   const Is_Inactive = this.formsource.get('Inactive')?.value === true;
   const Department_Id = this.selectedDepartmentId?.join(',') || '';
   const Usertype = this.user_Id_value;
+  const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
+  const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
+  const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
 
   // Debug log
-  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Usertype });
+  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Usertype , Add_invoice, View_invoice, Cancel_invoice }, 'Edit Data Payload');
 
   // Prepare payload
   const payload = {
+     user: 'admin', // ✅ Add this line
     ID: Id,
     // user: 'admin', // Or this.loggedInUser
     USER_NAME: User_name,
@@ -412,6 +439,9 @@ editData() {
     USER_TYPE: Usertype,
     IS_INACTIVE: Is_Inactive,
     DEPARTMENT_ID: Department_Id,
+    ADD_INVOICE: Add_invoice,
+    VIEW_INVOICE: View_invoice,
+    CANCEL_INVOICE: Cancel_invoice,
   };
 
   if (!User_name || !Login_name || !Login_password || !Usertype) {
@@ -502,9 +532,11 @@ editData() {
   Inactive: res.Data.IS_INACTIVE,
   DepartmentId: res.Data.DEPARTMENT_ID,
   UserType: res.Data.USER_TYPE,
-
-
+  AddInvoice :res.Data.ADD_INVOICE,
+  ViewInvoice : res.Data.VIEW_INVOICE,
+  CancelInvoice : res.Data.CANCEL_INVOICE,
     })
+
     this.selectedUserType = res.Data.USER_TYPE
 
     console.log(this.formsource.value);
@@ -521,6 +553,20 @@ console.log(this.selectedDepartmentId,'selectedDepartmentId');
 }
 
  deleteData(event:any){
+
+   if (event.data.USERTYPE === 1) {
+    event.cancel = true;
+    notify(
+      {
+        message: "Admin users cannot be deleted.",
+        position: { at: 'top right', my: 'top right' },
+        displayTime: 500,
+      },
+      'error'
+    );
+    return;
+  }
+
 const ID = event.data.ID
 
 if(ID){

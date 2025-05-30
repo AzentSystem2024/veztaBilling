@@ -39,6 +39,7 @@ selectedInvoice: any = null;
 
   addInvoicePopupOpened: boolean = false;
   invoiceList: any;
+  ID: any;
 
   constructor(private dataService: DataService) {}
 
@@ -70,14 +71,21 @@ selectedInvoice: any = null;
     this.addInvoicePopupOpened = true;
   }
 
-  handleClose() {
-    this.addInvoicePopupOpened = false;
-    // this.getPayrollList();
-  }
+handleClose() {
+  this.isEditPopupVisible = false;  // **Important**: hide the popup
+  this.addInvoicePopupOpened = false; // if this is related, keep it
+  this.getInvoiceList(); // reload list or any other action
+}
+
 
 onViewClick(e: any) {
   console.log("POPUP OPENED")
-  this.selectedInvoice = e.row?.data;
+  this.ID = e.row?.data.ID;
+  console.log(this.ID,"ID")
+  this.dataService.selectInvoice(this.ID).subscribe((response: any) => {
+    this.selectedInvoice = response
+    console.log(this.selectedInvoice,"SELECTEDINVOICE")
+  })
   this.isEditPopupVisible = true;
 }
 

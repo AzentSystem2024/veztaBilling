@@ -27,6 +27,10 @@ export class AppComponent implements OnDestroy {
     themeService.setAppTheme();
   }
 
+    ngOnInit(): void {
+    this.authService.startWatchingUserActivity();
+  }
+
   isAuthenticated() {
     // return this.authService.loggedIn;
   }

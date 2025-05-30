@@ -49,8 +49,8 @@
 
     <dxo-editing
       mode="popup"
-      [allowUpdating]="true"
-      [allowDeleting]="true"
+      [allowUpdating]="isDeleteIconVisible"
+      [allowDeleting]="isDeleteIconVisible"
       [allowAdding]="true"
       [useIcons]="true"
     >
@@ -91,6 +91,7 @@
     </dxi-column>
     <dxi-column dataField="USER_NAME" caption="User Name"></dxi-column>
     <dxi-column dataField="LOGIN_NAME" caption="Login Name"></dxi-column>
+    
     <dxi-column
       dataField="IS_INACTIVE"
       caption="Status"
@@ -110,8 +111,8 @@
 <!-- ======================Add User=================== -->
 <dx-popup
   [(visible)]="addPopup"
-  [width]="600"
-  height="600"
+  [width]="460"
+  height="550"
   title="New User"
   [shading]="false"
   [showCloseButton]="true"
@@ -119,19 +120,19 @@
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
-    <dxi-item>
+    <dxi-item class="fields">
       <dx-text-box
         type="text"
         formControlName="UserName"
-        class="form-control mb-2"
+        class="form-control mt-1"
         label="UserName"
         labelMode="floating"></dx-text-box>
     </dxi-item>
-    <dxi-item>
+    <dxi-item class="fields">
       <dx-text-box
         type="text"
         formControlName="LoginName"
-        class="form-control mb-2"
+        class="form-control mt-1"
         label="LoginName"
         labelMode="floating"
       ></dx-text-box>
@@ -146,7 +147,7 @@
         formControlName="LoginPassword"
         label="Password"
         labelMode="floating"
-        class="form-control mb-2"
+        class="form-control mt-1"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
         [mode]="passwordMode"
@@ -176,7 +177,7 @@
         formControlName="ConfirmPassword"
         label="Confirm Password"
         labelMode="floating"
-        class="form-control mb-2"
+        class="form-control mt-1"
         [height]="35"
         [buttons]="[
         {
@@ -202,7 +203,7 @@
     <dxi-item>
       <dx-select-box
         [items]="UserType"
-        class="mt-2"
+        class="mt-1"
         label="UserType"
         labelMode="floating"
         alignment="center"
@@ -216,11 +217,12 @@
       </dx-select-box
     ></dxi-item>
 
+
     <!-- DROPDOWN HOSPITAL -->
 
     <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) -->
     <dxi-item>
-      <dx-tag-box
+      <dx-select-box
         [showClearButton]="true"
         [visible]="selectedUserType===3"
         [items]="department_list"
@@ -232,28 +234,47 @@
         labelLocation="left"
         [showSelectionControls]="true"
         applyValueMode="instantly"
-        [multiline]="false"
         [searchEnabled]="true"
         formControlName="DepartmentId"
         
       >
-      </dx-tag-box>
+      </dx-select-box>
     </dxi-item>
 
+    <dxi-item class="checkbox-row">
+
+      <dx-check-box
+        class="mt-1"
+        formControlName="AddInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+<label for="checboxadd" class="me-3" >Add Invoice</label>
+      
+      <dx-check-box
+        class="mt-1"
+        formControlName="ViewInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+<label for="checboxadd" class="me-3" >View Invoice</label>
+      
+      <dx-check-box
+        class="mt-1"
+        formControlName="CancelInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-3" >Cancel Invoice</label>
+      </dxi-item>
+
     <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-3">
-      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
-        Cancel
-      </button>
-      <dx-button
-        [width]="60"
-        text="Save"
-        class="me-1"
-        type="default"
-        stylingMode="contained"
-        (onClick)="addData()"
-      ></dx-button>
-    </dxi-item>
+   <dxi-item class="d-flex justify-content-end mt-3">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Save" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
+          </dxi-item>
   </dx-form>
 </dx-popup>
 
@@ -261,8 +282,8 @@
 <dx-popup
   [title]="'Edit User'"
   [(visible)]="editPopup"
-  [width]="600"
-  height="600"
+  [width]="500"
+  height="620"
   [closeOnOutsideClick]="false"
   [showCloseButton]="true"
   [shading]="false"
@@ -271,11 +292,11 @@
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
-    <dxi-item >
-      <dx-text-box formControlName="UserName" class="mb-2" label="UserName" labelMode="floating"></dx-text-box
+    <dxi-item class="fields" >
+      <dx-text-box formControlName="UserName" class="mt-1" label="UserName" labelMode="floating"></dx-text-box
     ></dxi-item>
     <dxi-item>
-      <dx-text-box formControlName="LoginName" class="mb-2" label="LoginName" labelMode="floating"></dx-text-box
+      <dx-text-box formControlName="LoginName" class="mt-1" label="LoginName" labelMode="floating"></dx-text-box
     ></dxi-item>
 
     <dxi-item
@@ -285,7 +306,7 @@
         formControlName="LoginPassword"
         label="Password"
         labelMode="floating"
-        class="form-control mb-2"
+        class="form-control mt-1"
         [height]="35"
         [inputAttr]="{ autocomplete: 'new-password' }"
         [mode]="passwordMode"
@@ -315,7 +336,7 @@
         formControlName="ConfirmPassword"
         label="Confirm Password"
         labelMode="floating"
-        class="form-control mb-2"
+        class="form-control mt-1"
         [height]="35"
         [buttons]="[
         {
@@ -340,11 +361,38 @@
 <dxi-item>
 <label for="checboxadd" class="me-5" >Inactive</label>
       <dx-check-box
-        class="mt-2"
+        class="mt-1"
         formControlName="Inactive"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
         id="checboxadd"
       ></dx-check-box>
+      </dxi-item>
+      
+<dxi-item class="checkbox-row">
+      <dx-check-box
+        class="mt-2"
+        formControlName="AddInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-2" > Can Add Invoice</label>
+
+      <dx-check-box
+        class="mt-2"
+        formControlName="ViewInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-2" >Can View Invoice</label>
+
+      
+      <dx-check-box
+        class="mt-2"
+        formControlName="CancelInvoice"
+        [elementAttr]="{ 'aria-label': 'Unchecked' }"
+        id="checboxadd"
+      ></dx-check-box>
+      <label for="checboxadd" class="me-2" > Can Cancel Invoice</label>
       </dxi-item>
 
     <!-- DROPDOWN ROLES -->
@@ -386,18 +434,11 @@
     </dxi-item>
 
     <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-3">
-      <button class="me-1 btn text-dark border border-1" (click)="closePop()">
-        Cancel
-      </button>
-      <dx-button
-        [width]="60"
-        text="Save"
-        class="me-1"
-        type="default"
-        stylingMode="contained"
-        (onClick)="editData()"
-      ></dx-button>
-    </dxi-item>
+     <dxi-item class="d-flex justify-content-end mt-3">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
+          </dxi-item>
   </dx-form>
 </dx-popup>
