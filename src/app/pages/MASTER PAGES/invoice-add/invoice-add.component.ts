@@ -58,7 +58,10 @@ import { DataService } from 'src/app/services';
 })
 export class InvoiceAddComponent {
   USER: any;
-    formatInvoiceDate(dateString: string): string {
+  departmentsForAdmin: any;
+  selectedDepartmentName: any;
+  selectedDepartmentId: any;
+  formatInvoiceDate(dateString: string): string {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
 
@@ -67,7 +70,11 @@ export class InvoiceAddComponent {
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
 
-    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()} ${hours}:${minutes} ${ampm}`;
+    return `${date.getDate().toString().padStart(2, '0')}-${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}-${date.getFullYear()} ${hours}:${minutes} ${ampm}`;
   }
   @ViewChild('invoiceFormGroup') invoiceFormGroup: DxValidationGroupComponent;
   @ViewChild('itemsGridRef') itemsGridRef: any;
@@ -90,6 +97,8 @@ export class InvoiceAddComponent {
   @ViewChild('schemaSelect') schemaSelect!: DxSelectBoxComponent;
   @ViewChild('paymentModeSelect') paymentModeSelect!: DxSelectBoxComponent;
   @ViewChild('insuranceSelect') insuranceSelect!: DxSelectBoxComponent;
+  @ViewChild('insuranceNumberSelect')
+  insuranceNumberSelect!: DxSelectBoxComponent;
   @ViewChild('saveButton', { read: ElementRef })
   saveButtonElementRef!: ElementRef;
   @ViewChild('saveButton') saveButton!: DxButtonComponent;
@@ -121,9 +130,7 @@ export class InvoiceAddComponent {
   mobileNumber: string = '';
   mobileValid: boolean = true;
   mobileTouched = false;
-  Department: any = {
-    DEPARTMENT_ID: 1,
-  };
+  Department: any = {};
   formattedInvoiceDate: string = '';
   invoiceFormData: any = {
     INVOICE_NO: '',
@@ -146,6 +153,7 @@ export class InvoiceAddComponent {
     INSURANCE_ID: '',
     STATUS: '',
     CANCEL_TIME: '',
+    INSURANCE_NO: '',
     INVOICE_ENTRY: [
       {
         ITEM_ID: '',
@@ -172,44 +180,57 @@ export class InvoiceAddComponent {
   departmentName: any;
   itemsOfDepartment: any;
 
-  constructor(private dataService: DataService,
-    private ngZone: NgZone
-  ) {}
-
-
-
+  constructor(private dataService: DataService, private ngZone: NgZone) {}
 
   ngOnInit() {
-    
     const storedData = sessionStorage.getItem('savedUserData');
     if (storedData) {
       this.userData = JSON.parse(storedData);
       console.log('User Data in InvoiceComponent:', this.userData);
-this.USER = this.userData.USER_TYPE_NAME;
+      this.USER = this.userData.USER_TYPE_NAME;
       // Example: Accessing department name
-      console.log('Department Name:', this.userData.DEPARTMENT_ID);
-      this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+      console.log('Department Name============:', this.userData.DEPARTMENT_ID);
+
+      if (
+        this.userData.USER_TYPE_ID === 1 ||
+        this.userData.USER_TYPE_ID === 2
+      ) {
+        this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId; // from dropdown
+      } else {
+        this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID; // fallback
+      }
+      if (
+        this.userData.USER_TYPE_ID === 1 ||
+        this.userData.USER_TYPE_ID === 2
+      ) {
+        this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
+      } else {
+        this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+      }
+
       this.invoiceFormData.USER_ID = this.userData.USER_ID;
       this.departmentName = this.userData.DEPARTMENT_NAME;
       console.log(this.departmentName, 'DEPARTMENTNAME');
     } else {
       console.warn('No user data found in sessionStorage');
     }
-
+this.getDropdownData();
+  setTimeout(() => {
     this.getInvoiceNo();
+  }, 500);
     this.invoiceFormData.INVOICE_DATE = new Date();
     this.formattedInvoiceDate = this.getFormattedDateTime(
       this.invoiceFormData.INVOICE_DATE
     );
+    
     this.startMinuteUpdater();
     this.getSchemaList();
     this.getPaymentMode();
     this.getInsuranceOptions();
     // this.getItems();
     this.getWardAndUnit();
-     this.updateAmountInWords();
-     this.getItemsOfDepartment();
-
+    this.updateAmountInWords();
+    this.getItemsOfDepartment();
   }
   private timerId: any;
   ngAfterViewInit(): void {
@@ -235,14 +256,32 @@ this.USER = this.userData.USER_TYPE_NAME;
               this.insuranceSelect?.instance?.open();
 
               const insuranceHandler = () => {
-                // Unsubscribe after the first selection
                 this.insuranceSelect?.instance?.off(
                   'valueChanged',
                   insuranceHandler
                 );
+
                 setTimeout(() => {
-                  this.saveButton?.instance?.focus();
-                });
+                  // Focus and open insurance number select
+                  this.insuranceNumberSelect?.instance?.focus();
+                  this.insuranceNumberSelect?.instance?.open();
+
+                  const insuranceNumberHandler = () => {
+                    this.insuranceNumberSelect?.instance?.off(
+                      'valueChanged',
+                      insuranceNumberHandler
+                    );
+
+                    setTimeout(() => {
+                      this.saveButton?.instance?.focus();
+                    }, 50);
+                  };
+
+                  this.insuranceNumberSelect?.instance?.on(
+                    'valueChanged',
+                    insuranceNumberHandler
+                  );
+                }, 50);
               };
 
               this.insuranceSelect?.instance?.on(
@@ -251,7 +290,6 @@ this.USER = this.userData.USER_TYPE_NAME;
               );
             } else {
               this.saveButton?.instance?.focus();
-
             }
           }, 50);
         }
@@ -260,49 +298,44 @@ this.USER = this.userData.USER_TYPE_NAME;
   }
 
   validateUhid = (e: any) => {
-  const value = e.value;
-  if (!value) return false;
+    const value = e.value;
+    if (!value) return false;
 
-  // Check length = 11
-  if (value.length !== 11) return false;
+    // Check length = 11
+    if (value.length !== 11) return false;
 
-  // Check all digits
-  if (!/^\d{11}$/.test(value)) return false;
+    // Check all digits
+    if (!/^\d{11}$/.test(value)) return false;
 
-  // Check first 4 digits are a valid year
-  const year = parseInt(value.slice(0, 4), 10);
-  const currentYear = new Date().getFullYear();
+    // Check first 4 digits are a valid year
+    const year = parseInt(value.slice(0, 4), 10);
+    const currentYear = new Date().getFullYear();
 
-  // Accept years from 2000 up to current year (adjust if needed)
-  if (year < 2000 || year > currentYear) return false;
+    // Accept years from 2000 up to current year (adjust if needed)
+    if (year < 2000 || year > currentYear) return false;
 
-  return true;
-};
+    return true;
+  };
 
-restrictUHIDLength(e: any): void {
-  const inputElement = e.event?.target as HTMLInputElement;
-  if (inputElement && inputElement.value.length > 11) {
-    inputElement.value = inputElement.value.slice(0, 11);
-    this.invoiceFormData.UHID = inputElement.value;
+  restrictUHIDLength(e: any): void {
+    const inputElement = e.event?.target as HTMLInputElement;
+    if (inputElement && inputElement.value.length > 11) {
+      inputElement.value = inputElement.value.slice(0, 11);
+      this.invoiceFormData.UHID = inputElement.value;
+    }
   }
-}
-
 
   getSchema() {
     this.dataService.getDropdownData('SCHEMA').subscribe((data) => {
       this.schemaOptions = data;
-      // console.log(this.schemaOptions, 'SCHEMAOPTIONS');
     });
   }
-
-
 
   getWardAndUnit() {
     const department = this.Department;
     this.dataService.getWardAndUnit(department).subscribe((response: any) => {
       this.wardOptions = response.Ward;
       this.unitOptions = response.Unit;
-      // console.log(response,"ward and unit")
     });
   }
 
@@ -316,7 +349,6 @@ restrictUHIDLength(e: any): void {
   getSchemaList() {
     this.dataService.getSchema().subscribe((response: any) => {
       this.schemaOptions = response.Data;
-      // console.log(this.schemaOptions,"SCHEMAAAAAAAA")
     });
   }
 
@@ -337,19 +369,14 @@ restrictUHIDLength(e: any): void {
 
   updateNetAmount() {
     const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
-    // console.log(gross,"GROSSSSSSSS")
 
     const schema = Number(this.invoiceFormData.SCHEMA_AMOUNT) || 0;
-    //  console.log(schema,"SCHEMAAAAAAAAA")
     this.invoiceFormData.NET_AMOUNT = +(gross - schema).toFixed(2);
-    // console.log(this.invoiceFormData.NET_AMOUNT,"NETAMOUNT")
   }
 
   calculateSchemaAmount() {
     const gross = Number(this.invoiceFormData.GROSS_AMOUNT) || 0;
     const percent = Number(this.invoiceFormData.SCHEMA_PERCENT) || 0;
-    // console.log(this.invoiceFormData.AMOUNT,"====================")
-    // console.log('GROSS_AMOUNT:', gross, 'SCHEMA_PERCENT:', percent);
 
     this.invoiceFormData.SCHEMA_AMOUNT = ((gross * percent) / 100).toFixed(2);
     this.updateNetAmount();
@@ -358,36 +385,30 @@ restrictUHIDLength(e: any): void {
   getPaymentMode() {
     this.dataService.getDropdownData('PAYMENT_MODE').subscribe((data) => {
       this.paymentModes = data;
-      // console.log(this.paymentModes, 'PAYMENTMODES');
     });
   }
 
   getInsuranceOptions() {
     this.dataService.getDropdownData('INSURANCE').subscribe((data) => {
       this.insuranceOptions = data;
-      // console.log(this.insuranceOptions, 'SALARYHEAD');
     });
   }
 
-  // getItems() {
-  //   this.dataService.getDropdownData('ITEMS').subscribe((data) => {
-  //     // this.items = data.filter((item: any) => item.ID === 1 || item.ID === 2);
-  //     this.items = data;
-  //     console.log(this.items, 'Filtered ITEMS with ID 1 and 2');
-  //   });
-  // }
-
-    getItemsOfDepartment(){
-    this.dataService.getDropdownItemsofDepartment(this.Department).subscribe((response: any) => {
-      this.items = response;
-      console.log(this.itemsOfDepartment,"ITEMSOFDEPARTMENT")
-    })
+  getItemsOfDepartment() {
+    this.dataService
+      .getDropdownItemsofDepartment(this.Department)
+      .subscribe((response: any) => {
+        this.items = response;
+        console.log(this.items, 'ITEMSSSSSSSSSSSSS');
+        console.log(this.selectedDepartmentId, 'ITEMSOFDEPARTMENT');
+      });
   }
 
   getSelectedItemsData(rowIndex: number) {
+    console.log();
     this.itemData = {
       ITEM_ID: this.selectedItem.ID,
-      DEPARTMENT_ID: this.userData.DEPARTMENT_ID,
+      DEPARTMENT_ID: this.selectedDepartmentId,
     };
     this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
       if (response?.data?.length) {
@@ -432,7 +453,6 @@ restrictUHIDLength(e: any): void {
   };
 
   onCalculateCustomSummary(e: any) {
-    // console.log('onCalculateCustomSummary called', e);
     if (e.summaryProcess === 'start') {
       e.totalValue = 0;
     }
@@ -485,6 +505,64 @@ restrictUHIDLength(e: any): void {
     }
   }
 
+  getDropdownData() {
+    this.dataService
+      .getDropdownData('DEPARTMENT')
+      .subscribe((response: any) => {
+        this.departmentsForAdmin = response;
+        console.log(response, 'DEPARTMENTSSSSSSSSSSSS');
+        if (
+          this.userData?.USER_TYPE_NAME === 'Administrator' &&
+          !this.selectedDepartmentName &&
+          this.departmentsForAdmin.length > 0
+        ) {
+          this.selectedDepartmentName = this.departmentsForAdmin[0].DESCRIPTION;
+          this.selectedDepartmentId = this.departmentsForAdmin[0].ID;
+          console.log(
+            this.selectedDepartmentId,
+            this.selectedDepartmentName,
+            'IDANDNAME'
+          );
+          this.Department = {
+            DEPARTMENT_ID: this.selectedDepartmentId, // convert to string if needed
+          };
+
+          console.log(
+            this.selectedDepartmentId,
+            this.selectedDepartmentName,
+            'IDANDNAME'
+          );
+          console.log(this.Department, 'Department object bound');
+          this.getItemsOfDepartment();
+        }
+      });
+  }
+
+  onDepartmentChanged(event: any) {
+    console.log(event, 'EVENT');
+
+    this.selectedDepartmentId = event.value;
+    this.selectedDepartmentName =
+      event.component.option('selectedItem')?.DESCRIPTION || '';
+
+    // ✅ Update the Department object
+    this.Department = {
+      DEPARTMENT_ID: this.selectedDepartmentId, // convert to string
+    };
+
+    console.log(
+      this.selectedDepartmentId,
+      this.selectedDepartmentName,
+      'Updated Department Selection'
+    );
+
+    // ✅ Fetch items for the newly selected department
+    this.getItemsOfDepartment();
+
+    // Optional: call other related logic if needed
+    this.getInvoiceNo(); // if you want to keep this
+  }
+
   getFormattedDateTime(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -500,14 +578,21 @@ restrictUHIDLength(e: any): void {
     return `${day}-${month}-${year} ${hourStr}:${minutes} ${ampm}`;
   }
 
-  getInvoiceNo() {
-    const department = this.Department;
-    this.dataService.getInvoiceNo(department).subscribe((response: any) => {
-      this.invoiceFormData.INVOICE_NO = response.data;
-      // this.invoiceFormData.INVOICE_NO = this.billNo;
-      // console.log(this.billNo, 'Invoice no.');
-    });
+ getInvoiceNo() {
+  if (this.userData.USER_TYPE_ID === 1 || this.userData.USER_TYPE_ID === 2) {
+    this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
+  } else {
+    this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
   }
+
+  const department = this.Department;
+  console.log(this.Department.DEPARTMENT_ID, 'DEPPPPPPPPPPPPPPPPPPPP');
+
+  this.dataService.getInvoiceNo(department).subscribe((response: any) => {
+    this.invoiceFormData.INVOICE_NO = response.data;
+    console.log(this.invoiceFormData.INVOICE_NO, "INVOICENUMBER");
+  });
+}
 
   customFormat(value: number): string {
     return new Intl.NumberFormat('en-US', {
@@ -613,10 +698,10 @@ restrictUHIDLength(e: any): void {
     }
   }
 
-onInitNewRow(e: any): void {
-  console.log('onInitNewRow called'); // Check if this logs
-  e.data.QUANTITY = 1.00;
-}
+  onInitNewRow(e: any): void {
+    console.log('onInitNewRow called'); // Check if this logs
+    e.data.QUANTITY = 1.0;
+  }
 
   onEditorPreparing(e: any): void {
     if (e.parentType === 'dataRow') {
@@ -703,18 +788,10 @@ onInitNewRow(e: any): void {
                 // grid.addRow();
 
                 const maxRows = this.items.length;
-                // console.log(maxRows, 'MAXROWS');
-                // console.log(this.items, 'ITEMSSSSSS');
-
-                // const currentRows = grid.getVisibleRows().length;
                 let currentRows = grid.option('dataSource')?.length ?? 0;
-                // console.log(currentRows, 'currentrow');
-                // Focus new row (optional)
                 if (currentRows < maxRows) {
                   grid.addRow();
                 } else {
-                  // Optional: show some notification about max rows reached
-                  // console.warn('Maximum row limit reached');
                   this.schemaSelect.instance.focus();
                   this.schemaSelect.instance.open();
                 }
@@ -743,7 +820,6 @@ onInitNewRow(e: any): void {
               return;
             }
 
-            // ✅ Only proceed if there's no error
             setTimeout(() => {
               grid.saveEditData();
 
@@ -759,9 +835,7 @@ onInitNewRow(e: any): void {
             }, 100);
           }
 
-         
           if (key === 'ArrowLeft') {
-            // event.event.preventDefault(); // Optional: prevent default left arrow behavior
             this.itemsGridRef?.instance?.editCell(rowIndex, 'ITEM_ID');
           }
         };
@@ -770,7 +844,6 @@ onInitNewRow(e: any): void {
   }
 
   onRowRemoving(e: any) {
-    // console.log("deletion trigerred")
     const index = this.items.findIndex((item) => item.ID === e.data.ID);
     if (index !== -1) {
       this.items.splice(index, 1); // actually remove it from the array
@@ -839,10 +912,6 @@ onInitNewRow(e: any): void {
       e.errorText = 'Quantity is required';
       this.hasQuantityError = true;
     }
-    // else if(!netAmount || isNaN(netAmount) || netAmount <=0){
-    //   e.isValid = false;
-    //   e.errorText = 'Amount is required';
-    // }
   }
 
   showConfirm() {
@@ -901,15 +970,14 @@ onInitNewRow(e: any): void {
   }
 
   @HostListener('document:keydown.esc', ['$event'])
-@HostListener('document:keydown.Escape', ['$event']) // support both
-handleEscapeKey(event: KeyboardEvent) {
-  if (this.printConfirmVisible) {
-    event.preventDefault();
-    this.onConfirmPrint('no'); // cancel print
-    notify('Print cancelled', 'warning', 2000);
+  @HostListener('document:keydown.Escape', ['$event']) // support both
+  handleEscapeKey(event: KeyboardEvent) {
+    if (this.printConfirmVisible) {
+      event.preventDefault();
+      this.onConfirmPrint('no'); // cancel print
+      notify('Print cancelled', 'warning', 2000);
+    }
   }
-}
-
 
   focusYesButton() {
     setTimeout(() => {
@@ -925,6 +993,7 @@ handleEscapeKey(event: KeyboardEvent) {
   }
 
   save() {
+    
     if (
       !this.invoiceFormData.NET_AMOUNT ||
       +this.invoiceFormData.NET_AMOUNT === 0
@@ -937,6 +1006,7 @@ handleEscapeKey(event: KeyboardEvent) {
       });
       return;
     }
+    this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId;
     const clonedData = { ...this.invoiceFormData };
     const invoiceEntries = clonedData.INVOICE_ENTRY || [];
     const entries = clonedData.INVOICE_ENTRY || [];
@@ -983,10 +1053,8 @@ handleEscapeKey(event: KeyboardEvent) {
 
     // Save to backend
     this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
-      // console.log(response, 'SAVE');
       if (response.flag == '1') {
         this.printData = response.data;
-        console.log(this.printData, 'PRINTDATAAAAAAAAAAAA');
         notify(
           {
             message: 'Invoice Entered Successfully',
@@ -1014,14 +1082,11 @@ handleEscapeKey(event: KeyboardEvent) {
 
     if (action === 'print') {
       this.onPrintDirectly(this.printData);
-    } 
-    else if(action === 'Print & Preview'){
+    } else if (action === 'Print & Preview') {
       this.previewAndPrintInvoice(this.printData);
-    }
-    else if (action === 'no') {
+    } else if (action === 'no') {
       notify('Print cancelled', 'warning', 2000);
       this.resetInvoiceForm();
-      
     }
 
     setTimeout(() => {
@@ -1049,8 +1114,9 @@ handleEscapeKey(event: KeyboardEvent) {
       NET_AMOUNT: '',
       PAYMENT_MODE: '',
       INSURANCE_ID: '',
-          STATUS: '',
-    CANCEL_TIME: '',
+      STATUS: '',
+      INSURANCE_NO: '',
+      CANCEL_TIME: '',
       INVOICE_ENTRY: [
         {
           ITEM_ID: '',
@@ -1065,7 +1131,7 @@ handleEscapeKey(event: KeyboardEvent) {
     this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
     this.getInvoiceNo();
     this.invoiceFormGroup.instance.reset();
-this.invoiceFormData.UHID = new Date().getFullYear().toString()
+    this.invoiceFormData.UHID = new Date().getFullYear().toString();
     // Focus on ward field
     setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
@@ -1073,46 +1139,8 @@ this.invoiceFormData.UHID = new Date().getFullYear().toString()
   }
 
   cancel() {
-    // Reset form
-this.invoiceFormData = {
-      INVOICE_NO: '',
-      INVOICE_DATE: new Date().toISOString(),
-      DEPARTMENT_ID: '1',
-      USER_ID: '1',
-      UHID: new Date().getFullYear().toString(),
-      PATIENT_NAME: '',
-      PATIENT_AGE: '',
-      PATIENT_SEX: '',
-      PATIENT_MOBILE: '',
-      WARD: '',
-      UNIT: '',
-      GROSS_AMOUNT: '',
-      SCHEMA_ID: '',
-      SCHEMA_PERCENT: '',
-      SCHEMA_AMOUNT: '',
-      NET_AMOUNT: '',
-      PAYMENT_MODE: '',
-      INSURANCE_ID: '',
-          STATUS: '',
-    CANCEL_TIME: '',
-      INVOICE_ENTRY: [
-        {
-          ITEM_ID: '',
-
-          QUANTITY: '1.00',
-          UNIT_PRICE: '',
-          AMOUNT: '',
-        },
-      ],
-    };
-    this.formattedInvoiceDate = this.getFormattedDateTime(new Date());
-    this.getInvoiceNo();
-    this.invoiceFormGroup.instance.reset();
-this.invoiceFormData.UHID = new Date().getFullYear().toString()
-    this.getInvoiceNo();
-    setTimeout(() => {
-      this.wardBoxRef?.instance?.focus();
-    }, 0);
+    this.resetInvoiceForm();
+ 
   }
 
   validateMobile = (e: any) => {
@@ -1136,53 +1164,100 @@ this.invoiceFormData.UHID = new Date().getFullYear().toString()
     return value !== 0 && value !== '0'; // ensure age is not zero (number or string)
   };
 
-updateAmountInWords(): void {
-  const amount = this.invoiceFormData.NET_AMOUNT;
-  if (amount && !isNaN(amount)) {
-    this.amountInWords = this.convertNumberToWords(Number(amount));
-  } else {
-    this.amountInWords = '';
+  updateAmountInWords(): void {
+    const amount = this.invoiceFormData.NET_AMOUNT;
+    if (amount && !isNaN(amount)) {
+      this.amountInWords = this.convertNumberToWords(Number(amount));
+    } else {
+      this.amountInWords = '';
+    }
   }
-}
-convertNumberToWords(amount: number): string {
-  // You can enhance this for large amounts
-  const ones = [
-    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
-    'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
-    'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
-  ];
-  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  convertNumberToWords(amount: number): string {
+    // You can enhance this for large amounts
+    const ones = [
+      '',
+      'One',
+      'Two',
+      'Three',
+      'Four',
+      'Five',
+      'Six',
+      'Seven',
+      'Eight',
+      'Nine',
+      'Ten',
+      'Eleven',
+      'Twelve',
+      'Thirteen',
+      'Fourteen',
+      'Fifteen',
+      'Sixteen',
+      'Seventeen',
+      'Eighteen',
+      'Nineteen',
+    ];
+    const tens = [
+      '',
+      '',
+      'Twenty',
+      'Thirty',
+      'Forty',
+      'Fifty',
+      'Sixty',
+      'Seventy',
+      'Eighty',
+      'Ninety',
+    ];
 
-  if (amount === 0) return 'Zero Rupees Only';
+    if (amount === 0) return 'Zero Rupees Only';
 
-  const numToWords = (num: number): string => {
-    if (num < 20) return ones[num];
-    if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 ? ' ' + ones[num % 10] : '');
-    if (num < 1000) return ones[Math.floor(num / 100)] + ' Hundred ' + (num % 100 ? numToWords(num % 100) : '');
-    if (num < 100000) return numToWords(Math.floor(num / 1000)) + ' Thousand ' + (num % 1000 ? numToWords(num % 1000) : '');
-    if (num < 10000000) return numToWords(Math.floor(num / 100000)) + ' Lakh ' + (num % 100000 ? numToWords(num % 100000) : '');
-    return numToWords(Math.floor(num / 10000000)) + ' Crore ' + (num % 10000000 ? numToWords(num % 10000000) : '');
-  };
- const rupees = Math.floor(amount);
-  const paise = Math.round((amount - rupees) * 100);
+    const numToWords = (num: number): string => {
+      if (num < 20) return ones[num];
+      if (num < 100)
+        return (
+          tens[Math.floor(num / 10)] + (num % 10 ? ' ' + ones[num % 10] : '')
+        );
+      if (num < 1000)
+        return (
+          ones[Math.floor(num / 100)] +
+          ' Hundred ' +
+          (num % 100 ? numToWords(num % 100) : '')
+        );
+      if (num < 100000)
+        return (
+          numToWords(Math.floor(num / 1000)) +
+          ' Thousand ' +
+          (num % 1000 ? numToWords(num % 1000) : '')
+        );
+      if (num < 10000000)
+        return (
+          numToWords(Math.floor(num / 100000)) +
+          ' Lakh ' +
+          (num % 100000 ? numToWords(num % 100000) : '')
+        );
+      return (
+        numToWords(Math.floor(num / 10000000)) +
+        ' Crore ' +
+        (num % 10000000 ? numToWords(num % 10000000) : '')
+      );
+    };
+    const rupees = Math.floor(amount);
+    const paise = Math.round((amount - rupees) * 100);
 
-  let words = numToWords(rupees) + ' Rupees';
+    let words = numToWords(rupees) + ' Rupees';
 
-  if (paise > 0) {
-    words += ' and ' + paise + ' Paise';
+    if (paise > 0) {
+      words += ' and ' + paise + ' Paise';
+    }
+
+    return words;
+    // return numToWords(Math.floor(amount)) + ' Rupees Only';
   }
-
-  return words;
-  // return numToWords(Math.floor(amount)) + ' Rupees Only';
-}
-
-
-
 
   previewAndPrintInvoice(data: any) {
-    console.log(data,"DATA")
-      const amount = Number(data.NET_AMOUNT);
-  const amountInWords = this.convertNumberToWords(amount);
+    console.log(data, 'DATA');
+    const amount = Number(data.NET_AMOUNT);
+    const amountInWords = this.convertNumberToWords(amount);
     const printWindow = window.open('', '_blank', 'width=800,height=700');
     const htmlContent = `
 <html>
@@ -1252,9 +1327,15 @@ convertNumberToWords(amount: number): string {
       <!-- Header -->
       <table class="header-table">
         <tr>
-          <td><strong>${(!data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()) ? 'CASH BILL' : 'CREDIT BILL'}</strong></td>
-<td style="text-align: center;"><strong>BILLED BY:</strong> ${(this.USER)}</td>
-          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(data.DEPARTMENT)}</td>
+          <td><strong>${
+            !data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()
+              ? 'CASH BILL'
+              : 'CREDIT BILL'
+          }</strong></td>
+<td style="text-align: center;"><strong>BILLED BY:</strong> ${this.USER}</td>
+          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${
+            data.DEPARTMENT
+          }</td>
         </tr>
       </table>
 
@@ -1267,7 +1348,9 @@ convertNumberToWords(amount: number): string {
         <tr>
           <td><span class="label">PATIENT NAME:</span> ${data.PATIENT_NAME}</td>
           <td><span class="label">AGE:</span> ${data.PATIENT_AGE}</td>
-          <td style="text-align: right;"><span class="label">RECEIPT DATE:</span> ${this.formattedInvoiceDate}</td>
+          <td style="text-align: right;"><span class="label">RECEIPT DATE:</span> ${
+            this.formattedInvoiceDate
+          }</td>
         </tr>
       </table>
 
@@ -1284,7 +1367,8 @@ convertNumberToWords(amount: number): string {
           </tr>
         </thead>
         <tbody>
-          ${data.INVOICE_ENTRY.map((item, index) => `
+          ${data.INVOICE_ENTRY.map(
+            (item, index) => `
             <tr>
               <td>${index + 1}</td>
               <td>${item.ITEM_NAME}</td>
@@ -1293,13 +1377,15 @@ convertNumberToWords(amount: number): string {
               <td>${item.DISCOUNT || 0}</td>
               <td>${item.AMOUNT}</td>
             </tr>
-          `).join('')}
+          `
+          ).join('')}
         </tbody>
       </table>
 
       <!-- Scheme Section -->
      ${
-        data.SCHEMA_NAME ? `
+       data.SCHEMA_NAME
+         ? `
           <table class="scheme-table">
             <thead>
               <tr>
@@ -1316,16 +1402,21 @@ convertNumberToWords(amount: number): string {
               </tr>
             </tbody>
           </table>
-        ` : ''
-      }
+        `
+         : ''
+     }
 
       <!-- Footer -->
       <table class="footer-table">
         <tr>
-          <td class="right-align"><strong>RECEIPT AMOUNT:</strong> ₹${data.GROSS_AMOUNT}</td>
+          <td class="right-align"><strong>RECEIPT AMOUNT:</strong> ₹${
+            data.GROSS_AMOUNT
+          }</td>
         </tr>
         <tr>
-          <td class="right-align"><strong>CREDIT AMOUNT:</strong> ₹${data.NET_AMOUNT}</td>
+          <td class="right-align"><strong>CREDIT AMOUNT:</strong> ₹${
+            data.NET_AMOUNT
+          }</td>
         </tr>
       </table>
 
@@ -1345,20 +1436,15 @@ convertNumberToWords(amount: number): string {
       printWindow.document.close();
     }
 
-        printWindow.onbeforeunload = () => {
+    printWindow.onbeforeunload = () => {
       this.ngZone.run(() => {
         this.printConfirmVisible = false;
       });
     };
-        setTimeout(() => {
+    setTimeout(() => {
       this.wardBoxRef?.instance?.focus();
     }, 1500);
   }
-
-  // onPrintDirectly() {
-  //   console.log('ONLY PRINT NO PREVIEW');
-  //   window.print();
-  // }
 
   onPrintDirectly(data: any): void {
     console.log('onPrintDirectly received data:', data);

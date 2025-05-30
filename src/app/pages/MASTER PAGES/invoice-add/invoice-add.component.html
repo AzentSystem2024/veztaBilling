@@ -113,7 +113,7 @@
                   ></dx-text-box>
 
                   <!-- ✅ Department Field -->
-                  <dx-text-box
+                  <!-- <dx-text-box
                     #departmentBoxRef
                     label="Department"
                     labelMode="floating"
@@ -121,7 +121,24 @@
                     [width]="200"
                     [readOnly]="true"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                  ></dx-text-box>
+                  ></dx-text-box> -->
+                  <dx-select-box
+  #departmentBoxRef
+  [items]="departmentsForAdmin"
+  displayExpr="DESCRIPTION"
+  valueExpr="ID"
+  [(value)]="selectedDepartmentId"
+  [readOnly]="userData?.USER_TYPE_NAME !== 'Administrator'"
+  [width]="200"
+  placeholder="Select Department"
+  [searchEnabled]="true"
+  label="Department"
+  labelMode="floating"
+  (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
+  (onValueChanged)="onDepartmentChanged($event)"
+>
+</dx-select-box>
+
                 </div>
 
                 <!-- Row: Patient Name and Mobile No. -->
@@ -165,12 +182,12 @@
                     (onKeyDown)="onKeyDownMobile($event)"
                     (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
                   >
-                    <dx-validator>
+                    <!-- <dx-validator>
                       <dxi-validation-rule
                         type="required"
                         message="Mobile No. is required"
                       ></dxi-validation-rule>
-                    </dx-validator>
+                    </dx-validator> -->
                   </dx-text-box>
                 </div>
               </div>
@@ -408,15 +425,16 @@
                 displayExpr="DESCRIPTION"
                 valueExpr="ID"
                 [(value)]="invoiceFormData.INSURANCE_ID"
+                [searchEnabled]="true"
                 [width]="200"
               ></dx-select-box>
               <dx-text-box
                 *ngIf="selectedPaymentModeId === creditModeId"
-                #insuranceSelect
+                #insuranceNumberSelect
                 label="Insurance ID"
                 labelMode="floating"
-          
-       
+          [(value)]="invoiceFormData.INSURANCE_NO"
+       (onKeyDown)="onKeyDownHandler($event, 'saveButton')"
                 [width]="200"
               ></dx-text-box>
             </div>
