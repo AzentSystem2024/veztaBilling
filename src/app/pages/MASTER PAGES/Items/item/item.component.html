@@ -114,7 +114,9 @@
   [(visible)]="isAddPop"
   [width]="360"
   [height]="380"
-  [shading]="false"
+ 
+   [shading]="true"               
+  [hideOnOutsideClick]="false"    
   (onHiding)="closePopup()"
 >
   <form [formGroup]="formsource">
@@ -226,7 +228,8 @@
   [(visible)]="isEditPop"
   [width]="360"
   [height]="395"
-  [shading]="false"
+   [shading]="true"               
+  [hideOnOutsideClick]="false"    
  
 >
   <form>
