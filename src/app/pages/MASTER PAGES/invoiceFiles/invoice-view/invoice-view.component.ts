@@ -63,6 +63,7 @@ export class InvoiceViewComponent {
   invoiceEntry: any;
   storedUserData: string;
   USER: any;
+  hospitalName: any;
 
   formatInvoiceDate(dateString: string): string {
     const date = new Date(dateString);
@@ -171,6 +172,7 @@ export class InvoiceViewComponent {
       this.userData = JSON.parse(this.storedUserData);
       console.log('User Data in InvoiceComponent:', this.userData);
       this.USER = this.userData.USER_TYPE_NAME;
+      this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
         }
     this.formattedInvoiceDate = this.getFormattedDateTime(
       this.invoiceFormData.INVOICE_DATE
@@ -365,7 +367,7 @@ previewAndPrintInvoice(): void {
         <tr>
           <td><strong>${(!data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()) ? 'CASH BILL' : 'CREDIT BILL'}</strong></td>
           <td style="text-align: center;"><strong>BILLED BY:</strong> ${(this.USER)}</td>
-          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(data.DEPARTMENT)}</td>
+          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(this.hospitalName)}</td>
         </tr>
       </table>
 
