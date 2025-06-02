@@ -113,6 +113,7 @@ closePop() {
     this.formsource.reset({
       LoginPassword: 0,
     });
+    
     this.selectedUserType = [];
     this.confirmPasswordMode = 'password';
 
@@ -408,16 +409,6 @@ const payload = { // or dynamic: this.loggedInUser
     return;
   }
 
-  // // 🚫 New condition: Hospital User must select hospital
-  // if (Usertype === 4 && !Hospital_Id ) {
-  //   notify({
-  //     message: 'Please select the hospital',
-  //     position: { at: 'top right', my: 'top right' },
-  //     displayTime: 1500,
-  //   }, 'error');
-  //   return;
-  // }
-
     // 🚫 New condition: Hospital User must select hospital
   if (Usertype === 4 && !Department_Id ) {
     notify({
@@ -518,6 +509,7 @@ editData() {
   const Login_password = this.formsource.get('LoginPassword')?.value?.trim();
   const Is_Inactive = this.formsource.get('Inactive')?.value === true;
   const Department_Id = this.selectedDepartmentId.toString();
+  
   const Hospital_Id = this.selectedHospitalId;
   const Usertype = this.user_Id_value;
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
@@ -555,6 +547,41 @@ editData() {
     );
     return; // Stop further execution
   }
+
+  
+   // 🚫 New condition: Hospital User must select hospital
+  if (Usertype === 3 && !Hospital_Id) {
+    notify({
+      message: 'Please select the hospital',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1500,
+    }, 'error');
+    return;
+  }
+
+  // 🚫 New condition: Hospital User must select hospital
+  // if (Usertype === 4 && !Department_Id) {
+  //   notify({
+  //     message: 'Please select the department',
+  //     position: { at: 'top right', my: 'top right' },
+  //     displayTime: 1500,
+  //   }, 'error');
+  //   return;
+  // }
+
+  if (Usertype === 4 && (!Department_Id || Department_Id === 0)) {
+  notify(
+    {
+      message: 'Please select the department',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1500,
+    },
+    'error'
+  );
+  return;
+}
+
+
 
   // Optional: Check for duplicate login name
   const isDuplicate = this.dataSource?.some((data: any) => {
