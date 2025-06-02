@@ -193,6 +193,7 @@ export class InvoiceAddComponent {
       console.log('Department Name============:', this.userData.DEPARTMENT_ID);
 this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
 console.log(this.hospitalName,"HOSPITALNAME")
+
       if (
         this.userData.USER_TYPE_ID === 1 ||
         this.userData.USER_TYPE_ID === 2
@@ -207,7 +208,8 @@ console.log(this.hospitalName,"HOSPITALNAME")
       }
       if (
         this.userData.USER_TYPE_ID === 1 ||
-        this.userData.USER_TYPE_ID === 2
+        this.userData.USER_TYPE_ID === 2 || 
+        this.userData.USER_TYPE_ID === 3
       ) {
         this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
       } else {
@@ -545,7 +547,7 @@ this.getDropdownData();
           this.getItemsOfDepartment();
         }
          else if (
-      (this.userData?.USER_TYPE_ID === 3 || this.userData?.USER_TYPE_ID === 4) &&
+      ( this.userData?.USER_TYPE_ID === 4) &&
       this.userData?.Hospitals?.length > 0 &&
       this.userData?.Hospitals[0]?.Departments?.length > 0
     ) {
@@ -560,6 +562,32 @@ this.getDropdownData();
       console.log(this.Department, 'Department object bound (Dept User)');
       this.getItemsOfDepartment();
     }
+
+    if (
+  this.userData?.USER_TYPE_ID === 3 &&
+  this.userData?.Hospitals?.length > 0 &&
+  this.userData?.Hospitals[0]?.Departments?.length > 0
+) {
+  // 1. Populate all departments in dropdown
+  this.departmentsForAdmin = this.userData.Hospitals[0].Departments.map(dept => ({
+    ID: dept.DEPARTMENT_ID,
+    DESCRIPTION: dept.DEPARTMENT_NAME
+  }));
+
+  // 2. Set first department as default selection
+  const firstDept = this.departmentsForAdmin[0];
+  this.selectedDepartmentName = firstDept.DESCRIPTION;
+  this.selectedDepartmentId = firstDept.ID;
+
+  // 3. Bind Department object
+  this.Department = {
+    DEPARTMENT_ID: this.selectedDepartmentId,
+  };
+
+  console.log(this.Department, 'Department object bound (Hospital User)');
+  this.getItemsOfDepartment(); // Or your appropriate data-fetch method
+}
+
       });
   }
 
@@ -604,7 +632,7 @@ this.getDropdownData();
   }
 
  getInvoiceNo() {
-  if (this.userData.USER_TYPE_ID === 1 || this.userData.USER_TYPE_ID === 2) {
+  if (this.userData.USER_TYPE_ID === 1 || this.userData.USER_TYPE_ID === 2 || this.userData.USER_TYPE_ID === 3) {
     this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
   } else {
     // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;

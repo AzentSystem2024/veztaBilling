@@ -41,7 +41,7 @@ currentFilter: string = 'auto';
 //form source for add  hospital
 formsource:FormGroup;
 
- 
+ isLoading: any;
 
 //store value for edit 
 editHospitalData:any=[]
@@ -146,6 +146,7 @@ getSerialNumber=(rowIndex: number)=> {
 }
 
 get_Hospital_List(){
+   this.isLoading = true;
   console.log('get_Hospital_List');
   
 this.dataservice.get_HospitalData_List().subscribe((response:any)=>{
