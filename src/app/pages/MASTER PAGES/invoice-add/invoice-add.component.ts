@@ -197,7 +197,11 @@ export class InvoiceAddComponent {
       ) {
         this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId; // from dropdown
       } else {
-        this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID; // fallback
+        // this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID; // fallback
+          this.invoiceFormData.DEPARTMENT_ID =
+    this.userData?.DEPARTMENT_ID ??
+    this.userData?.Hospitals?.[0]?.Departments?.[0]?.DEPARTMENT_ID ??
+    null;
       }
       if (
         this.userData.USER_TYPE_ID === 1 ||
@@ -205,7 +209,10 @@ export class InvoiceAddComponent {
       ) {
         this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
       } else {
-        this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+        // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+        this.Department.DEPARTMENT_ID = this.userData?.DEPARTMENT_ID ??
+    this.userData?.Hospitals?.[0]?.Departments?.[0]?.DEPARTMENT_ID ??
+    null;
       }
 
       this.invoiceFormData.USER_ID = this.userData.USER_ID;
@@ -535,6 +542,22 @@ this.getDropdownData();
           console.log(this.Department, 'Department object bound');
           this.getItemsOfDepartment();
         }
+         else if (
+      (this.userData?.USER_TYPE_ID === 3 || this.userData?.USER_TYPE_ID === 4) &&
+      this.userData?.Hospitals?.length > 0 &&
+      this.userData?.Hospitals[0]?.Departments?.length > 0
+    ) {
+      const dept = this.userData.Hospitals[0].Departments[0];
+      this.selectedDepartmentName = dept.DEPARTMENT_NAME;
+      this.selectedDepartmentId = dept.DEPARTMENT_ID;
+
+      this.Department = {
+        DEPARTMENT_ID: this.selectedDepartmentId,
+      };
+
+      console.log(this.Department, 'Department object bound (Dept User)');
+      this.getItemsOfDepartment();
+    }
       });
   }
 
@@ -582,7 +605,9 @@ this.getDropdownData();
   if (this.userData.USER_TYPE_ID === 1 || this.userData.USER_TYPE_ID === 2) {
     this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
   } else {
-    this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+    // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+        this.Department.DEPARTMENT_ID =
+      this.userData.Hospitals[0].Departments[0].DEPARTMENT_ID;
   }
 
   const department = this.Department;
