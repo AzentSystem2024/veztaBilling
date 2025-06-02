@@ -29,7 +29,7 @@ itemWiseSummaryData: any = [];
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
     ColumnNames: any;
-     summaryColumnsData: any;
+  
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
@@ -138,8 +138,8 @@ monthEnd: Date = new Date();
       this.selectedRange === 'custom'
         ? `${this.fromDate} to ${this.toDate}`
         : this.selectedRange;
-    const departmentId = this.Departmens_value.join(',');
-    const staffId = this.staff_value.join(',');
+const departmentId = (this.Departmens_value ?? []).join(',');
+const staffId = (this.staff_value ?? []).join(',');
     console.log('Selected Department ID:', departmentId);
     console.log('Selected Staff ID:', staffId);
     console.log('Selected Date Range:', date);
@@ -176,6 +176,40 @@ refresh(){
     const fileName = 'Test Item Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
+  summaryColumnsData = {
+  totalItems: [
+     { 
+    column: "QUANTITY", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "QUANTITY",
+      alignment: "right"
+    },
+       
+       { 
+      column: "NO_OF_BILLS", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "NO_OF_BILLS",
+      alignment: "right"
+    },
+    { 
+      column: "AMOUNT", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "AMOUNT",
+      alignment: "right"
+    },
+  ],
+  calculateCustomSummary: (options) => {
+    if (options.name === "summaryRow") {
+      // Custom logic if needed
+    }
+  }
+};
 }
 
 @NgModule({

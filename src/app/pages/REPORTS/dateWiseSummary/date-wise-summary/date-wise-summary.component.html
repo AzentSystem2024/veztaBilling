@@ -64,10 +64,14 @@
       [showRowLines]="true"
       [allowColumnResizing]="false"
       [columnAutoWidth]="true"
+      [groupPanel]="{ visible: true }"
+    [grouping]="{ autoExpandAll: false }"
       [rowAlternationEnabled]="true"
       rowAlternationInterval="2"
+        [summary]="summaryColumnsData"
       [allowColumnReordering]="true"
       [filterRow]="{ visible: false }"
+      [height]="'75vh'"
        id="dataGrid"
       [headerFilter]="{ visible: false }"
       [columnFixing]="{
@@ -75,7 +79,7 @@
         texts: { fix: 'Freeze', unfix: 'Unfreeze' }
       }"
       (onExporting)="onExporting($event)"
-      [summary]="summaryColumnsData"
+    
     >
       <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
       <dxo-toolbar>
@@ -110,6 +114,11 @@
           }"
         ></dxi-item> -->
       </dxo-toolbar>
+         <dxo-grouping
+        [autoExpandAll]="false"
+        [contextMenuEnabled]="true"
+        [expandMode]="'rowClick'"
+      ></dxo-grouping>
   <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
@@ -123,6 +132,7 @@
  <dxi-column
         dataField="DEPARTMENT_NAME"
         caption="Department Name"
+     [allowGrouping]="true"
         data-type="string"
         width="200"
       ></dxi-column>
@@ -130,38 +140,39 @@
         dataField="NoOfBills"
         caption="Number of Bills"
         data-type="number"
+           [grouping]="true"
       ></dxi-column>
      
       <dxi-column
         dataField="GrossAmt"
         caption="Gross Amount"
         data-type="number"
-         [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+         [format]="{ type: 'fixedPoint', precision: 2}"
       ></dxi-column>
    
       <dxi-column
   dataField="SchemaAmt"
   caption="Scheme Amount"
   data-type="number"
-  [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+  [format]="{ type: 'fixedPoint', precision: 2 }"
 ></dxi-column>
    <dxi-column
         dataField="NetAmt"
         caption="Net Amount"
         data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+        [format]="{ type: 'fixedPoint', precision: 2}"
       ></dxi-column>
  <dxi-column
         dataField="Cash"
         caption="Cash"
         data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+        [format]="{ type: 'fixedPoint', precision: 2}"
       ></dxi-column>
       <dxi-column
         dataField="Credit"
         caption="Credit"
         data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
+        [format]="{ type: 'fixedPoint', precision: 2 }"
       ></dxi-column>
 
       <dxi-column
@@ -191,6 +202,7 @@
       type="date"
       displayFormat="yyyy-MM-dd"
       label="From Date"
+     
     >
     </dx-date-box>
 

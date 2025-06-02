@@ -67,6 +67,8 @@
       [rowAlternationEnabled]="true"
       rowAlternationInterval="2"
       [allowColumnReordering]="true"
+       [groupPanel]="{ visible: true }"
+    [grouping]="{ autoExpandAll: false }"
       [filterRow]="{ visible: false }"
       id="dataGrid"
       [headerFilter]="{ visible: false }"
@@ -81,7 +83,7 @@
       <dxo-toolbar>
         <dxi-item location="before">
           <div class="grid-header" style="font-weight: 600 ;font-size: 20px; margin-left: 12px;">
-            Schema Wise Summary
+            Scheme Wise Summary
           </div>
         </dxi-item>
     
@@ -92,6 +94,12 @@
         <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
+       <dxo-grouping
+        [autoExpandAll]="false"
+        [contextMenuEnabled]="true"
+        [expandMode]="'rowClick'"
+      ></dxo-grouping>
+
       <dxi-column
         dataField="SCHEMA_NAME"
         caption="Scheme Name"
@@ -101,6 +109,7 @@
         dataField="DEPARTMENT_NAME"
         caption="Department Name"
         data-type="string"
+        allowGrouping="true"
         width="200"
       ></dxi-column>
            <dxi-column
@@ -128,13 +137,7 @@
         data-type="number"
        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
       ></dxi-column>
-        <dxo-summary>
-    <dxi-total-item
-      column="NET_AMOUNT"
-      summaryType="sum"
-      displayFormat="Net Amount: {0}">
-    </dxi-total-item>
-  </dxo-summary>
+      
     </dx-data-grid>
   </div>
 </div>
