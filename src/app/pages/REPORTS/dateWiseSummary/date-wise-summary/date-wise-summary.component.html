@@ -118,7 +118,7 @@
   caption="Date"
   dataType="date"
   width="150"
-  format="yyyy-MM-dd"
+  format="dd-MM-yyyy"
 ></dxi-column>
  <dxi-column
         dataField="DEPARTMENT_NAME"
@@ -178,12 +178,12 @@
 <!-- =================header filter======================== -->
 <dx-popup
   [(visible)]="isCustomDatePopupVisible"
-  [width]="'400px'"
+  [width]="'300px'"
   title="Select Custom Date Range"
   [showCloseButton]="true"
   [dragEnabled]="false"
   [closeOnOutsideClick]="true"
-  [height]="'250px'"
+  [height]="'300px'"
 >
   <div class="p-3">
     <dx-date-box

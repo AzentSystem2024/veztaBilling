@@ -59,7 +59,7 @@
     <dx-data-grid
       [dataSource]="schemawisedData"
       width="100%"
-      height="85vh"
+      height="75vh"
       [showBorders]="true"
       [columnAutoWidth]="true"
       [wordWrapEnabled]="false"
@@ -128,6 +128,13 @@
         data-type="number"
        [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
       ></dxi-column>
+        <dxo-summary>
+    <dxi-total-item
+      column="NET_AMOUNT"
+      summaryType="sum"
+      displayFormat="Net Amount: {0}">
+    </dxi-total-item>
+  </dxo-summary>
     </dx-data-grid>
   </div>
 </div>
@@ -135,12 +142,12 @@
 <!-- =================header filter======================== -->
 <dx-popup
   [(visible)]="isCustomDatePopupVisible"
-  [width]="'400px'"
+  [width]="'300px'"
   title="Select Custom Date Range"
   [showCloseButton]="true"
   [dragEnabled]="false"
   [closeOnOutsideClick]="true"
-  [height]="'250px'"
+  [height]="'300px'"
 >
   <div class="p-3">
     <dx-date-box

@@ -175,7 +175,7 @@ refreshMenu() {
   // Settings (Admin only)
   if (isAdmin) {
     this.items.push({
-      text: 'settings',
+      text: 'Settings',
       icon: 'preferences',
       path: '/dashboard',
       items: [
@@ -227,11 +227,11 @@ refreshMenu() {
     items: [
       { text: 'Date Wise Summary', path: '/datewise-summary' },
       { text: 'Bill Wise Summary', path: '/billwise-summary' },
-      { text: 'Staff Wise Summary', path: '/staffwise-summary' },
-      { text: 'Test Item Wise Summary', path: '/testitemwise-summary' },
+      // { text: 'Staff Wise Summary', path: '/staffwise-summary' },
+      { text: 'Item Wise Summary', path: '/testitemwise-summary' },
       { text: 'Scheme Wise Summary', path: '/schemewise-summary' },
-      { text: 'Scheme Wise Bill Summary', path: '/schemewise-bill-summary' },
-      { text: 'Patient Wise Summary', path: '/patientwise-summary' },
+      // { text: 'Scheme Wise Bill Summary', path: '/schemewise-bill-summary' },
+      // { text: 'Patient Wise Summary', path: '/patientwise-summary' },
     ],
   });
 
