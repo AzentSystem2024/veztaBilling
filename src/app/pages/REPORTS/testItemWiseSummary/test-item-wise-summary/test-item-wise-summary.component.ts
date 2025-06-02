@@ -15,7 +15,7 @@ import { DataService } from 'src/app/services';
 export class TestItemWiseSummaryComponent {
 
 itemWiseSummaryData: any = []; 
- selectedRange: any = null;
+ selectedRange: any = 'all';
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
@@ -29,11 +29,12 @@ itemWiseSummaryData: any = [];
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
     ColumnNames: any;
-     summaryColumnsData: any;
+   startDate: Date = new Date(2025, 3, 25);
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
   dateRanges = [
+     { label: 'All', value: 'all' },
     { label: 'Today', value: new Date() },
     {
       label: 'Yesterday',
@@ -51,7 +52,19 @@ monthEnd: Date = new Date();
   constructor(private dataservice: DataService, private fb: FormBuilder) {
    
     this.getUserDetails();
+    this.get_alldata();
   }
+
+  
+get_alldata(){
+       if (this.selectedRange === 'all') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = this.startDate;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    this.get_DataSource(); // Load data immediately
+  }
+}
 
   applyCustomDate() {
     if (!this.fromDate || !this.toDate) {
@@ -117,6 +130,13 @@ monthEnd: Date = new Date();
       console.log(event.value);
       // this.applyCustomDate()
     } 
+     else if (selected === 'all') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = this.startDate;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    // this.get_DataSource(); // Load data immediately
+  }
     else if (selected?.start && selected?.end) {
     // For ranges like "This Month"
     this.FromDate_value = this.monthStart
@@ -138,8 +158,8 @@ monthEnd: Date = new Date();
       this.selectedRange === 'custom'
         ? `${this.fromDate} to ${this.toDate}`
         : this.selectedRange;
-    const departmentId = this.Departmens_value.join(',');
-    const staffId = this.staff_value.join(',');
+const departmentId = (this.Departmens_value ?? []).join(',');
+const staffId = (this.staff_value ?? []).join(',');
     console.log('Selected Department ID:', departmentId);
     console.log('Selected Staff ID:', staffId);
     console.log('Selected Date Range:', date);
@@ -176,6 +196,40 @@ refresh(){
     const fileName = 'Test Item Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
+  summaryColumnsData = {
+  totalItems: [
+     { 
+    column: "QUANTITY", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "QUANTITY",
+      alignment: "right"
+    },
+       
+       { 
+      column: "NO_OF_BILLS", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "NO_OF_BILLS",
+      alignment: "right"
+    },
+    { 
+      column: "AMOUNT", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "AMOUNT",
+      alignment: "right"
+    },
+  ],
+  calculateCustomSummary: (options) => {
+    if (options.name === "summaryRow") {
+      // Custom logic if needed
+    }
+  }
+};
 }
 
 @NgModule({

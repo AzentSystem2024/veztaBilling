@@ -61,7 +61,7 @@
     
       [dataSource]="billWiseSummaryData"
       width="100%"
-      height="75vh"
+      height="80vh"
       [showBorders]="true"
       [columnAutoWidth]="true"
       [wordWrapEnabled]="false"
@@ -78,7 +78,9 @@
       }"
       (onExporting)="onExporting($event)"
       [summary]="summaryColumnsData"
-      > <dxo-filter-row [visible]="true"></dxo-filter-row>
+     
+      > 
+      <!-- <dxo-filter-row [visible]="true"></dxo-filter-row> -->
        <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
@@ -154,40 +156,54 @@
         ></dxi-item> -->
       </dxo-toolbar>
       
+      <dxo-grouping
+        [autoExpandAll]="false"
+        [contextMenuEnabled]="true"
+        [expandMode]="'rowClick'"
+      ></dxo-grouping>
+      <dxo-group-panel [visible]="true"></dxo-group-panel>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      
        <dxi-column
         dataField="DEPARTMENT_NAME"
         caption="Department Name"
         data-type="string"
         width="200"
+        grouping="true"
       ></dxi-column>
     
       <dxi-column
         dataField="BillNo"
         caption="Bill No"
         data-type="string"
+        grouping="true"
         width="100"
       ></dxi-column>
       <dxi-column
         dataField="InvoiceSl"
         caption="Invoice No"
         data-type="number"
+         grouping="true"
         width="100"
       ></dxi-column>
       <dxi-column
         dataField="PatientName"
         caption="Patient Name"
         data-type="string"
+         grouping="true"
         width="150"
       ></dxi-column>
       <dxi-column
         dataField="Uhid"
         caption="UHID"
+         grouping="true"
         data-type="string"
         width="150"
       ></dxi-column>
       <dxi-column
         dataField="GrossAmt"
         caption="Gross Amount"
+         grouping="true"
         data-type="number"
         [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"
         width="120"

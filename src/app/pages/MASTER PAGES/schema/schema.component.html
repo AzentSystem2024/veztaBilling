@@ -13,6 +13,7 @@
         [columnAutoWidth]="true"
          (onRowRemoved)="deleteData($event)"
         (onExporting)="onExporting($event)"
+        [loadPanel]="{ enabled: true, text: 'Loading...', showIndicator: true, showPane: true }"
         [pager]="{ 
           showInfo: true, 
           infoText: 'Page {0} of {1}', 
@@ -121,6 +122,8 @@
     [shading]="false"
     [showCloseButton]="true"
     [width]="PopupWidth"
+    [shading]="true"               
+  [hideOnOutsideClick]="false"
     >
     <dx-form [formGroup]="formsource" class="mt-3">
       
@@ -160,6 +163,8 @@
         [showCloseButton]="true"
         [shading]="false"
         [width]="PopupWidth"
+        [shading]="true"               
+  [hideOnOutsideClick]="false"
       >
         <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>

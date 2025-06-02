@@ -35,3 +35,22 @@
 }
 
 
+
+/* Hide the close (×) button */
+::ng-deep .dx-tag-remove-button {
+  display: none !important;
+}
+
+/* Remove background, border, and shadow from selected tags */
+::ng-deep .dx-tag-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2px 6px !important;
+  color: inherit !important;
+}
+
+/* Optional: reduce spacing between items */
+::ng-deep .dx-tag {
+  margin: 0 4px 0 0 !important;
+}

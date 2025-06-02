@@ -16,7 +16,7 @@ export class BillWiseSummaryComponent {
 billWiseSummaryData: any = [];
 
 
-  selectedRange: any = null;
+  selectedRange: any = 'all';
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
@@ -30,15 +30,15 @@ billWiseSummaryData: any = [];
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
     ColumnNames: any;
-    summaryColumnsData: any;
     today: Date = new Date();
    yesterday:Date= new Date(new Date().setDate(new Date().getDate() - 1))
 monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
-
+startDate: Date = new Date(2025, 3, 25);
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
 
 dateRanges = [
+    { label: 'All', value: 'all' },
   { label: 'Today', value: this.today },
   { label: 'Yesterday', value: this.yesterday },
   {
@@ -54,8 +54,17 @@ dateRanges = [
   constructor(private dataservice: DataService, private fb: FormBuilder) {
    
     this.getUserDetails();
+    this.get_alldata()
   }
-
+get_alldata(){
+       if (this.selectedRange === 'all') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = this.startDate;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    this.get_DataSource(); // Load data immediately
+  }
+}
   applyCustomDate() {
     if (!this.fromDate || !this.toDate) {
       alert('Please select both From and To dates.');
@@ -120,6 +129,13 @@ dateRanges = [
       console.log(event.value);
       // this.applyCustomDate()
     }
+      else if (selected === 'all') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = this.startDate;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    // this.get_DataSource(); // Load data immediately
+  }
     else if (selected?.start && selected?.end) {
     // For ranges like "This Month"
     this.FromDate_value = this.monthStart
@@ -138,8 +154,8 @@ dateRanges = [
   }
 
   get_DataSource() {
-    const departmentId = this.Departmens_value.join(',');
-    const staffId = this.staff_value.join(',');
+ const departmentId = (this.Departmens_value ?? []).join(',');
+const staffId = (this.staff_value ?? []).join(',');
     console.log('Selected Department ID:', departmentId);
     console.log('Selected Staff ID:', staffId);
     console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
@@ -177,6 +193,80 @@ refresh(){
     const fileName = 'Bill Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
+
+
+summaryColumnsData = {
+  totalItems: [
+     { 
+      column: "GrossAmt", 
+      summaryType: "sum", 
+      displayFormat: " {0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "GrossAmt",
+      alignment: "right"
+    },
+    { 
+      column: "SchemaAmt", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "SchemaAmt",
+      alignment: "right"
+    },
+    { 
+      column: "NetAmt", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "NetAmt",
+      alignment: "right"
+    },
+    { 
+      column: "Cash", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "Cash",
+      alignment: "right"
+    },
+    { 
+      column: "Credit", 
+      summaryType: "sum", 
+      displayFormat: "{0}",
+      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
+      showInColumn: "Credit",
+      alignment: "right"
+    },
+  ],
+  calculateCustomSummary: (options) => {
+    if (options.name === "summaryRow") {
+      // Custom logic if needed
+    }
+  }
+};
+
+
+  onContextMenuPreparing(e: any) {
+  if (e.target === "header") {
+    e.items = e.items || [];
+
+    e.items.push(
+      {
+        text: "Group by This Column",
+        onItemClick: () => {
+          e.component.columnOption(e.column.dataField, "groupIndex", 0);
+        }
+      },
+      {
+        text: "Ungroup All",
+        onItemClick: () => {
+          e.component.clearGrouping();
+        }
+      }
+    );
+  }
+}
+
 }
 @NgModule({
   imports: [

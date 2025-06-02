@@ -61,11 +61,14 @@
     <dx-data-grid
       [dataSource]="itemWiseSummaryData"
       width="100%"
+      noDataText=""
       height="75vh"
       width="100%"
       [showBorders]="true"
       [columnAutoWidth]="true"
       [wordWrapEnabled]="false"
+        [grouping]="{ autoExpandAll: false }"
+      [filterRow]="{ visible: false }"
       [rowAlternationEnabled]="true"
       [rowAlternationEnabled]="true"
       rowAlternationInterval="2"
@@ -79,6 +82,7 @@
       }"
       (onExporting)="onExporting($event)"
       [summary]="summaryColumnsData"
+        [loadPanel]="{ enabled: true, text: 'Loading...',  }"
     >
       <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"  style="padding-right: 15px;"> </dxo-export>
       <dxo-toolbar>
@@ -87,10 +91,6 @@
             Item Wise Summary
           </div>
         </dxi-item>
-       
-
-     
-
         <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
 
       </dxo-toolbar>
@@ -115,6 +115,11 @@
         <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
+      <dxo-grouping
+        [autoExpandAll]="false"
+        [contextMenuEnabled]="true"
+        [expandMode]="'rowClick'"
+      ></dxo-grouping>
       <dxi-column
         dataField="ITEM_NAME"
         caption="Item Name"
@@ -125,6 +130,7 @@
         dataField="DEPARTMENT_NAME"
         caption="Department Name"
         data-type="string"
+           [allowGrouping]="true"
         width="200"
       ></dxi-column>
       <dxi-column
@@ -138,6 +144,7 @@
         caption="No. of Bills"
         data-type="number"
         width="120"
+        alignment="right"
       ></dxi-column>
       <!-- <dxi-column
         dataField="AMOUNT"
@@ -160,13 +167,7 @@
 
         <dxi-column dataField="AMOUNT" caption="Amount"></dxi-column>
 
-  <dxo-summary>
-    <dxi-total-item
-      column="AMOUNT"
-      summaryType="sum"
-      displayFormat="Total Amount: {0}">
-    </dxi-total-item>
-  </dxo-summary>
+  
     </dx-data-grid>
   </div>
 </div>
