@@ -94,23 +94,26 @@ export class LoginFormComponent {
               'savedUserData',
               JSON.stringify(savedUserData)
             );
-// const redirectPath = savedUserData.ADD_INVOICE ? '/invoice-entry' : 'null';
-const redirectPath =
-  savedUserData.USER_TYPE_ID === 3
-    ? '/invoice-entry'
-    : (savedUserData.USER_TYPE_ID === 1 || savedUserData.USER_TYPE_ID === 2)
-    ? '/invoice'
-    : null;
+            // const redirectPath = savedUserData.ADD_INVOICE ? '/invoice-entry' : 'null';
+            const redirectPath =
+              savedUserData.USER_TYPE_ID === 3 ||
+              savedUserData.USER_TYPE_ID === 4
+                ? '/invoice-entry'
+                : savedUserData.USER_TYPE_ID === 1 ||
+                  savedUserData.USER_TYPE_ID === 2
+                ? '/invoice'
+                : null;
 
             // Navigate to dashboard
-        this.router.navigate([redirectPath]).then(() => {
-          console.log('Navigation to dashboard successful');
-    window.location.reload();
-    
-  })
-  .catch((err) => {
-    console.error('Navigation failed:', err);
-  });
+            this.router
+              .navigate([redirectPath])
+              .then(() => {
+                console.log('Navigation to dashboard successful');
+                window.location.reload();
+              })
+              .catch((err) => {
+                console.error('Navigation failed:', err);
+              });
           } else {
             notify({
               message: response.Message || 'Login failed',
@@ -126,7 +129,6 @@ const redirectPath =
         }
       );
   }
-
 }
 @NgModule({
   imports: [

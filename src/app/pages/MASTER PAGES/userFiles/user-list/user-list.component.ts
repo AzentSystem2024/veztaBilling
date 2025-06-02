@@ -351,11 +351,17 @@ addData(){
   const User_name = this.formsource.get('UserName')?.value;
   const Login_password = this.formsource.get('LoginPassword')?.value;
  const Is_Inactive = this.formsource.get('Inactive')?.value === true;
-  const Department_Id = this.selectedDepartmentId.toString();
+  // const Department_Id = this.selectedDepartmentId.toString();
+  const Department_Id = this.selectedDepartmentId != null ? this.selectedDepartmentId.toString() : '';
+
   // const Department_Id = this.selectedDepartmentId?.toString() || '';
   // const Department_Id = this.selectedDepartmentId ?? null; // null or number
 
-  const Hospital_Id = this.selectedHospitalId;
+  // const Hospital_Id = this.selectedHospitalId;
+  const Hospital_Id = Array.isArray(this.selectedHospitalId)
+  ? Number(this.selectedHospitalId[0]) || 0
+  : Number(this.selectedHospitalId) || 0;
+
   const Usertype = this.formsource.get('UserType')?.value;
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
   const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
@@ -364,14 +370,15 @@ addData(){
 
   
 const payload = { // or dynamic: this.loggedInUser
-  //  user: 'admin', // ✅ Add this line
+   user: 'admin', // ✅ Add this line
   USER_NAME: User_name,
   LOGIN_NAME: Login_name,
   LOGIN_PWD: Login_password,
   USER_TYPE: Usertype,
   IS_INACTIVE: Is_Inactive,
   DEPARTMENT_ID: Department_Id ,
-  HOSPITAL_ID :  Hospital_Id ?? 0  ,
+  // HOSPITAL_ID :  Hospital_Id ?? 0  ,
+  HOSPITAL_ID: Hospital_Id,
   ADD_INVOICE : Add_invoice,
   VIEW_INVOICE : View_invoice,
   CANCEL_INVOICE : Cancel_invoice,
@@ -387,6 +394,38 @@ const payload = { // or dynamic: this.loggedInUser
       'error'
     );
     return; // Stop further execution
+  }
+
+
+   // 🚫 New condition: Hospital User must select hospital
+  if (Usertype === 3 && !Hospital_Id) {
+    notify({
+      message: 'Please select the hospital',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1500,
+    }, 'error');
+    return;
+  }
+
+  // // 🚫 New condition: Hospital User must select hospital
+  // if (Usertype === 4 && !Hospital_Id ) {
+  //   notify({
+  //     message: 'Please select the hospital',
+  //     position: { at: 'top right', my: 'top right' },
+  //     displayTime: 1500,
+  //   }, 'error');
+  //   return;
+  // }
+
+    // 🚫 New condition: Hospital User must select hospital
+  if (Usertype === 4 && !Department_Id ) {
+    notify({
+      message: 'Please select the department',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 1500,
+    }, 'error');
+    return;
+    
   }
 
 // Optional: Check for duplicate login name
@@ -437,6 +476,8 @@ const payload = { // or dynamic: this.loggedInUser
           
           this.addPopup = false;
           this.formsource.reset();
+
+          
          this.dxFormInstance?.instance?.resetValidation();
           this.get_User_List();
          
