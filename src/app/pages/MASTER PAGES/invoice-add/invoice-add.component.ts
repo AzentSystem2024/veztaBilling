@@ -1088,6 +1088,8 @@ this.getDropdownData();
           'success'
         );
         this.printConfirmVisible = true;
+            this.resetInvoiceForm();
+        this.getInvoiceNo();
       } else {
         notify(
           {
@@ -1098,8 +1100,8 @@ this.getDropdownData();
         );
       }
     });
-    this.resetInvoiceForm();
-    // this.printInvoice();
+
+
   }
 
   onConfirmPrint(action: 'print' | 'no' | 'Print & Preview') {
@@ -1123,8 +1125,8 @@ this.getDropdownData();
     this.invoiceFormData = {
       INVOICE_NO: '',
       INVOICE_DATE: new Date().toISOString(),
-      DEPARTMENT_ID: '1',
-      USER_ID: '1',
+      DEPARTMENT_ID: '',
+      USER_ID: this.userData?.USER_ID?.toString() || '',
       UHID: new Date().getFullYear().toString(),
       PATIENT_NAME: '',
       PATIENT_AGE: '',
