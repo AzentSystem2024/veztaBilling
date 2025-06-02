@@ -171,8 +171,8 @@ monthEnd: Date = new Date();
       this.selectedRange === 'custom'
         ? `${this.fromDate} to ${this.toDate}`
         : this.selectedRange;
-    const departmentId = this.Departmens_value.join(',');
-    const staffId = this.staff_value.join(',');
+  const departmentId = (this.Departmens_value ?? []).join(',');
+const staffId = (this.staff_value ?? []).join(',');
     console.log('Selected Department ID:', departmentId);
     console.log('Selected Staff ID:', staffId);
     console.log('Selected Date Range:', date);

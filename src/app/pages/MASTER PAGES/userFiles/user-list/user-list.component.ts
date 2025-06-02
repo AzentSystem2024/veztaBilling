@@ -86,6 +86,7 @@ formData = { IS_INACTIVE: false,pwd:''};
   currentFilter: string = 'auto';
   Status: any;
 
+
   CollectionDisplay: boolean = false;
   //edit
   selectedData: any=[]
@@ -476,7 +477,8 @@ const payload = { // or dynamic: this.loggedInUser
           
           this.addPopup = false;
           this.formsource.reset();
-
+          this.selectedUserType = null;
+         this.editPopup = false;
           
          this.dxFormInstance?.instance?.resetValidation();
           this.get_User_List();
@@ -492,13 +494,19 @@ openPopup() {
     Inactive: "",
     AddInvoice:"",
     ViewInvoice:"",
-    CancelInvoice:""
+    CancelInvoice:"",
+    DepartmentId:null,
+    HospitalId:""
      
   });
     
 }
 
-
+onAddPopupClose(){
+   this.formsource.reset();
+     this.dxFormInstance?.instance?.resetValidation();
+ this.selectedUserType = null;
+}
 
 editData() {
   console.log("Edit Button Clicked");
