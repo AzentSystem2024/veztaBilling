@@ -244,7 +244,7 @@ if(Insurance){
 this.dataservice.Update_InsuranceData_Api(ID,Insurance,Inactive).subscribe((response:any)=>{
   notify(
     {
-      message: 'Data succesfully added',
+      message: 'Data succesfully updated',
       position: { at: 'top right', my: 'top right' },
       displayTime: 500,
     },

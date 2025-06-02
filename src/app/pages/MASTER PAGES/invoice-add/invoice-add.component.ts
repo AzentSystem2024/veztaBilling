@@ -512,7 +512,7 @@ this.getDropdownData();
         this.departmentsForAdmin = response;
         console.log(response, 'DEPARTMENTSSSSSSSSSSSS');
         if (
-          this.userData?.USER_TYPE_NAME === 'Administrator' &&
+           (this.userData?.USER_TYPE_ID === 1 || this.userData?.USER_TYPE_ID === 2) &&
           !this.selectedDepartmentName &&
           this.departmentsForAdmin.length > 0
         ) {
