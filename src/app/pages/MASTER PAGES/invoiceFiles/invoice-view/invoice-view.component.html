@@ -282,34 +282,45 @@
               <dx-text-box
                 label="Insurance ID"
                 labelMode="floating"
+                [(value)]="invoiceData.INSURANCE_ID"
                 [width]="200"
                 [readOnly]="true"
+              ></dx-text-box>
+              <dx-text-box
+                #insuranceNumberSelect
+                label="Insurance ID"
+                labelMode="floating"
+                [(value)]="invoiceData.INSURANCE_NO"
+                [readOnly]="true"
+                [width]="200"
               ></dx-text-box>
             </div>
           </div>
 
           <!-- Right side: Buttons -->
-           <div (keydown)="handleKeyEvents($event)" tabindex="0">
-          <div style="display: flex; gap: 10px">
-            <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
-            <dx-button
-              text="Reprint"
-              stylingMode="outlined"
-              type="default"
-              (onClick)="previewAndPrintInvoice()"
-              
-            ></dx-button>
-            <dx-button
-              *ngIf="userData.CANCEL_INVOICE !== false && invoiceData?.STATUS !== 'Cancelled'"
-              text="Cancel Invoice"
-              stylingMode="outlined"
-              type="normal"
-              (onClick)="cancelBillPrint()"
-              [elementAttr]="{
-                style: 'background-color: red; color: white;'
-              }"
-            ></dx-button>
-          </div>
+          <div (keydown)="handleKeyEvents($event)" tabindex="0">
+            <div style="display: flex; gap: 10px">
+              <!-- <dx-button text="Print" stylingMode="outlined" type="default"></dx-button> -->
+              <dx-button
+                text="Reprint"
+                stylingMode="outlined"
+                type="default"
+                (onClick)="previewAndPrintInvoice()"
+              ></dx-button>
+              <dx-button
+                *ngIf="
+                  userData.CANCEL_INVOICE !== false &&
+                  invoiceData?.STATUS !== 'Cancelled'
+                "
+                text="Cancel Invoice"
+                stylingMode="outlined"
+                type="normal"
+                (onClick)="cancelBillPrint()"
+                [elementAttr]="{
+                  style: 'background-color: red; color: white;'
+                }"
+              ></dx-button>
+            </div>
           </div>
         </div>
       </div>

@@ -61,6 +61,7 @@ export class InvoiceAddComponent {
   departmentsForAdmin: any;
   selectedDepartmentName: any;
   selectedDepartmentId: any;
+  hospitalName: any;
   formatInvoiceDate(dateString: string): string {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
@@ -190,7 +191,8 @@ export class InvoiceAddComponent {
       this.USER = this.userData.USER_TYPE_NAME;
       // Example: Accessing department name
       console.log('Department Name============:', this.userData.DEPARTMENT_ID);
-
+this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
+console.log(this.hospitalName,"HOSPITALNAME")
       if (
         this.userData.USER_TYPE_ID === 1 ||
         this.userData.USER_TYPE_ID === 2
@@ -1361,7 +1363,7 @@ this.getDropdownData();
           }</strong></td>
 <td style="text-align: center;"><strong>BILLED BY:</strong> ${this.USER}</td>
           <td style="text-align: right;"><strong>COMPANY NAME:</strong>${
-            data.DEPARTMENT
+            this.hospitalName
           }</td>
         </tr>
       </table>
