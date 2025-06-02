@@ -1,4 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, NgModule, ViewChild } from '@angular/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgModule,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import {
@@ -43,7 +48,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./date-wise-summary.component.scss'],
 })
 export class DateWiseSummaryComponent {
-    @ViewChild(DxDataGridComponent, { static: true })
+  @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
   dateWiseSummaryData: any = [];
   selectedRange: any = 'all';
@@ -58,36 +63,41 @@ export class DateWiseSummaryComponent {
   fromDate: string | number | Date = new Date();
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
-  isFilterOpened: boolean = false;
-
     ColumnNames: any;
-   
-        yesterday:Date= new Date(new Date().setDate(new Date().getDate() - 1))
-monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
-startDate: Date = new Date(2025, 3, 25); // Months are 0-indexed (0 = January)
- // Start of the year (e.g., January 1, 2025)
-// Today's date (e.g., May 30, 2025)
-monthEnd: Date = new Date();
+  isFilterOpened: boolean = false;
+  customRangeLabel: string = 'Custom';
+      displayMode: any = 'full';
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
+  yesterday: Date = new Date(new Date().setDate(new Date().getDate() - 1));
+  monthStart: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    2
+  );
+  startDate: Date = new Date(2025, 3, 25); // Months are 0-indexed (0 = January)
+  // Start of the year (e.g., January 1, 2025)
+  // Today's date (e.g., May 30, 2025)
+  monthEnd: Date = new Date();
   dateRanges = [
-      { label: 'All', value: 'all' },
+    { label: 'All', value: 'all' },
     { label: 'Today', value: new Date() },
     {
       label: 'Yesterday',
       value: new Date(new Date().setDate(new Date().getDate() - 1)),
     },
     {
-    label: 'This Month',
-    value: { start: this.monthStart, end: this.monthEnd },
-  },
-    { label: 'Custom', value: 'custom' },
+      label: 'This Month',
+      value: { start: this.monthStart, end: this.monthEnd },
+    },
+    { label: this.customRangeLabel, value: 'custom' },
   ];
   ToDate_value: any;
 
   constructor(private dataservice: DataService, private fb: FormBuilder) {
-   
     this.getUserDetails();
- 
-    this.get_alldata();}
+
+    this.get_alldata();
+  }
 
   applyCustomDate() {
     if (!this.fromDate || !this.toDate) {
@@ -114,20 +124,17 @@ monthEnd: Date = new Date();
     );
 
     this.isCustomDatePopupVisible = false;
-  
   }
 
-
-get_alldata(){
-       if (this.selectedRange === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    this.get_DataSource(); // Load data immediately
+  get_alldata() {
+    if (this.selectedRange === 'all') {
+      // For "All" option, set dates to null or wide range
+      this.FromDate_value = this.startDate;
+      this.ToDate_value = new Date();
+      console.log('All dates selected - loading complete data');
+      this.get_DataSource(); // Load data immediately
+    }
   }
-}
-
 
   getUserDetails() {
     const user_details = sessionStorage.getItem('savedUserData');
@@ -162,26 +169,18 @@ get_alldata(){
       console.log('Custom date range selected');
       console.log(event.value);
       // this.applyCustomDate()
-    }
-    
-     else if (selected === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    // this.get_DataSource(); // Load data immediately
-  }
-    
-    else if (selected?.start && selected?.end) {
-    // For ranges like "This Month"
-    this.FromDate_value = this.monthStart
-    
-    
-    ;
-    this.ToDate_value = this.monthEnd
-    console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-  }
-     else {
+    } else if (selected === 'all') {
+      // For "All" option, set dates to null or wide range
+      this.FromDate_value = this.startDate;
+      this.ToDate_value = new Date();
+      console.log('All dates selected - loading complete data');
+      // this.get_DataSource(); // Load data immediately
+    } else if (selected?.start && selected?.end) {
+      // For ranges like "This Month"
+      this.FromDate_value = this.monthStart;
+      this.ToDate_value = this.monthEnd;
+      console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
+    } else {
       this.FromDate_value = event.value;
       console.log('FromDate_value Date Range:', this.FromDate_value);
       this.ToDate_value = this.FromDate_value;
@@ -194,8 +193,8 @@ get_alldata(){
         ? `${this.fromDate} to ${this.toDate}`
         : this.selectedRange;
 
-  const departmentId = (this.Departmens_value ?? []).join(',');
-const staffId = (this.staff_value ?? []).join(',');
+    const departmentId = (this.Departmens_value ?? []).join(',');
+    const staffId = (this.staff_value ?? []).join(',');
     console.log('Selected Department ID:', departmentId);
     console.log('Selected Staff ID:', staffId);
     console.log('Selected Date Range:', date);
@@ -206,92 +205,86 @@ const staffId = (this.staff_value ?? []).join(',');
     this.dataservice
       .Date_wise_Api(fromDate, ToDate, departmentId, staffId)
       .subscribe((res: any) => {
-           this.isEmptyDatagrid = false;
+        this.isEmptyDatagrid = false;
         this.dateWiseSummaryData = res.Data;
         console.log('Date Wise Summary Data:', this.dateWiseSummaryData);
         console.log(res);
       });
   }
-public filterClick = () => {
-  console.log('Clicked');
-  if (this.dateWiseSummaryData) {
-    this.isFilterOpened = !this.isFilterOpened;
+  public filterClick = () => {
+    console.log('Clicked');
+    if (this.dateWiseSummaryData) {
+      this.isFilterOpened = !this.isFilterOpened;
+    }
+  };
+  SummaryClick() {}
+  findColumnLocation(columnName: string) {}
+  refresh() {
+    this.dataGrid.instance.refresh();
   }
-};
-SummaryClick(){
-
-}
-findColumnLocation(columnName: string) {
-
-}
-refresh(){
-  this.dataGrid.instance.refresh();
-
-}
- onExporting(event: any) {
+  onExporting(event: any) {
     const fileName = 'Date Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
-    //========== DataGrid Refreshing ================
+  //========== DataGrid Refreshing ================
 
-summaryColumnsData = {
-  totalItems: [
-     { 
-      column: "NoOfBills", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "NoOfBills",
-      alignment: "right"
+  summaryColumnsData = {
+    totalItems: [
+      {
+        column: 'NoOfBills',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'NoOfBills',
+        alignment: 'right',
+      },
+      {
+        column: 'GrossAmt',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'GrossAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'SchemaAmt',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'SchemaAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'NetAmt',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'NetAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'Cash',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Cash',
+        alignment: 'right',
+      },
+      {
+        column: 'Credit',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Credit',
+        alignment: 'right',
+      },
+    ],
+    calculateCustomSummary: (options) => {
+      if (options.name === 'summaryRow') {
+        // Custom logic if needed
+      }
     },
-    { 
-      column: "GrossAmt", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "GrossAmt",
-      alignment: "right"
-    },
-    { 
-      column: "SchemaAmt", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "SchemaAmt",
-      alignment: "right"
-    },
-    { 
-      column: "NetAmt", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "NetAmt",
-      alignment: "right"
-    },
-    { 
-      column: "Cash", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "Cash",
-      alignment: "right"
-    },
-    { 
-      column: "Credit", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "Credit",
-      alignment: "right"
-    }
-  ],
-  calculateCustomSummary: (options) => {
-    if (options.name === "summaryRow") {
-      // Custom logic if needed
-    }
-  }
-};
-
+  };
 }
 
 @NgModule({

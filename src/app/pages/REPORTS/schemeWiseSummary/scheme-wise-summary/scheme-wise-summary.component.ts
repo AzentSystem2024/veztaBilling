@@ -27,6 +27,8 @@ export class SchemeWiseSummaryComponent {
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
+    displayMode: any = 'full';
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
     ColumnNames: any;
     startDate: Date = new Date(2025, 3, 25);
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);

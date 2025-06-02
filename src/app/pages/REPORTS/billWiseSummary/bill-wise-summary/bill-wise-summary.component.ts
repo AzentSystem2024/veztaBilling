@@ -34,6 +34,8 @@ billWiseSummaryData: any = [];
    yesterday:Date= new Date(new Date().setDate(new Date().getDate() - 1))
 monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
 startDate: Date = new Date(2025, 3, 25);
+  displayMode: any = 'full';
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
 

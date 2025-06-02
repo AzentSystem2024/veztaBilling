@@ -31,6 +31,8 @@ itemWiseSummaryData: any = [];
     ColumnNames: any;
    startDate: Date = new Date(2025, 3, 25);
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
+       displayMode: any = 'full';
+   readonly allowedPageSizes: any = [ 5,10, 'all'];
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
   dateRanges = [
