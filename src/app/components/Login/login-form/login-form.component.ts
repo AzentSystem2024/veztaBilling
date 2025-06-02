@@ -96,7 +96,7 @@ export class LoginFormComponent {
             );
 // const redirectPath = savedUserData.ADD_INVOICE ? '/invoice-entry' : 'null';
 const redirectPath =
-  savedUserData.USER_TYPE_ID === 3
+  (savedUserData.USER_TYPE_ID === 3 || savedUserData.USER_TYPE_ID === 4)
     ? '/invoice-entry'
     : (savedUserData.USER_TYPE_ID === 1 || savedUserData.USER_TYPE_ID === 2)
     ? '/invoice'
