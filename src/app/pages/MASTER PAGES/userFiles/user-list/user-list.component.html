@@ -12,7 +12,7 @@
     [columnAutoWidth]="true"
     (onEditingStart)="onEditingStart($event)"
      (onRowRemoved)="deleteData($event)"
-   
+   [loadPanel]="{ enabled: true, text: 'Loading...', showIndicator: true, showPane: true }"
     [elementAttr]="{ class: 'custom-popup' }"
     [pager]="{
       showInfo: true,
@@ -117,7 +117,8 @@
   [shading]="false"
   [showCloseButton]="true"
   (onHiding)="onAddPopupClose()"
-  
+  [shading]="true"               
+  [hideOnOutsideClick]="false"
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
@@ -311,7 +312,8 @@
   [showCloseButton]="true"
   [shading]="false"
   (onHidden)="closePop()"
-  
+  [shading]="true"               
+  [hideOnOutsideClick]="false"
 >
   <!-- INPUT FIELD -->
   <dx-form [formGroup]="formsource">
