@@ -61,6 +61,7 @@
     <dx-data-grid
       [dataSource]="itemWiseSummaryData"
       width="100%"
+      noDataText=""
       height="75vh"
       width="100%"
       [showBorders]="true"
@@ -81,6 +82,7 @@
       }"
       (onExporting)="onExporting($event)"
       [summary]="summaryColumnsData"
+        [loadPanel]="{ enabled: true, text: 'Loading...',  }"
     >
       <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"  style="padding-right: 15px;"> </dxo-export>
       <dxo-toolbar>

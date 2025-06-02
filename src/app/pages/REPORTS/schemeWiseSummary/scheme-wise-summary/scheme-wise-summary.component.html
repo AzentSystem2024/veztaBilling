@@ -78,6 +78,7 @@
       }"
       (onExporting)="onExporting($event)"
       [summary]="summaryColumnsData"
+          [loadPanel]="{ enabled: true, text: 'Loading...',  }"
     >
       <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
       <dxo-toolbar>

@@ -79,6 +79,7 @@
         texts: { fix: 'Freeze', unfix: 'Unfreeze' }
       }"
       (onExporting)="onExporting($event)"
+          [loadPanel]="{ enabled: true, text: 'Loading...',  }"
     
     >
       <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
