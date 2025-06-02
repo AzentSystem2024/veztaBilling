@@ -116,6 +116,7 @@
   title="New User"
   [shading]="false"
   [showCloseButton]="true"
+  (onHiding)="onAddPopupClose()"
   
 >
   <!-- INPUT FIELD -->
@@ -169,6 +170,7 @@
     </dxi-item>
 
     <dxi-item
+
       [editorOptions]="{ mode: 'password' }"
     >
     
@@ -194,7 +196,7 @@
     </dx-text-box>
     </dxi-item>
    
-<dxi-item class="checkbox-row">
+<dxi-item class="checkbox-row" >
 
       <dx-check-box
         class="mt-1"
@@ -222,7 +224,7 @@
       </dxi-item>
     
     <!-- DROPDOWN ROLES -->
-    <dxi-item> 
+    <dxi-item > 
       <dx-select-box
         [items]="UserType"
         label="UserType"
@@ -249,6 +251,7 @@
         [items]="hospital_list"
         valueExpr="ID"
         [(value)]="selectedHospitalId"
+        
         displayExpr="DESCRIPTION"
         label="Select Hospital"
         labelMode="floating"
@@ -289,7 +292,7 @@
     
 
     <!-- BUTTONS -->
-   <dxi-item class="d-flex justify-content-end mt-3">
+   <dxi-item class="d-flex justify-content-end mt-1">
             <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
               Cancel
             </button>
