@@ -300,12 +300,11 @@
               
             ></dx-button>
             <dx-button
-              *ngIf="userData.CANCEL_INVOICE !== false"
+              *ngIf="userData.CANCEL_INVOICE !== false && invoiceData?.STATUS !== 'Cancelled'"
               text="Cancel Invoice"
               stylingMode="outlined"
               type="normal"
               (onClick)="cancelBillPrint()"
-              [disabled]="invoiceData?.STATUS === 'Cancelled'"
               [elementAttr]="{
                 style: 'background-color: red; color: white;'
               }"
