@@ -255,7 +255,7 @@ if(Hospital){
 this.dataservice.Update_HospitalData_Api(ID,Hospital,Inactive).subscribe((response:any)=>{
   notify(
     {
-      message: 'Data succesfully added',
+      message: 'Data succesfully updated',
       position: { at: 'top right', my: 'top right' },
       displayTime: 500,
     },
