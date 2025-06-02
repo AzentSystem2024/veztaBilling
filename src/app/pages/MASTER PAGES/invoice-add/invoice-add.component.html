@@ -128,7 +128,7 @@
   displayExpr="DESCRIPTION"
   valueExpr="ID"
   [(value)]="selectedDepartmentId"
-  [readOnly]="userData?.USER_TYPE_NAME !== 'Administrator'"
+  [readOnly]="userData?.USER_TYPE_ID !== 1 && userData?.USER_TYPE_ID !== 2"
   [width]="200"
   placeholder="Select Department"
   [searchEnabled]="true"
