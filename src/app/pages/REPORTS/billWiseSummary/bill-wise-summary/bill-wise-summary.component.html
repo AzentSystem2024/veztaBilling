@@ -1,4 +1,4 @@
-<div class="salary-grid-wrapper" style="padding: 0 10px">
+<div class="salary-grid-wrapper" style="padding: 10px">
   <div class="form-flex-wrapper">
     <div class="form-item">
       <dx-select-box
@@ -62,8 +62,8 @@
     <dx-data-grid 
     
       [dataSource]="billWiseSummaryData"
-      width="100%"
-      height="75vh"
+       width="100%"
+      height="83vh"
       [showBorders]="true"
       [columnAutoWidth]="true"
       [wordWrapEnabled]="false"
@@ -194,6 +194,7 @@
         dataField="InvoiceSl"
         caption="Invoice No"
         data-type="number"
+        alignment="left"
          grouping="true"
         width="100"
       ></dxi-column>
@@ -201,13 +202,13 @@
         dataField="PatientName"
         caption="Patient Name"
         data-type="string"
-         grouping="true"
+        
         width="150"
       ></dxi-column>
       <dxi-column
         dataField="Uhid"
         caption="UHID"
-         grouping="true"
+        
         data-type="string"
         width="150"
       ></dxi-column>
