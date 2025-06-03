@@ -29,6 +29,7 @@ import { SchemeWiseSummaryComponent } from './pages/REPORTS/schemeWiseSummary/sc
 import { SchemeWiseBillSummaryComponent } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 import { PatientWiseSummaryComponent } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
 import { TestItemWiseSummaryComponent } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+import { HospitalWiseSummaryComponent } from './pages/REPORTS/hospital-wise-summary/hospital-wise-summary.component';
 const routes: Routes = [
   {
     path: '',
@@ -145,6 +146,11 @@ const routes: Routes = [
         component: TestItemWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },
+      //   {
+      //   path: 'testitemwise-summary',
+      //   component: HospitalWiseSummaryComponent,
+      //   canActivate: [AuthGuardService],
+      // },
      
       // {
       //   path: '**',
