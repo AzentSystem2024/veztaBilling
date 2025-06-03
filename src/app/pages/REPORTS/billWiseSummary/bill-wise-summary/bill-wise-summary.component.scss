@@ -1,17 +1,18 @@
 .form-flex-wrapper {
   display: flex;
-  justify-content: center;
-  gap: 20px; /* spacing between fields */
-  flex-wrap: wrap; /* allows wrapping on smaller screens */
-  
+  flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
+  align-items: center;
+  justify-content: space-between; /* creates space between first and last */
+  width: 100%;
+  gap: 10px; /* optional spacing between items */
 }
 
 .form-item {
-  flex: 0 0 auto;
+  flex: 0 1 auto; /* allows items to size based on content */
 }
-.applybtn{
-  // margin-top: 50px; /* space above the button */
-  margin-left: 190px;
+
+.applybtn {
+  margin-left: auto; /* pushes it to the end */
 }
 
 

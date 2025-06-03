@@ -43,12 +43,13 @@ import { SchemeWiseSummaryComponent, SchemeWiseSummaryModule } from './pages/REP
 import { SchemeWiseBillSummaryComponent, SchemeWiseBillSummaryModule } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 import { PatientWiseSummaryComponent, PatientWiseSummaryModule } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
 import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+import { HospitalWiseSummaryComponent, HospitalWiseSummaryModule } from './pages/REPORTS/hospital-wise-summary/hospital-wise-summary.component';
 
 
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent ],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -75,7 +76,8 @@ import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages
     SchemeWiseSummaryModule,
     SchemeWiseBillSummaryModule,
     PatientWiseSummaryModule,
-    TestItemWiseSummaryModule
+    TestItemWiseSummaryModule,
+    HospitalWiseSummaryModule,
 
   ],
   providers: [

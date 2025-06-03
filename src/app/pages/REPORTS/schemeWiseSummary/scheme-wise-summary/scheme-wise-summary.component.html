@@ -8,7 +8,9 @@
         valueExpr="value"
         label="Date Range"
         labelMode="floating"
-        [width]="200"
+         [acceptCustomValue]="true"
+           [searchEnabled]="true"
+        [width]="250"
         (onValueChanged)="onDateRangeChange($event)"
       ></dx-select-box>
     </div>
