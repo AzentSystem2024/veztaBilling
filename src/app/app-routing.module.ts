@@ -146,6 +146,11 @@ const routes: Routes = [
         component: TestItemWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },
+      {
+        path: 'hospitalwise-summary',
+        component: HospitalWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
       //   {
       //   path: 'testitemwise-summary',
       //   component: HospitalWiseSummaryComponent,
