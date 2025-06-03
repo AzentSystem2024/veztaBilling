@@ -1,4 +1,4 @@
-<div class="salary-grid-wrapper" style="padding: 0 10px">
+<div class="salary-grid-wrapper" style="padding: 10px">
   
   <div class="form-flex-wrapper">
     <div class="form-item">
@@ -65,7 +65,7 @@
       [dataSource]="itemWiseSummaryData"
       width="100%"
       noDataText=""
-      height="75vh"
+      height="83vh"
       width="100%"
       [showBorders]="true"
       [columnAutoWidth]="true"
@@ -177,7 +177,7 @@
           </dxo-summary> -->
 
 
-        <dxi-column dataField="AMOUNT" caption="Amount"></dxi-column>
+        <dxi-column dataField="AMOUNT" caption="Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"></dxi-column>
 
   
     </dx-data-grid>

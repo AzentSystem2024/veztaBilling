@@ -1,0 +1,180 @@
+<div class="salary-grid-wrapper" style="padding: 10px">
+  <div class="form-flex-wrapper">
+    <div class="form-item">
+      <dx-select-box
+        [(value)]="selectedRange"
+        [dataSource]="dateRanges"
+        displayExpr="label"
+        valueExpr="value"
+        label="Date Range"
+        labelMode="floating"
+        [width]="250"
+        [searchEnabled]="true"
+        [acceptCustomValue]="true"
+        (onValueChanged)="onDateRangeChange($event)"
+      ></dx-select-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="DepartmentData"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Department"
+        labelMode="floating"
+        [(value)]="Departmens_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="250"
+      ></dx-tag-box>
+    </div>
+
+    <div class="form-item">
+      <dx-tag-box
+        [items]="staff_Data"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Staff"
+        labelMode="floating"
+        [(value)]="staff_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="200"
+      ></dx-tag-box>
+    </div>
+
+    <div class="form-item applybtn">
+      <dx-button
+        text="Apply"
+        type="default"
+        icon="todo"
+        stylingMode="contained"
+        [width]="100"
+        class="mt-2"
+        (onClick)="get_DataSource()"
+      ></dx-button>
+    </div>
+  </div>
+
+  <div class="grid-container">
+    <dx-data-grid
+      [dataSource]="HospitalWiseSummaryData"
+       width="100%"
+      height="83vh"
+      [showBorders]="true"
+     
+      [showRowLines]="false"
+      [allowColumnResizing]="false"
+      [columnAutoWidth]="true"
+      [groupPanel]="{ visible: true }"
+      [grouping]="{ autoExpandAll: false }"
+      [rowAlternationEnabled]="true"
+      rowAlternationInterval="2"
+      [summary]="summaryColumnsData"
+      [allowColumnReordering]="true"
+      [filterRow]="{ visible: false }"
+      
+      id="dataGrid"
+      [headerFilter]="{ visible: false }"
+      [columnFixing]="{
+        enabled: true,
+        texts: { fix: 'Freeze', unfix: 'Unfreeze' }
+      }"
+      (onExporting)="onExporting($event)"
+      [loadPanel]="{ enabled: true, text: 'Loading...',  }"
+    >
+      <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
+      <dxo-paging [pageSize]="10"></dxo-paging>
+      <dxo-pager
+        [visible]="true"
+        [allowedPageSizes]="allowedPageSizes"
+        [displayMode]="displayMode"
+        [showPageSizeSelector]="true"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+      ></dxo-pager>
+      <dxo-toolbar>
+        <dxi-item location="before">
+          <div
+            class="grid-header"
+            style="font-weight: 600; font-size: 20px; margin-left: 12px"
+          >
+            Hospital Wise Summary
+          </div>
+        </dxi-item>
+
+        <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
+
+        <!-- <dxi-item
+          class="columnfinderclass"
+          widget="dxDropDownButton"
+          [options]="{
+            dataSource: ColumnNames,
+            onItemClick: findColumnLocation,
+            placeholder: 'Search Column',
+            noDataText: 'Load data and try again',
+            disabled: isEmptyDatagrid,
+            hint: 'Column location finder',
+            icon:'columnproperties',
+            dropDownOptions: {
+              width: 'auto',
+              height: '60vh'
+            },
+
+          }"
+        ></dxi-item> -->
+      </dxo-toolbar>
+      <dxo-grouping
+        [autoExpandAll]="false"
+        [contextMenuEnabled]="true"
+        [expandMode]="'rowClick'"
+      ></dxo-grouping>
+      <dxo-header-filter [visible]="true">
+        <dxo-search [enabled]="true"></dxo-search>
+      </dxo-header-filter>
+   
+
+<!-- <dxi-column dataField="DEPARTMENT_NAME" caption="Department Name" dataType="string"></dxi-column> -->
+<dxi-column dataField="HOSPITAL_NAME" caption="Hospital Name" dataType="string"></dxi-column>
+<dxi-column dataField="NO_OF_BILLS" caption="No. of Bills"   alignment="left" dataType="number"></dxi-column>
+<dxi-column dataField="GROSS_AMOUNT" caption="Gross Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="SCHEMA_AMOUNT" caption="Scheme Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="NET_AMOUNT" caption="Net Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+
+
+    </dx-data-grid>
+  </div>
+</div>
+
+<!-- =================header filter======================== -->
+<dx-popup
+  [(visible)]="isCustomDatePopupVisible"
+  [width]="'300px'"
+  title="Select Custom Date Range"
+  [showCloseButton]="true"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+  [height]="'300px'"
+>
+  <div class="p-3">
+    <dx-date-box
+      [(value)]="fromDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="From Date"
+    >
+    </dx-date-box>
+
+    <dx-date-box
+      [(value)]="toDate"
+      type="date"
+      displayFormat="yyyy-MM-dd"
+      label="To Date"
+    >
+    </dx-date-box>
+
+    <button class="custom-apply-btn" (click)="applyCustomDate()">Apply</button>
+  </div>
+</dx-popup>

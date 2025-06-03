@@ -694,6 +694,12 @@ body {
   background-color: #00a1e0;
   margin-right: 10px;
 }
-
+.dx-toolbar .dx-toolbar-items-container {
+    height: 48px;
+    overflow: visible;
+    background-color: var(--base-bg);
+    padding: 5px;
+    border-radius: 8px;
+}
 
 

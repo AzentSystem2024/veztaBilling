@@ -311,7 +311,7 @@ refresh(){
       displayFormat: "{0}",
       valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
       showInColumn: "NO_OF_BILLS",
-      alignment: "right"
+      alignment: "left"
     },
     { 
       column: "GROSS_AMOUNT", 

@@ -1,4 +1,4 @@
-<div class="salary-grid-wrapper" style="padding: 0 10px">
+<div class="salary-grid-wrapper" style="padding: 10px">
   <div class="form-flex-wrapper">
     <div class="form-item">
       <dx-select-box
@@ -62,7 +62,7 @@
     <dx-data-grid
       [dataSource]="dateWiseSummaryData"
       [showBorders]="true"
-      [showColumnLines]="true"
+    
       [showRowLines]="true"
       [allowColumnResizing]="false"
       [columnAutoWidth]="true"
@@ -73,7 +73,7 @@
       [summary]="summaryColumnsData"
       [allowColumnReordering]="true"
       [filterRow]="{ visible: false }"
-      [height]="'75vh'"
+      [height]="'83vh'"
       id="dataGrid"
       [headerFilter]="{ visible: false }"
       [columnFixing]="{
@@ -150,6 +150,7 @@
         dataField="NoOfBills"
         caption="Number of Bills"
         data-type="number"
+         alignment="left"
         [grouping]="true"
       ></dxi-column>
 
