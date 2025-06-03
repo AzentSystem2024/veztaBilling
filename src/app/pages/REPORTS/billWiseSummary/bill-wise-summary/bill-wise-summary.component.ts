@@ -39,16 +39,40 @@ startDate: Date = new Date(2025, 3, 25);
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
 
-dateRanges = [
+// dateRanges = [
+//     { label: 'All', value: 'all' },
+//   { label: 'Today', value: this.today },
+//   { label: 'Yesterday', value: this.yesterday },
+//   {
+//     label: 'This Month',
+//     value: { start: this.monthStart, end: this.monthEnd },
+//   },
+//   { label: 'Custom', value: 'custom' },
+// ];
+
+ dateRanges = [
     { label: 'All', value: 'all' },
-  { label: 'Today', value: this.today },
-  { label: 'Yesterday', value: this.yesterday },
-  {
-    label: 'This Month',
-    value: { start: this.monthStart, end: this.monthEnd },
-  },
-  { label: 'Custom', value: 'custom' },
-];
+    { 
+      label: 'Today', 
+      value: { start: new Date(), end: new Date() } 
+    },
+    {
+      label: 'Yesterday',
+      value: { 
+        start: new Date(new Date().setDate(new Date().getDate() - 1)),
+        end: new Date(new Date().setDate(new Date().getDate() - 1))
+      }
+    },
+    {
+      label: 'This Month',
+      value: { start: this.monthStart, end: this.monthEnd },
+    },
+    {  
+      label: 'Custom', 
+      value: 'custom' 
+    },
+  ];
+  
 
   ToDate_value: any;
   dataGrid: any;
@@ -67,33 +91,33 @@ get_alldata(){
     this.get_DataSource(); // Load data immediately
   }
 }
-  applyCustomDate() {
-    if (!this.fromDate || !this.toDate) {
-      alert('Please select both From and To dates.');
-      return;
-    }
+  // applyCustomDate() {
+  //   if (!this.fromDate || !this.toDate) {
+  //     alert('Please select both From and To dates.');
+  //     return;
+  //   }
 
-    if (new Date(this.fromDate) > new Date(this.toDate)) {
-      alert('From Date cannot be after To Date.');
-      return;
-    }
-    this.FromDate_value = this.fromDate;
-    console.log('FromDate_value Date Range:', this.FromDate_value);
-    this.ToDate_value = this.toDate;
+  //   if (new Date(this.fromDate) > new Date(this.toDate)) {
+  //     alert('From Date cannot be after To Date.');
+  //     return;
+  //   }
+  //   this.FromDate_value = this.fromDate;
+  //   console.log('FromDate_value Date Range:', this.FromDate_value);
+  //   this.ToDate_value = this.toDate;
 
-    // console.log('ToDate_value Date Range:', this.ToDate_value);
-    console.log(
-      'Selected Date Range:',
-      this.FromDate_value.toISOString().split('T')[0]
-    );
-    console.log(
-      'Selected Date Range:',
-      this.ToDate_value.toISOString().split('T')[0]
-    );
+  //   // console.log('ToDate_value Date Range:', this.ToDate_value);
+  //   console.log(
+  //     'Selected Date Range:',
+  //     this.FromDate_value.toISOString().split('T')[0]
+  //   );
+  //   console.log(
+  //     'Selected Date Range:',
+  //     this.ToDate_value.toISOString().split('T')[0]
+  //   );
 
-    this.isCustomDatePopupVisible = false;
+  //   this.isCustomDatePopupVisible = false;
   
-  }
+  // }
 
 
 
@@ -121,62 +145,147 @@ get_alldata(){
     }
   }
 
-  onDateRangeChange(event: any) {
+//   onDateRangeChange(event: any) {
+//     const selected = event.value;
+//     console.log(event);
+
+//     if (selected == 'custom') {
+//       this.isCustomDatePopupVisible = true;
+//       console.log('Custom date range selected');
+//       console.log(event.value);
+//       // this.applyCustomDate()
+//     }
+//       else if (selected === 'all') {
+//     // For "All" option, set dates to null or wide range
+//     this.FromDate_value = this.startDate;
+//     this.ToDate_value = new Date()
+//     console.log('All dates selected - loading complete data');
+//     // this.get_DataSource(); // Load data immediately
+//   }
+//     else if (selected?.start && selected?.end) {
+//     // For ranges like "This Month"
+//     this.FromDate_value = this.monthStart
+    
+    
+//     ;
+//     this.ToDate_value = this.monthEnd
+//     console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
+//   }
+    
+//     else {
+//       this.FromDate_value = event.value;
+//       console.log('FromDate_value Date Range:', this.FromDate_value);
+//       this.ToDate_value = this.FromDate_value;
+//     }
+//   }
+
+//   get_DataSource() {
+//  const departmentId = (this.Departmens_value ?? []).join(',');
+// const staffId = (this.staff_value ?? []).join(',');
+//     console.log('Selected Department ID:', departmentId);
+//     console.log('Selected Staff ID:', staffId);
+//     console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
+//     console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
+//     const fromDate = this.FromDate_value.toISOString().split('T')[0];
+//     const ToDate = this.ToDate_value.toISOString().split('T')[0];
+//     console.log('Selected FromDate Range:', fromDate,);
+//         console.log('Selected ToDate Range:', ToDate);
+
+    
+//     this.dataservice
+//       .Bill_wise_Api(fromDate, ToDate, departmentId, staffId)
+//       .subscribe((res: any) => {
+//            this.isEmptyDatagrid = false;
+//         this.billWiseSummaryData = res.Data;
+//         console.log('Bill Wise Summary Data:', this.billWiseSummaryData);
+//         console.log(res);
+//       });
+//   }
+ onDateRangeChange(event: any) {
     const selected = event.value;
     console.log(event);
+    
+    if (selected === 'all') {
+      this.FromDate_value = this.startDate;
+      this.ToDate_value = new Date();
+      console.log('All dates selected');
+      // this.get_DataSource();
+      return;
+    }
 
-    if (selected == 'custom') {
-      this.isCustomDatePopupVisible = true;
+    if (typeof selected === 'object' && selected.start && selected.end) {
+      // Handle date range objects
+      this.FromDate_value = new Date(selected.start);
+      this.ToDate_value = new Date(selected.end);
+      console.log('Date Range:', this.FromDate_value, '-', this.ToDate_value);
+     
+      return;
+    }
+
+    if (selected === 'custom') {
       console.log('Custom date range selected');
-      console.log(event.value);
-      // this.applyCustomDate()
+      this.isCustomDatePopupVisible = true;
+      return;
     }
-      else if (selected === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    // this.get_DataSource(); // Load data immediately
-  }
-    else if (selected?.start && selected?.end) {
-    // For ranges like "This Month"
-    this.FromDate_value = this.monthStart
-    
-    
-    ;
-    this.ToDate_value = this.monthEnd
-    console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-  }
-    
-    else {
-      this.FromDate_value = event.value;
-      console.log('FromDate_value Date Range:', this.FromDate_value);
-      this.ToDate_value = this.FromDate_value;
-    }
+
+    // Default case (shouldn't happen with proper setup)
+    console.warn('Unknown date range selection:', selected);
   }
 
+  // Keep your improved applyCustomDate
+  applyCustomDate() {
+    if (!this.fromDate || !this.toDate) {
+      alert('Please select both From and To dates.');
+      return;
+    }
+
+    const fromDate = new Date(this.fromDate);
+    const toDate = new Date(this.toDate);
+
+    if (fromDate > toDate) {
+      alert('From Date cannot be after To Date.');
+      return;
+    }
+
+    this.FromDate_value = fromDate;
+    this.ToDate_value = toDate;
+
+    this.selectedRange = {
+      label: `${this.formatDate(this.FromDate_value)} - ${this.formatDate(this.ToDate_value)}`,
+      value: 'custom'
+    };
+    
+    this.isCustomDatePopupVisible = false;
+  
+  }
+
+  // Helper method to format dates consistently
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
   get_DataSource() {
- const departmentId = (this.Departmens_value ?? []).join(',');
-const staffId = (this.staff_value ?? []).join(',');
-    console.log('Selected Department ID:', departmentId);
-    console.log('Selected Staff ID:', staffId);
-    console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
-    console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
-    const fromDate = this.FromDate_value.toISOString().split('T')[0];
-    const ToDate = this.ToDate_value.toISOString().split('T')[0];
-    console.log('Selected FromDate Range:', fromDate,);
-        console.log('Selected ToDate Range:', ToDate);
+    const departmentId = (this.Departmens_value ?? []).join(',');
+    const staffId = (this.staff_value ?? []).join(',');
 
-    
+    // Ensure dates are valid Date objects before formatting
+    const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
+    const toDate = this.ToDate_value ? this.formatDate(new Date(this.ToDate_value)) : '';
+
+    if (!fromDate || !toDate) {
+      console.error('Invalid date range');
+      return;
+    }
+
     this.dataservice
-      .Bill_wise_Api(fromDate, ToDate, departmentId, staffId)
+      .Bill_wise_Api(fromDate, toDate, departmentId, staffId)
       .subscribe((res: any) => {
-           this.isEmptyDatagrid = false;
+        this.isEmptyDatagrid = false;
         this.billWiseSummaryData = res.Data;
-        console.log('Bill Wise Summary Data:', this.billWiseSummaryData);
-        console.log(res);
+        console.log('Date Wise Summary Data:', this.billWiseSummaryData);
       });
   }
+
+
 public filterClick = () => {
   console.log('Clicked');
   if (this.billWiseSummaryData) {
