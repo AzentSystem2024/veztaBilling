@@ -174,9 +174,7 @@ export class InvoiceViewComponent {
       this.USER = this.userData.USER_TYPE_NAME;
       this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
         }
-    this.formattedInvoiceDate = this.getFormattedDateTime(
-      this.invoiceFormData.INVOICE_DATE
-    );
+
   }
 
     @HostListener('document:keydown.enter', ['$event'])
@@ -186,8 +184,11 @@ export class InvoiceViewComponent {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['invoiceData'] && changes['invoiceData'].currentValue) {
-      console.log('Invoice data updated:', this.invoiceData);
+      console.log('Invoice data updated:', this.invoiceData.INVOICE_DATE);
       this.invoiceEntry = this.invoiceData.INVOICE_ENTRY || [];
+          this.formattedInvoiceDate = this.getFormattedDateTime(
+      new Date(this.invoiceData.INVOICE_DATE)
+    );
     }
   }
 
@@ -294,6 +295,14 @@ convertNumberToWords(amount: number): string {
   }
   close() {
     this.popupClosed.emit();
+  }
+
+    customFormat(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    }).format(value);
   }
 
 previewAndPrintInvoice(): void {

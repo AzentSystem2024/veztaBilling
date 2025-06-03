@@ -264,8 +264,23 @@ export class AuthGuardService implements CanActivate {
       this.router.navigate(['/auth/login']);
       return false; // Block navigation
     }
-    
+      // Get allowed roles from route data
+    const allowedRoles: number[] = route.data['allowedRoles'];
 
-    return true; // Allow navigation if logged in
+    if (allowedRoles) {
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const userType = userData.USER_TYPE_ID;
+
+      if (!allowedRoles.includes(userType)) {
+        // Redirect to unauthorized or default page
+        this.router.navigate(['/invoice']);
+        return false;
+      }
+    }
+
+    return true;
+  
+
+    // return true; // Allow navigation if logged in
   }
 }

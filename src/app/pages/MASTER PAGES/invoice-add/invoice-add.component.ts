@@ -49,6 +49,7 @@ import {
 import notify from 'devextreme/ui/notify';
 import { FormTextboxModule } from 'src/app/components';
 import { DataService } from 'src/app/services';
+import { InvoiceListUpdateService } from 'src/app/services/invoice-list-update.service';
 // import { UserAddComponent } from '../userFiles/user-add/user-add.component';
 
 @Component({
@@ -181,7 +182,9 @@ export class InvoiceAddComponent {
   departmentName: any;
   itemsOfDepartment: any;
 
-  constructor(private dataService: DataService, private ngZone: NgZone) {}
+  constructor(private dataService: DataService, private ngZone: NgZone,
+    private invoiceUpdateService: InvoiceListUpdateService
+  ) {}
 
   ngOnInit() {
     const storedData = sessionStorage.getItem('savedUserData');
@@ -1120,6 +1123,7 @@ this.getDropdownData();
         this.printConfirmVisible = true;
             this.resetInvoiceForm();
         this.getInvoiceNo();
+        this.invoiceUpdateService.triggerUpdate();
       } else {
         notify(
           {
