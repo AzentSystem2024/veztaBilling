@@ -1,14 +1,32 @@
+
 .form-flex-wrapper {
   display: flex;
-  justify-content: center;
-  gap: 20px; /* spacing between fields */
-  flex-wrap: wrap; /* allows wrapping on smaller screens */
-  
+  flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
+  align-items: center;
+  justify-content: space-between; /* creates space between first and last */
+  width: 100%;
+  gap: 10px; /* optional spacing between items */
 }
 
 .form-item {
-  flex: 0 0 auto;
+  flex: 0 1 auto; /* allows items to size based on content */
 }
+
+.applybtn {
+  margin-left: auto; /* pushes it to the end */
+}
+
+// .form-flex-wrapper {
+//   display: flex;
+//   justify-content: center;
+//   gap: 20px; /* spacing between fields */
+//   flex-wrap: wrap; /* allows wrapping on smaller screens */
+  
+// }
+
+// .form-item {
+//   flex: 0 0 auto;
+// }
 
    /* Set popup height */
 .custom-date-popup .dx-popup-content {
@@ -29,10 +47,10 @@
 .custom-apply-btn:hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
-.applybtn{
-  // margin-top: 50px; /* space above the button */
-  margin-left: 10px;
-}
+// .applybtn{
+//   // margin-top: 50px; /* space above the button */
+//   margin-left: 10px;
+// }
 /* Hide the close (×) button */
 ::ng-deep .dx-tag-remove-button {
   display: none !important;
