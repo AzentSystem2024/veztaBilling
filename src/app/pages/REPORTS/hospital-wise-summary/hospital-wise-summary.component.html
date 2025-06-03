@@ -136,12 +136,12 @@
       </dxo-header-filter>
    
 
-<dxi-column dataField="DEPARTMENT_NAME" caption="Department Name" dataType="string"></dxi-column>
+<!-- <dxi-column dataField="DEPARTMENT_NAME" caption="Department Name" dataType="string"></dxi-column> -->
 <dxi-column dataField="HOSPITAL_NAME" caption="Hospital Name" dataType="string"></dxi-column>
 <dxi-column dataField="NO_OF_BILLS" caption="No. of Bills"   alignment="left" dataType="number"></dxi-column>
-<dxi-column dataField="GROSS_AMOUNT" caption="Gross Amount" dataType="number"></dxi-column>
-<dxi-column dataField="SCHEMA_AMOUNT" caption="Scheme Amount" dataType="number"></dxi-column>
-<dxi-column dataField="NET_AMOUNT" caption="Net Amount" dataType="number"></dxi-column>
+<dxi-column dataField="GROSS_AMOUNT" caption="Gross Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="SCHEMA_AMOUNT" caption="Scheme Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="NET_AMOUNT" caption="Net Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
 
 
     </dx-data-grid>

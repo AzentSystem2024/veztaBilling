@@ -342,7 +342,7 @@ export class DateWiseSummaryComponent {
         displayFormat: '{0}',
         valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
         showInColumn: 'NoOfBills',
-        alignment: 'right',
+        alignment: 'left',
       },
       {
         column: 'GrossAmt',

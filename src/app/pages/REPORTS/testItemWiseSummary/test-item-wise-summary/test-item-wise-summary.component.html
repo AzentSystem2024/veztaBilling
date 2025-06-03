@@ -177,7 +177,7 @@
           </dxo-summary> -->
 
 
-        <dxi-column dataField="AMOUNT" caption="Amount"></dxi-column>
+        <dxi-column dataField="AMOUNT" caption="Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }"></dxi-column>
 
   
     </dx-data-grid>
