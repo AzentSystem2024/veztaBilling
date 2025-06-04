@@ -19,6 +19,9 @@ import {
   DxRadioGroupModule,
   DxValidatorModule,
   DxFormModule,
+  DxTabPanelComponent,
+  DxTabPanelModule,
+  DxTreeListModule,
 } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { FormPopupModule } from 'src/app/components';
@@ -30,6 +33,7 @@ import { DataService } from 'src/app/services';
 import notify from 'devextreme/ui/notify';
 import  Validator  from 'devextreme/ui/validator';
 import { get } from 'jquery';
+import { UserMenuModule } from "../../user-menu/user-menu.component";
 
 type EditorOptions = DxTextBoxTypes.Properties;
 
@@ -39,10 +43,11 @@ type EditorOptions = DxTextBoxTypes.Properties;
   styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent {
+[x: string]: any;
 
 UserType :any
 user: any;
-
+selectedTabIndex = 0;
 confirmPasswordValue: any;
   userData: any;
   passwordForm: any;
@@ -106,6 +111,72 @@ formData = { IS_INACTIVE: false,pwd:''};
   changePasswordMode: any;
   Department_Data: any;
   hos_ID: any;
+statuses: Function|any[]
+tasks:any=[{
+   Task_ID:1,
+   Task_Subject: 'Invoice',
+   Task_Parent_ID: 0,
+},
+{
+Task_ID:5,
+   Task_Subject: 'New invoice ',
+   Task_Parent_ID: 1,
+},
+{
+Task_ID:6,
+   Task_Subject: 'Invoice list',
+   Task_Parent_ID: 1,
+},
+{
+  Task_ID:2,
+   Task_Subject: 'Masters',
+   Task_Parent_ID: 0,
+},
+{
+  Task_ID:7,
+   Task_Subject: 'Department',
+   Task_Parent_ID: 2,
+},
+{
+  Task_ID:8,
+   Task_Subject: 'Hospital',
+   Task_Parent_ID: 2,
+},
+{
+  Task_ID:9,
+   Task_Subject: 'Items',
+   Task_Parent_ID: 2,
+},
+{
+  Task_ID:3,
+   Task_Subject: 'Reports',
+   Task_Parent_ID: 0,
+},
+{
+  Task_ID:10,
+   Task_Subject: 'Datewise summary',
+   Task_Parent_ID: 3,
+},
+{
+  Task_ID:11,
+   Task_Subject: 'Billwise summary',
+   Task_Parent_ID: 3,
+},
+{
+  Task_ID:12,
+   Task_Subject: 'Hospitalwise summary',
+   Task_Parent_ID: 3,
+},
+{
+  Task_ID:4,
+   Task_Subject: 'Plans 2015',
+   Task_Parent_ID: 0,
+},
+{
+  Task_ID:13,
+   Task_Subject: 'Plans 2015',
+   Task_Parent_ID: 4,
+}]
 
 closePop() {
   this.addPopup = false;
@@ -718,6 +789,9 @@ if(ID){
  }
 
 }
+
+
+ 
   
 }
 
@@ -740,8 +814,11 @@ if(ID){
     DxRadioGroupModule,
     DxFormModule,
     DxValidatorModule,
-    ReactiveFormsModule
-  ],
+    DxTabPanelModule,
+    ReactiveFormsModule,
+    DxTabPanelModule,
+    DxTreeListModule,
+],
   providers: [],
   exports: [UserListComponent],
   declarations: [UserListComponent],

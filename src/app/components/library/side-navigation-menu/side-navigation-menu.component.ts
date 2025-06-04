@@ -64,6 +64,7 @@ export class SideNavigationMenuComponent
           text: 'User',
           path: '/user',
         },
+        
 
       ]
     },
@@ -181,6 +182,7 @@ refreshMenu() {
       items: [
         { text: 'Basic Settings' },
         { text: 'User', path: '/user' },
+        
       ],
     });
   }

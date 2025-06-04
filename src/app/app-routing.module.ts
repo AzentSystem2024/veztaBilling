@@ -29,6 +29,7 @@ import { SchemeWiseSummaryComponent } from './pages/REPORTS/schemeWiseSummary/sc
 import { SchemeWiseBillSummaryComponent } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 import { PatientWiseSummaryComponent } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
 import { TestItemWiseSummaryComponent } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+import { UserMenuComponent } from './pages/MASTER PAGES/user-menu/user-menu.component';
 const routes: Routes = [
   {
     path: '',
@@ -36,7 +37,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   
-
+ 
 
   {
     path: 'auth',
@@ -73,6 +74,11 @@ const routes: Routes = [
         path: 'user',
         component: UserListComponent,
         canActivate: [AuthGuardService],
+      },
+      {
+         path:'usermenu',
+        component:UserMenuComponent,
+        canActivate:[AuthGuardService],
       },
       {
         path: 'invoice',

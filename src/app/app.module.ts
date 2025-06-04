@@ -43,6 +43,8 @@ import { SchemeWiseSummaryComponent, SchemeWiseSummaryModule } from './pages/REP
 import { SchemeWiseBillSummaryComponent, SchemeWiseBillSummaryModule } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 import { PatientWiseSummaryComponent, PatientWiseSummaryModule } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
 import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+import { UserMenuComponent,UserMenuModule } from './pages/MASTER PAGES/user-menu/user-menu.component';
+
 
 
 
@@ -69,6 +71,7 @@ import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages
     ItemModule,
     InsuranceModule,
     SchemaModule,
+    UserMenuModule,
     DateWiseSummaryModule,
     BillWiseSummaryModule,
     StaffWiseSummaryModule,
