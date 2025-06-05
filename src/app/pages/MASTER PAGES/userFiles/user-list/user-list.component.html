@@ -240,7 +240,6 @@
      <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
      <dxi-item > 
       <dx-select-box
-        [items]="UserType"
         label="UserType"
         labelMode="floating"
         alignment="center"
@@ -315,37 +314,20 @@
    <!-- SECOND TAB -->
 <dxi-item title="Menu Access">
 <div class="tab-content">
-  <dx-tree-list
-  id="tasks"
-  [dataSource]="tasks"
-  keyExpr="Task_ID"
-  parentIdExpr="Task_Parent_ID"
-  [expandedRowKeys]="[1, 2]"
-  [selectedRowKeys]="[1, 29, 42]"
+ <dx-tree-list
+  [dataSource]="Usermenu"
+  keyExpr="ID"
+  parentIdExpr="Head_ID"
   [columnAutoWidth]="true"
   [wordWrapEnabled]="true"
   [showBorders]="true"
   width="580px"
+   (onSelectionChanged)="onSelectionChanged($event)"
 >
+  <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
 
+  <dxi-column dataField="Name" [width]="'auto'"></dxi-column>
 
-<dxo-selection mode="multiple"></dxo-selection>
-
- <dxi-column dataField="Task_Subject" [width]="300"></dxi-column>
-  <dxi-column
-    dataField="Task_Completion"
-    caption="% Completed"
-    [visible]="false"
-    [customizeText]="getCompletionText"
-  ></dxi-column>
-  <dxi-column dataField="Task_Priority" caption="Priority" [visible]="false">
-    <dxo-lookup
-      [dataSource]="priorities"
-      valueExpr="id"
-      displayExpr="value"
-    ></dxo-lookup>
-  </dxi-column>
-  
 </dx-tree-list>
   </div>
 </dxi-item>   
@@ -484,7 +466,6 @@
      <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
      <dxi-item > 
       <dx-select-box
-        [items]="UserType"
         label="UserType"
         labelMode="floating"
         alignment="center"
@@ -509,15 +490,14 @@
         [items]="hospital_list"
         valueExpr="ID"
         [(value)]="selectedHospitalId"
-        
         displayExpr="DESCRIPTION"
         label="Select Hospital"
         labelMode="floating"
+        formControlName="HospitalId"
         labelLocation="left"
         [showSelectionControls]="true"
         applyValueMode="instantly"
         [searchEnabled]="true"
-        formControlName="HospitalId"
        (onValueChanged)="onHospitalValue($event)"
       >
       </dx-select-box>
@@ -557,34 +537,21 @@
 <dxi-item title="Menu Access">
 
   <div class="tab-content">
-  <dx-tree-list
-  id="tasks"
-  [dataSource]="tasks"
-  keyExpr="Task_ID"
-  parentIdExpr="Task_Parent_ID"
-  [expandedRowKeys]="[1, 2]"
-  [selectedRowKeys]="[1, 29, 42]"
+ <dx-tree-list
+  [dataSource]="Usermenu"
+  keyExpr="ID"
+  parentIdExpr="Head_ID"
   [columnAutoWidth]="true"
   [wordWrapEnabled]="true"
   [showBorders]="true"
   width="580px"
+  [selectedRowKeys]="selectedMenuIds"
+   (onSelectionChanged)="onSelectionChanged($event)"
 >
-<dxo-selection mode="multiple"></dxo-selection>
+  <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
 
- <dxi-column dataField="Task_Subject" [width]="300"></dxi-column>
-  <dxi-column
-    dataField="Task_Completion"
-    caption="% Completed"
-    [visible]="false"
-    [customizeText]="getCompletionText"
-  ></dxi-column>
-  <dxi-column dataField="Task_Priority" caption="Priority" [visible]="false">
-    <dxo-lookup
-      [dataSource]="priorities"
-      valueExpr="id"
-      displayExpr="value"
-    ></dxo-lookup>
-  </dxi-column>
+  <dxi-column dataField="Name" [width]="'auto'"></dxi-column>
+
   
 </dx-tree-list>
   </div>

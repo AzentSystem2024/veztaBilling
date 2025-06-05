@@ -415,6 +415,11 @@ get_dropdown_User_Api(type: any) {
     return this.http.post(`${BASE_URL}dropdown`, reqBody);
   }
 
+ get_usermenu_Api(userId:any){
+  const getEndpoint = BASE_URL+`User/getmenu/${userId}`;
+  return this.http.post(getEndpoint,{});
+}
+
 get_UserData_List_Api(){
   return this.http.post( `${BASE_URL}User/list`,{} );
 }

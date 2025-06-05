@@ -70,6 +70,7 @@ formData = { IS_INACTIVE: false,pwd:''};
   dataSource: any=[{}];
   passwordMode: 'password' | 'text' = 'password';
   confirmPasswordMode: 'password' | 'text' = 'password';
+selectedMenuIds: number[] = [];
 
   addPopup: boolean = false;
   formsource: FormGroup;
@@ -111,72 +112,74 @@ formData = { IS_INACTIVE: false,pwd:''};
   changePasswordMode: any;
   Department_Data: any;
   hos_ID: any;
-statuses: Function|any[]
-tasks:any=[{
-   Task_ID:1,
-   Task_Subject: 'Invoice',
-   Task_Parent_ID: 0,
-},
-{
-Task_ID:5,
-   Task_Subject: 'New invoice ',
-   Task_Parent_ID: 1,
-},
-{
-Task_ID:6,
-   Task_Subject: 'Invoice list',
-   Task_Parent_ID: 1,
-},
-{
-  Task_ID:2,
-   Task_Subject: 'Masters',
-   Task_Parent_ID: 0,
-},
-{
-  Task_ID:7,
-   Task_Subject: 'Department',
-   Task_Parent_ID: 2,
-},
-{
-  Task_ID:8,
-   Task_Subject: 'Hospital',
-   Task_Parent_ID: 2,
-},
-{
-  Task_ID:9,
-   Task_Subject: 'Items',
-   Task_Parent_ID: 2,
-},
-{
-  Task_ID:3,
-   Task_Subject: 'Reports',
-   Task_Parent_ID: 0,
-},
-{
-  Task_ID:10,
-   Task_Subject: 'Datewise summary',
-   Task_Parent_ID: 3,
-},
-{
-  Task_ID:11,
-   Task_Subject: 'Billwise summary',
-   Task_Parent_ID: 3,
-},
-{
-  Task_ID:12,
-   Task_Subject: 'Hospitalwise summary',
-   Task_Parent_ID: 3,
-},
-{
-  Task_ID:4,
-   Task_Subject: 'Plans 2015',
-   Task_Parent_ID: 0,
-},
-{
-  Task_ID:13,
-   Task_Subject: 'Plans 2015',
-   Task_Parent_ID: 4,
-}]
+  statuses: Function|any[]
+  Usermenu : any;
+
+// tasks:any=[{
+//    Task_ID:1,
+//    Task_Subject: 'Invoice',
+//    Task_Parent_ID: 0,
+// },
+// {
+// Task_ID:5,
+//    Task_Subject: 'New invoice ',
+//    Task_Parent_ID: 1,
+// },
+// {
+// Task_ID:6,
+//    Task_Subject: 'Invoice list',
+//    Task_Parent_ID: 1,
+// },
+// {
+//   Task_ID:2,
+//    Task_Subject: 'Masters',
+//    Task_Parent_ID: 0,
+// },
+// {
+//   Task_ID:7,
+//    Task_Subject: 'Department',
+//    Task_Parent_ID: 2,
+// },
+// {
+//   Task_ID:8,
+//    Task_Subject: 'Hospital',
+//    Task_Parent_ID: 2,
+// },
+// {
+//   Task_ID:9,
+//    Task_Subject: 'Items',
+//    Task_Parent_ID: 2,
+// },
+// {
+//   Task_ID:3,
+//    Task_Subject: 'Reports',
+//    Task_Parent_ID: 0,
+// },
+// {
+//   Task_ID:10,
+//    Task_Subject: 'Datewise summary',
+//    Task_Parent_ID: 3,
+// },
+// {
+//   Task_ID:11,
+//    Task_Subject: 'Billwise summary',
+//    Task_Parent_ID: 3,
+// },
+// {
+//   Task_ID:12,
+//    Task_Subject: 'Hospitalwise summary',
+//    Task_Parent_ID: 3,
+// },
+// {
+//   Task_ID:4,
+//    Task_Subject: 'Plans 2015',
+//    Task_Parent_ID: 0,
+// },
+// {
+//   Task_ID:13,
+//    Task_Subject: 'Plans 2015',
+//    Task_Parent_ID: 4,
+// }]
 
 closePop() {
   this.addPopup = false;
@@ -206,6 +209,7 @@ closePop() {
           validatorInstance.reset();
         }
       });
+       this.selectedMenuIds = [...this.selectedMenuIds]; // reassign for change detection
     }, 100);
 }
 
@@ -223,6 +227,8 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
       AddInvoice: [false],
       ViewInvoice: [false],
       CancelInvoice: [false],
+      LastModifiedDate :['',[Validators.required]],
+      Menus : ['',[Validators.required]]
 
     })
 
@@ -230,7 +236,9 @@ constructor(private fb: FormBuilder , private dataservice: DataService) {
    this.hospital_dropdown_list();
    this.get_User_List();
    this.usertype_dropdown_list();
-   this.getDepartment_list()
+   this.getDepartment_list();
+   this.get_usermenu_List();
+   
 }
 
   statusCellTemplate = (cellElement: any, cellInfo: any) => {
@@ -317,18 +325,21 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
 
   onEditingStart(event:any){  
     console.log(event,'onEditingStart');
-    this.formsource.reset({
-    Inactive: "",
-    AddInvoice:"",
-    ViewInvoice:"",
-    CancelInvoice:""
-    })
+    // this.formsource.reset({
+    // Inactive: "",
+    // AddInvoice:"",
+    // ViewInvoice:"",
+    // CancelInvoice:""
+    // })
      event.cancel = true;
     this.editUserData = event.data;
-    this.editPopup = true;
 
-    this.selectedUserType = event.data.UserType;
+    this.selectedUserType = event.data.USER_TYPE;
+    console.log(this.selectedUserType,'usertype');
+    
     this.select_User_Data(event);
+    this.editPopup = true;
+   
   }
 
   //=======DROPDOWN=========
@@ -394,9 +405,11 @@ onHospitalValue(event:any){
   this.selectedHospitalId=event.value
   this.hos_ID=event.value
  this.department_dropdown_list()
-  console.log(this.hos_ID,'=============Hospital I D=======');
+  console.log(this.selectedHospitalId,'=============Hospital I D=======');
+  // console.log(this.hospital_list,'hospital list');
   
 }
+
  get_User_List(){
   console.log('get_User_List');
   
@@ -413,6 +426,61 @@ this.dataservice.get_UserData_List_Api().subscribe((response:any)=>{
 })
 }
 
+
+   get_usermenu_List(){
+     const userId = 0
+   
+    this.dataservice.get_usermenu_Api(userId).subscribe((response:any)=>{
+      // console.log(response,'usermenu response');
+      this.Usermenu = this.transformMenuToFlatTreeWithContinuousIDs(response)
+      console.log(this.Usermenu,'usermenu response');
+      
+    })
+   }
+
+//============ change the format of menu item list to the plan structure =========
+ transformMenuToFlatTreeWithContinuousIDs(data) {
+  const result = [];
+  const mainMenuMap = new Map(); 
+  let currentId = 1;
+
+  
+  data.forEach(item => {
+    if (!mainMenuMap.has(item.MAIN_MENU_ID)) {
+      mainMenuMap.set(item.MAIN_MENU_ID, currentId);
+      result.push({
+        ID: currentId,
+        Head_ID: null,
+        Name: item.MAIN_MENU_NAME,
+        Main_Name: item.MAIN_MENU_NAME,
+        Selected: 0
+      });
+      currentId++;
+    }
+  });
+
+  data.forEach(item => {
+    result.push({
+      ID: currentId,
+      Head_ID: mainMenuMap.get(item.MAIN_MENU_ID),
+      Name: item.MENU_NAME,
+      Main_Name: item.MAIN_MENU_NAME,
+      Selected: item.SELECTED
+    });
+    currentId++;
+  });
+
+  return result;
+}
+
+
+onSelectionChanged(e: any) {
+  this.selectedKeys = e.component.getSelectedRowKeys(); // array of selected IDs
+  this.formsource.get('Menu')?.setValue(this.selectedKeys);
+  console.log('Selected Menus:', this.selectedKeys);
+}
+
+
 addData(){
 
 
@@ -424,7 +492,6 @@ addData(){
   const User_name = this.formsource.get('UserName')?.value;
   const Login_password = this.formsource.get('LoginPassword')?.value;
  const Is_Inactive = this.formsource.get('Inactive')?.value === true;
-  // const Department_Id = this.selectedDepartmentId.toString();
   const Department_Id = this.selectedDepartmentId != null ? this.selectedDepartmentId.toString() : '';
 
   // const Department_Id = this.selectedDepartmentId?.toString() || '';
@@ -439,11 +506,18 @@ addData(){
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
   const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
   const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
-  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Hospital_Id,Usertype,Add_invoice,View_invoice,Cancel_invoice,'add data');
+  const Last_modified_date = new Date(); // sends full JS object, not valid JSON
+  const Menu = this.selectedKeys.toString()
+  
+  console.log(Menu);
+  
+
+  // const Menus = this.formsource.get('Menus')?.value;
+  console.log(Login_name,User_name,Login_password,Is_Inactive,Department_Id,Hospital_Id,Usertype,Add_invoice,View_invoice,Cancel_invoice,Last_modified_date,Menu,'add data');
 
   
 const payload = { // or dynamic: this.loggedInUser
-   user: 'admin', // ✅ Add this line
+   USER: 'admin', // ✅ Add this line
   USER_NAME: User_name,
   LOGIN_NAME: Login_name,
   LOGIN_PWD: Login_password,
@@ -455,6 +529,12 @@ const payload = { // or dynamic: this.loggedInUser
   ADD_INVOICE : Add_invoice,
   VIEW_INVOICE : View_invoice,
   CANCEL_INVOICE : Cancel_invoice,
+  LAST_MODIFIED_USER: 1,
+  LAST_MODIFIED_DATE:Last_modified_date,
+  // MENUS : Menus
+  // MENUS: Menus || []
+  MENUS:Menu
+
 };
 
  if (!User_name || !Login_name || !Login_password || !Usertype) {
@@ -519,7 +599,7 @@ const payload = { // or dynamic: this.loggedInUser
     );
     return; // 🚫 prevent saving
   }
-     
+     console.log(payload,"PAYLOAD")
      if(Login_name && User_name && Login_password  && Usertype) {
       this.dataservice
         .Insert_User_Api(payload)
@@ -558,7 +638,8 @@ openPopup() {
     ViewInvoice:"",
     CancelInvoice:"",
     DepartmentId:null,
-    HospitalId:""
+    HospitalId:"",
+    Menu:""
      
   });
     
@@ -579,16 +660,22 @@ editData() {
   const User_name = this.formsource.get('UserName')?.value?.trim();
   const Login_password = this.formsource.get('LoginPassword')?.value?.trim();
   const Is_Inactive = this.formsource.get('Inactive')?.value === true;
-  const Department_Id = this.selectedDepartmentId.toString();
-  
-  const Hospital_Id = this.selectedHospitalId;
+  // const Department_Id = this.selectedDepartmentId.toString();
+   const Department_Id = this.selectedDepartmentId != null ? this.selectedDepartmentId.toString() : '';
+  // const Hospital_Id = this.selectedHospitalId;
+  const Hospital_Id = Array.isArray(this.selectedHospitalId)
+  ? Number(this.selectedHospitalId[0]) || 0
+  : Number(this.selectedHospitalId) || 0;
   const Usertype = this.user_Id_value;
   const Add_invoice = this.formsource.get('AddInvoice')?.value === true;
   const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
   const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
+  const Last_modified_date = new Date(); // sends full JS object, not valid JSON
+
+  const Menu = this.selectedKeys.toString()
 
   // Debug log
-  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Hospital_Id ,Usertype , Add_invoice, View_invoice, Cancel_invoice }, 'Edit Data Payload');
+  console.log({ Id, Login_name, User_name, Login_password, Is_Inactive, Department_Id, Hospital_Id ,Usertype , Add_invoice, View_invoice, Cancel_invoice ,Last_modified_date,Menu}, 'Edit Data Payload');
 
   // Prepare payload
   const payload = {
@@ -605,6 +692,11 @@ editData() {
     ADD_INVOICE: Add_invoice,
     VIEW_INVOICE: View_invoice,
     CANCEL_INVOICE: Cancel_invoice,
+    LAST_MODIFIED_USER: 1,
+  LAST_MODIFIED_DATE:Last_modified_date,
+  // MENUS : Menus
+  // MENUS: Menus || []
+  MENUS:Menu
   };
 
   if (!User_name || !Login_name || !Login_password || !Usertype) {
@@ -707,39 +799,55 @@ editData() {
 }
 
 
+
  select_User_Data(e:any){
-  console.log(e);
+ 
   const ID = e.data.ID;
   
   this.dataservice.Select_UserData_Api(ID).subscribe((res:any)=>{
     console.log(res,"result");
 
     this.selectedData=res.Data
-    console.log(this.selectedData,'============selected data===================');
+        console.log(this.selectedData[0],'============selected data===================');
+
     
 this.selectedDepartmentId =Number(this.selectedData.DEPARTMENT_ID)
 console.log(this.selectedDepartmentId,'selectedDepartmentId');
-
-
-    console.log(this.selectedData,'selected data');
+    console.log(this.selectedData[0],'selected data');
     
     // this.select_Data = res;
     // this.updatedHospitalData = {...res};
     this.formsource.patchValue({
-  ID: res.Data.ID,
-  Id: res.Data.ID,
-  UserName: res.Data.USER_NAME,
-  LoginName: res.Data.LOGIN_NAME,
-  LoginPassword: res.Data.LOGIN_PWD, 
-  ConfirmPassword:res.Data.LOGIN_PWD,// Set the Discount value from your data
-  Inactive: res.Data.IS_INACTIVE,
-  DepartmentId: res.Data.DEPARTMENT_ID,
-  HospitalId :res.Data.HOSPITAL_ID,
-  UserType: res.Data.USER_TYPE,
-  AddInvoice :res.Data.ADD_INVOICE,
-  ViewInvoice : res.Data.VIEW_INVOICE,
-  CancelInvoice : res.Data.CANCEL_INVOICE,
+  ID: res.Data[0].ID,
+  Id: res.Data[0].ID,
+  UserName: res.Data[0].USER_NAME,
+  LoginName: res.Data[0].LOGIN_NAME,
+  LoginPassword: res.Data[0].LOGIN_PWD, 
+  ConfirmPassword:res.Data[0].LOGIN_PWD,// Set the Discount value from your data
+  Inactive: res.Data[0].IS_INACTIVE,
+  DepartmentId: res.Data[0].DEPARTMENT_ID,
+  HospitalId :res.Data[0].HOSPITAL_ID,
+  UserType: res.Data[0].USER_TYPE,
+  AddInvoice :res.Data[0].ADD_INVOICE,
+  ViewInvoice : res.Data[0].VIEW_INVOICE,
+  CancelInvoice : res.Data[0].CANCEL_INVOICE,
+  LastModifiedDate : res.Data[0].LAST_MODIFIED_DATE,
+  Menus : res.Data[0].MENUS
     })
+  this.username_value_edit=this.selectedData[0].USER_NAME
+  console.log(this.username_value_edit);
+  
+    // console.log(res.Data[0].MENUS.SELECTED == 1);
+    
+// const selectedMenus = res.Data[0].MENUS.filter(
+//   (m: any) => Number(m.SELECTED) === 1   // use Number() in case it's the string "1"
+// );
+
+this.selectedMenus = res.Data[0].MENUS.filter((m: any) => Number(m.SELECTED) === 1);
+this.selectedMenuIds = this.selectedMenus.map((m: any) => m.MENU_ID);  // or m.MENU_ID if your field is named that
+
+
+console.log('selectedMenus →',this. selectedMenus);
 
     this.selectedUserType = res.Data.USER_TYPE
 
@@ -747,15 +855,16 @@ console.log(this.selectedDepartmentId,'selectedDepartmentId');
     
   });
   this.user_Id_value=e.data.USER_TYPE;
-
-console.log(this.user_Id_value,'user============================================');
-
+  
+  
 
 this.selectedHospitalId = (e.data.HOSPITAL_ID)
 console.log(this.selectedHospitalId, 'selectedHospitalId');
 
   
 }
+
+
 
  deleteData(event:any){
 
