@@ -112,8 +112,8 @@
 <!-- ======================Add User=================== -->
 <dx-popup
   [(visible)]="addPopup"
-  [width]="530"
-  height="520"
+  [width]="670"
+  height="530"
   title="New User"
   [shading]="false"
   [showCloseButton]="true"
@@ -123,18 +123,12 @@
 >
 
 
-    <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-1">
-            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
-              Cancel
-            </button>
-            <dx-button class="equal-button" text="Save" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
-          </dxi-item>
+ 
   <!-- INPUT FIELD -->
-   <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true">
+   <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
 <dxi-item title="General">
   <div class="tab-content"  style="display: flex;" >
-  <dx-form [formGroup]="formsource">
+  <dx-form [formGroup]="formsource" width="600">
     <dxi-item class="fields">
       <dx-text-box
         type="text"
@@ -248,7 +242,7 @@
         valueExpr="ID"
         displayExpr="DESCRIPTION"
         [items]="usertype_list"
-        (onChange)="onUserTypeChange($event)"
+        (onValueChanged)="onUserTypeChange($event)"
       >
       </dx-select-box
     ></dxi-item>
@@ -264,7 +258,6 @@
         [items]="hospital_list"
         valueExpr="ID"
         [(value)]="selectedHospitalId"
-        
         displayExpr="DESCRIPTION"
         label="Select Hospital"
         labelMode="floating"
@@ -321,7 +314,8 @@
   [columnAutoWidth]="true"
   [wordWrapEnabled]="true"
   [showBorders]="true"
-  width="580px"
+    width="580px"
+  height="257px"
    (onSelectionChanged)="onSelectionChanged($event)"
 >
   <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
@@ -334,15 +328,21 @@
  
 
    </dx-tab-panel> 
- 
+    <!-- BUTTONS -->
+    <dxi-item class="d-flex justify-content-end mt-1">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Save" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
+          </dxi-item>
 </dx-popup> 
 
 <!-- ===================Update User========== -->
 <dx-popup
   [title]="'Edit User'"
   [(visible)]="editPopup"
-  [width]="530"
-  height="520"
+  width="670"
+  height="530"
   [closeOnOutsideClick]="false"
   [showCloseButton]="true"
   [shading]="false"
@@ -352,18 +352,12 @@
 > 
 
 
-    <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-1">
-            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
-              Cancel
-            </button>
-            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
-          </dxi-item>
+ 
   <!-- INPUT FIELD -->
-    <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true">
+    <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
 <dxi-item title="General">
   <div class="tab-content" style="display: flex;" >
-  <dx-form [formGroup]="formsource">
+  <dx-form [formGroup]="formsource" width="600px">
     <dxi-item class="fields">
       <dx-text-box
         type="text"
@@ -469,12 +463,11 @@
         label="UserType"
         labelMode="floating"
         alignment="center"
-        [(value)]="selectedUserType"
         formControlName="UserType"
         valueExpr="ID"
         displayExpr="DESCRIPTION"
         [items]="usertype_list"
-        (onChange)="onUserTypeChange($event)"
+        (onValueChanged)="onUserTypeChange($event)"
       >
       </dx-select-box
     ></dxi-item>
@@ -486,10 +479,9 @@
      <dxi-item>
       <dx-select-box
         [showClearButton]="true"
-        [visible]="selectedUserType===3 || selectedUserType===4"
+        [visible]="selectedUserType === 3 || selectedUserType === 4 "
         [items]="hospital_list"
         valueExpr="ID"
-        [(value)]="selectedHospitalId"
         displayExpr="DESCRIPTION"
         label="Select Hospital"
         labelMode="floating"
@@ -502,11 +494,7 @@
       >
       </dx-select-box>
     </dxi-item> 
-
-
-
     <!-- DROPDOWN DEPARTMENt -->
-
     <!-- Department Dropdown (Visible Only When "Hospital" is Selected) -->
     <dxi-item>
       <dx-select-box
@@ -514,7 +502,6 @@
         [visible]="selectedUserType===4"
         [items]="department_list"
         valueExpr="ID"
-        [(value)]="selectedDepartmentId"
         displayExpr="DESCRIPTION"
         label="Select Department"
         labelMode="floating"
@@ -523,14 +510,14 @@
         applyValueMode="instantly"
         [searchEnabled]="true"
         formControlName="DepartmentId"
-        
       >
       </dx-select-box>
     </dxi-item> 
     </dxi-item> 
 
-          
+  
   </dx-form>
+  
 </div></dxi-item>   
 
  <!-- SECOND TAB -->
@@ -545,6 +532,7 @@
   [wordWrapEnabled]="true"
   [showBorders]="true"
   width="580px"
+  height="253px"
   [selectedRowKeys]="selectedMenuIds"
    (onSelectionChanged)="onSelectionChanged($event)"
 >
@@ -559,6 +547,13 @@
  
 
   </dx-tab-panel>
+            <!-- BUTTONS -->
+    <dxi-item class="d-flex justify-content-end mt-2">
+            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
+              Cancel
+            </button>
+            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
+          </dxi-item> 
  
 </dx-popup> 
 
