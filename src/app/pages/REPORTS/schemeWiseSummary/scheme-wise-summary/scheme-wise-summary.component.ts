@@ -34,6 +34,8 @@ export class SchemeWiseSummaryComponent {
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
+isFilterRowVisible:boolean=false
+auto:string='auto'
   // dateRanges = [
   //    { label: 'All', value: 'all' },
   //   { label: 'Today', value: new Date() },
@@ -344,6 +346,9 @@ refresh(){
     }
   }
 }
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 }
 
 @NgModule({

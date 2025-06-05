@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxToolbarModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -36,8 +36,9 @@ addPopup : boolean = false;
 isMobile:boolean=false;
 editPopup : boolean = false;  
 IS_INACTIVE: boolean = false;
-showFilterRow: boolean = true;
+// showFilterRow: boolean = true;
 currentFilter: string = 'auto';
+isFilterRowVisible:boolean=false
 //form source for add  hospital
 formsource:FormGroup;
 
@@ -47,10 +48,10 @@ formsource:FormGroup;
 editHospitalData:any=[]
 
 dataSource: any = [];
+isFilterOpened:boolean=false
+auto: string = 'auto';
 
-
-
-openPopup(){
+openPopup=()=>{
   this.addPopup=true
   this.formsource.reset({
     Inactive: "" // Set the checkbox back to unchecked
@@ -217,6 +218,13 @@ return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase()
   } 
 }
 
+
+isfilterButton(){
+
+  this.isFilterOpened = !this.isFilterOpened;
+
+  }
+
 editData(){
 const ID = this.formsource.value.Id
 const Hospital = this.formsource.value.Hospital
@@ -309,13 +317,16 @@ if(ID){
  }
 
 }
-
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 
 }
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule,CommonModule,DxValidatorModule ,DxTextBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxButtonModule,CommonModule,DxValidatorModule ,DxTextBoxModule,DxPopupModule, 
+    DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,DxToolbarModule,
 ],
   providers: [],
   exports: [HospitalListComponent],

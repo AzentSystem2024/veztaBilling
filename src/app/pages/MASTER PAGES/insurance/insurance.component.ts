@@ -25,8 +25,9 @@ export class InsuranceComponent {
   selectedData: any;
 showFilterRow: boolean = true;
 currentFilter: string = 'auto';
-
-  openPopup(){
+auto: string = 'auto';
+isFilterRowVisible :boolean=false
+  openPopup=()=>{
   this.addPopup = true
   this.formsource.reset({
     Inactive: ""
@@ -259,7 +260,9 @@ this.get_Insurance_List()
 
 }
 
-
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 
 }
 

@@ -38,7 +38,8 @@ startDate: Date = new Date(2025, 3, 25);
    readonly allowedPageSizes: any = [ 5,10, 'all'];
 // Today's date (e.g., May 30, 2025)
 monthEnd: Date = new Date();
-
+isFilterRowVisible:boolean=false
+auto:string='auto'
 // dateRanges = [
 //     { label: 'All', value: 'all' },
 //   { label: 'Today', value: this.today },
@@ -306,6 +307,7 @@ refresh(){
   }
 
 
+
 summaryColumnsData = {
   totalItems: [
      { 
@@ -385,7 +387,9 @@ summaryColumnsData = {
     );
   }
 }
-
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 }
 @NgModule({
   imports: [

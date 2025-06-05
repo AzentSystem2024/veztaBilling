@@ -30,6 +30,8 @@ export class HospitalWiseSummaryComponent {
       ColumnNames: any;
     isFilterOpened: boolean = false;
     customRangeLabel: string = 'Custom';
+    isFilterRowVisible:boolean=false
+auto:string='auto'
         displayMode: any = 'full';
      readonly allowedPageSizes: any = [ 5,10, 'all'];
     yesterday: Date = new Date(new Date().setDate(new Date().getDate() - 1));
@@ -341,6 +343,10 @@ export class HospitalWiseSummaryComponent {
       },
     };
 
+
+    toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 }
 
 

@@ -29,6 +29,8 @@ itemWiseSummaryData: any = [];
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
+  isFilterRowVisible:boolean=false
+auto:string='auto'
     ColumnNames: any;
    startDate: Date = new Date(2025, 3, 25);
      monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
@@ -396,6 +398,9 @@ refresh(){
     }
   }
 };
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 }
 
 @NgModule({

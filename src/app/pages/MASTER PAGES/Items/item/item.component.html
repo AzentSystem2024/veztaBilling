@@ -15,7 +15,10 @@
   >
     <dxo-scrolling mode="standard"></dxo-scrolling>
 
-    <dxo-filter-row [visible]="true"></dxo-filter-row>
+  <dxo-filter-row
+      [visible]="isFilterRowVisible"
+      [applyFilter]="auto"
+    ></dxo-filter-row>
 
     <dxo-editing
       mode="popup"
@@ -33,14 +36,41 @@
       ></dxi-item>
       <!-- <dxi-item name="searchPanel" locateInMenu="auto"></dxi-item> -->
       <dxi-item name="" locateInMenu="auto"></dxi-item>
-      <dxi-item location="after" locateInMenu="auto">
+       
+    <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon: isFilterRowVisible ? 'filter' : 'filter',
+          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+          onClick: toggleFilterRow,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+   <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon:'plus',
+          hint: 'Add popup',
+          onClick: openPopup,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+      <!-- <dxi-item location="after" locateInMenu="auto">
         <dx-button
           icon="plus"
           type="default"
           stylingMode="contained"
           (onClick)="openPopup()"
         ></dx-button>
-      </dxi-item>
+      </dxi-item> -->
     </dxo-toolbar>
 
     <dxo-search-panel

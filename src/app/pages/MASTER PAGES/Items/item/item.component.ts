@@ -66,6 +66,8 @@ formsource:FormGroup
    readonly allowedPageSizes: any = [5, 10, 'all'];
      displayMode: any = 'full';
        showPageSizeSelector = true;
+       auto:string='auto'
+  isFilterRowVisible:boolean=false
 
 
 constructor(private dataservice:DataService,private fb:FormBuilder,private router: Router){
@@ -99,7 +101,7 @@ constructor(private dataservice:DataService,private fb:FormBuilder,private route
   }
 
 
-openPopup(){
+openPopup=()=>{
 this.isAddPop=true
 this.formsource.reset({
   IS_INACTIVE: false,
@@ -451,8 +453,13 @@ if (codeDuplicate || nameDuplicate) {
     
   })
 
+
+
 }
 
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 
 }
 @NgModule({

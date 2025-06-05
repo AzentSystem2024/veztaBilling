@@ -68,6 +68,8 @@ export class DateWiseSummaryComponent {
   customRangeLabel: string = 'Custom';
       displayMode: any = 'full';
    readonly allowedPageSizes: any = [ 5,10, 'all'];
+   isFilterRowVisible:boolean=false
+auto:string='auto'
   yesterday: Date = new Date(new Date().setDate(new Date().getDate() - 1));
   monthStart: Date = new Date(
     new Date().getFullYear(),
@@ -399,6 +401,11 @@ export class DateWiseSummaryComponent {
       }
     },
   };
+
+
+  toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 }
 
 @NgModule({

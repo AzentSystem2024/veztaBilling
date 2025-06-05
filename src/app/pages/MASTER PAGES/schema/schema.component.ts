@@ -28,7 +28,8 @@ currentFilter: string = 'auto';
 Status: boolean;
 IS_INACTIVE: boolean = false;
   selectedData: any;
-
+isFilterRowVisible:boolean=false
+auto:string='auto'
   constructor(private fb:FormBuilder ,private dataservice: DataService) {
    this.formsource=this.fb.group({
     Id: [null],
@@ -84,7 +85,7 @@ onDiscountChange(event: any) {
 }
 
 
-openPopup(){
+openPopup=()=>{
   this.addPopup = true;
   this.formsource.reset({
     Inactive: ""
@@ -293,7 +294,9 @@ this.get_Schema_List()
   });
   
 }
-
+toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  }
 }
 
 
