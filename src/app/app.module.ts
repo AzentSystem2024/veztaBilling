@@ -45,12 +45,14 @@ import { PatientWiseSummaryComponent, PatientWiseSummaryModule } from './pages/R
 import { TestItemWiseSummaryComponent, TestItemWiseSummaryModule } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
 import { UserMenuComponent,UserMenuModule } from './pages/MASTER PAGES/user-menu/user-menu.component';
 
+import { HospitalWiseSummaryComponent, HospitalWiseSummaryModule } from './pages/REPORTS/hospital-wise-summary/hospital-wise-summary.component';
+
 
 
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent ],
   imports: [
     TaskListModule,
     BrowserModule,
@@ -78,7 +80,8 @@ import { UserMenuComponent,UserMenuModule } from './pages/MASTER PAGES/user-menu
     SchemeWiseSummaryModule,
     SchemeWiseBillSummaryModule,
     PatientWiseSummaryModule,
-    TestItemWiseSummaryModule
+    TestItemWiseSummaryModule,
+    HospitalWiseSummaryModule,
 
   ],
   providers: [

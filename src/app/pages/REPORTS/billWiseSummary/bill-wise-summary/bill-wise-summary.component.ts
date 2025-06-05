@@ -72,7 +72,7 @@ monthEnd: Date = new Date();
       value: 'custom' 
     },
   ];
-  
+
 
   ToDate_value: any;
   dataGrid: any;
@@ -348,6 +348,14 @@ summaryColumnsData = {
       showInColumn: "Credit",
       alignment: "right"
     },
+     {
+        column: 'Upi',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Upi',
+        alignment: 'right',
+      },
   ],
   calculateCustomSummary: (options) => {
     if (options.name === "summaryRow") {

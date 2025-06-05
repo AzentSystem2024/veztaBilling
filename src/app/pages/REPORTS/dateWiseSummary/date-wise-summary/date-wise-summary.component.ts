@@ -342,7 +342,7 @@ export class DateWiseSummaryComponent {
         displayFormat: '{0}',
         valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
         showInColumn: 'NoOfBills',
-        alignment: 'right',
+        alignment: 'left',
       },
       {
         column: 'GrossAmt',
@@ -382,6 +382,14 @@ export class DateWiseSummaryComponent {
         displayFormat: '{0}',
         valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
         showInColumn: 'Credit',
+        alignment: 'right',
+      },
+          {
+        column: 'Upi',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Upi',
         alignment: 'right',
       },
     ],

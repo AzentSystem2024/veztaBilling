@@ -1,7 +1,3 @@
-
-@use "../../../../../variables.scss" as *;
-@use "sass:math";
-
 .form-flex-wrapper {
   display: flex;
   flex-wrap: wrap; /* optional: allows wrapping on smaller screens */
@@ -18,6 +14,7 @@
 .applybtn {
   margin-left: auto; /* pushes it to the end */
 }
+
 
    /* Set popup height */
 .custom-date-popup .dx-popup-content {
@@ -38,8 +35,6 @@
 .custom-apply-btn:hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
-
-
 
 /* Hide the close (×) button */
 ::ng-deep .dx-tag-remove-button {

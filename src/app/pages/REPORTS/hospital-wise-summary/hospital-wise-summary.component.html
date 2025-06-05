@@ -60,10 +60,12 @@
 
   <div class="grid-container">
     <dx-data-grid
-      [dataSource]="dateWiseSummaryData"
+      [dataSource]="HospitalWiseSummaryData"
+       width="100%"
+      height="83vh"
       [showBorders]="true"
-    
-      [showRowLines]="true"
+     
+      [showRowLines]="false"
       [allowColumnResizing]="false"
       [columnAutoWidth]="true"
       [groupPanel]="{ visible: true }"
@@ -73,7 +75,7 @@
       [summary]="summaryColumnsData"
       [allowColumnReordering]="true"
       [filterRow]="{ visible: false }"
-      [height]="'83vh'"
+      
       id="dataGrid"
       [headerFilter]="{ visible: false }"
       [columnFixing]="{
@@ -99,7 +101,7 @@
             class="grid-header"
             style="font-weight: 600; font-size: 20px; margin-left: 12px"
           >
-            Date Wise Summary
+            Hospital Wise Summary
           </div>
         </dxi-item>
 
@@ -132,61 +134,16 @@
       <dxo-header-filter [visible]="true">
         <dxo-search [enabled]="true"></dxo-search>
       </dxo-header-filter>
-      <dxi-column
-        dataField="Date"
-        caption="Date"
-        dataType="date"
-        width="150"
-        format="dd-MM-yyyy"
-      ></dxi-column>
-      <dxi-column
-        dataField="DEPARTMENT_NAME"
-        caption="Department Name"
-        [allowGrouping]="true"
-        data-type="string"
-        width="200"
-      ></dxi-column>
-      <dxi-column
-        dataField="NoOfBills"
-        caption="Number of Bills"
-        data-type="number"
-         alignment="left"
-        [grouping]="true"
-      ></dxi-column>
+   
 
-      <dxi-column
-        dataField="GrossAmt"
-        caption="Gross Amount"
-        data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2 }"
-      ></dxi-column>
+<!-- <dxi-column dataField="DEPARTMENT_NAME" caption="Department Name" dataType="string"></dxi-column> -->
+<dxi-column dataField="HOSPITAL_NAME" caption="Hospital Name" dataType="string"></dxi-column>
+<dxi-column dataField="NO_OF_BILLS" caption="No. of Bills"   alignment="left" dataType="number"></dxi-column>
+<dxi-column dataField="GROSS_AMOUNT" caption="Gross Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="SCHEMA_AMOUNT" caption="Scheme Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
+<dxi-column dataField="NET_AMOUNT" caption="Net Amount"       [format]="{ type: 'fixedPoint', precision: 2, useGrouping: true }" dataType="number"></dxi-column>
 
-      <dxi-column
-        dataField="SchemaAmt"
-        caption="Scheme Amount"
-        data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2 }"
-      ></dxi-column>
-      <dxi-column
-        dataField="NetAmt"
-        caption="Net Amount"
-        data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2 }"
-      ></dxi-column>
-      <dxi-column
-        dataField="Cash"
-        caption="Cash"
-        data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2 }"
-      ></dxi-column>
-      <dxi-column
-        dataField="Credit"
-        caption="Credit"
-        data-type="number"
-        [format]="{ type: 'fixedPoint', precision: 2 }"
-      ></dxi-column>
 
-      <dxi-column dataField="Upi" caption="UPI" data-type="number"></dxi-column>
     </dx-data-grid>
   </div>
 </div>

@@ -29,7 +29,9 @@ import { SchemeWiseSummaryComponent } from './pages/REPORTS/schemeWiseSummary/sc
 import { SchemeWiseBillSummaryComponent } from './pages/REPORTS/schemeWiseBillSummary/scheme-wise-bill-summary/scheme-wise-bill-summary.component';
 import { PatientWiseSummaryComponent } from './pages/REPORTS/patientWiseSummary/patient-wise-summary/patient-wise-summary.component';
 import { TestItemWiseSummaryComponent } from './pages/REPORTS/testItemWiseSummary/test-item-wise-summary/test-item-wise-summary.component';
+
 import { UserMenuComponent } from './pages/MASTER PAGES/user-menu/user-menu.component';
+import { HospitalWiseSummaryComponent } from './pages/REPORTS/hospital-wise-summary/hospital-wise-summary.component';
 const routes: Routes = [
   {
     path: '',
@@ -89,26 +91,32 @@ const routes: Routes = [
         path : 'hospital',
         component : HospitalListComponent,
         canActivate: [AuthGuardService],
+        data: { allowedRoles: [1, 2] }, 
       },
 
         {
         path: 'department',
         component: DepartmentComponent,
         canActivate: [AuthGuardService],
+        data: { allowedRoles: [1, 2] },
       },
          {
         path: 'item',
         component: ItemComponent,
+        canActivate: [AuthGuardService],
+        data: { allowedRoles: [1, 2] },
     },
        {
         path: 'insurance',
         component:InsuranceComponent,
-        canActivate:[AuthGuardService]
+        canActivate:[AuthGuardService],
+        data: { allowedRoles: [1, 2] },
       },
       {
         path: 'schema',
         component : SchemaComponent,
         canActivate: [AuthGuardService],
+        data: { allowedRoles: [1, 2] },
       },
       {
         path: 'invoice-entry',
@@ -149,6 +157,11 @@ const routes: Routes = [
       {
         path: 'testitemwise-summary',
         component: TestItemWiseSummaryComponent,
+        canActivate: [AuthGuardService],
+      },
+      {
+        path: 'hospitalwise-summary',
+        component: HospitalWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },
      

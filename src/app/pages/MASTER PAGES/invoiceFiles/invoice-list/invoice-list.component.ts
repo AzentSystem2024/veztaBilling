@@ -21,6 +21,7 @@ import {
 import { InvoiceAddModule } from '../../invoice-add/invoice-add.component';
 import { DataService } from 'src/app/services';
 import { InvoiceViewModule } from '../invoice-view/invoice-view.component';
+import { InvoiceListUpdateService } from 'src/app/services/invoice-list-update.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -55,9 +56,12 @@ loggedInUser : any = {}
   userData: any;
   USER: any;
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService,
+    private invoiceUpdateService: InvoiceListUpdateService
+  ) {}
 
   ngOnInit() {
+    
     this.storedUserData = sessionStorage.getItem('savedUserData');
     console.log(this.storedUserData, 'STOREDUSERDATA');
     if (this.storedUserData) {
@@ -67,7 +71,12 @@ loggedInUser : any = {}
       this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
       this.loggedInUser.USER_ID = this.userData.USER_ID
     }
+
     this.getInvoiceList();
+  this.invoiceUpdateService.update$.subscribe(() => {
+    console.log('New invoice added — refreshing list...');
+    this.getInvoiceList();
+  });
   }
 
   getInvoiceList() {

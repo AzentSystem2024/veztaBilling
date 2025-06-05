@@ -498,6 +498,7 @@ Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
  const getEndpoint = BASE_URL+`Report/billwise`;
   return this.http.post(getEndpoint,reqBody);
 }
+
 item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   const reqBody = {
     
@@ -513,6 +514,21 @@ item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
  const getEndpoint = BASE_URL+`Report/itemwise`;
   return this.http.post(getEndpoint,reqBody);
 }
+hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+ const reqBody = {
+    
+  "REPORT_ID": "HOSPITALWISESUMMARY",
+  "FROM_DATE": fromDate,
+  "TO_DATE": ToDate,
+  "DEPARTMENT_ID": departmentId,
+  "USER_ID": staffId,
+  "SL_FROM": 0,
+  "SL_TO": 0
+  }
+ const getEndpoint = BASE_URL+`Report/hospitalwise`;
+  return this.http.post(getEndpoint,reqBody);
+}
+
 
  exportDataGridReport(e: any, fileName: any) {
     if (e.format === 'pdf') {
