@@ -2,14 +2,12 @@
   <dx-data-grid
     id="gridContainer"
     [dataSource]="departments"
-    [remoteOperations]="true"
-    [remoteOperations]="true"
+     [remoteOperations]="true"
     [allowColumnReordering]="true"
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
     [showBorders]="true"
     [loadPanel]="{ enabled: true, text: 'Loading...', showIndicator: true, showPane: true }"
-   
     [showRowLines]="true"
     (onEditingStart)="onEditingStart($event)"
     [width]="'100%'"
@@ -21,7 +19,8 @@
  
   >
     <dxo-scrolling mode="standard"></dxo-scrolling>
-    <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+ <!-- <dxo-filter-row [visible]="isFilterOpened"></dxo-filter-row> -->
     <dxo-editing
       mode="popup"
       [allowUpdating]="true"
@@ -29,6 +28,13 @@
       [useIcons]="true"
       editIcon="edit"
     ></dxo-editing>
+
+      <!-- <dxo-filter-row [visible]="isFilterOpened"></dxo-filter-row> -->
+ <dxo-filter-row
+      [visible]="isFilterRowVisible"
+      [applyFilter]="auto"
+    ></dxo-filter-row>
+    
     <dxo-paging [pageSize]="10"></dxo-paging>
 <dxo-pager
         [visible]="true"
@@ -44,22 +50,63 @@
         text="Department"
         cssClass="font-bold text-lg"
       ></dxi-item>
+
       <!-- <dxi-item name="searchPanel" locateInMenu="auto"></dxi-item> -->
       <dxi-item name="" locateInMenu="auto"></dxi-item>
-      <dxi-item location="after" locateInMenu="auto">
+        <dxi-item name="filterPanel"></dxi-item>
+     <!-- <dxi-item>
+  <dx-button
+    icon="filter"
+    type="default"
+    stylingMode="contained"
+    (onClick)="toggleFilterRow()" 
+
+  ></dx-button>
+      </dxi-item> -->
+
+       <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon: isFilterRowVisible ? 'filter' : 'filter',
+          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+          onClick: toggleFilterRow,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+
+
+      <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon:'plus',
+          hint: 'Add popup',
+          onClick: openPopup,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+      <!-- <dxi-item location="after" locateInMenu="auto">
         <dx-button
           icon="plus"
           type="default"
           stylingMode="contained"
           (onClick)="openPopup()"
         ></dx-button>
-      </dxi-item>
+      </dxi-item> -->
     </dxo-toolbar>
 
-    <dxo-search-panel
+    <!-- <dxo-search-panel
       [visible]="true"
       [highlightCaseSensitive]="true"
-    ></dxo-search-panel>
+    ></dxo-search-panel> -->
+
     <dxi-column
       dataField="SlNo"
       [width]="80"
@@ -88,6 +135,7 @@
       fixedPosition="right"
     >
     </dxi-column>
+
     <div *dxTemplate="let cellData of 'statusCellTemplate'">
       <i
         class="fas fa-flag"
@@ -114,7 +162,6 @@
   [(visible)]="isAddPop"
   [width]="400"
   [height]="300"
-  [shading]="false"
     [shading]="true"               
   [hideOnOutsideClick]="false"     
   (onHiding)="closePopup()"
@@ -161,17 +208,6 @@
     >
     </dx-text-box>
 
-    <!-- Inactive checkbox -->
-    <!-- <div class="d-flex me-4">
-    <label for="checboxadd" class="me-2">Inactive</label>
-    <dx-check-box
-      formControlName="IS_INACTIVE"
-      [elementAttr]="{ 'aria-label': 'Unchecked' }"
-      id="checboxadd"
-    
-    ></dx-check-box>
- 
-  </div> -->
 
     <div class="d-flex justify-content-end mt-4">
       <!-- Cancel Button -->

@@ -80,12 +80,17 @@
       }"
       (onExporting)="onExporting($event)"
       [summary]="summaryColumnsData"
-     
+     [loadPanel]="{ enabled: true, text: 'Loading...',  }"
       > 
       <!-- <dxo-filter-row [visible]="true"></dxo-filter-row> -->
+       
        <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
     </dxo-header-filter>
+   <dxo-filter-row
+      [visible]="isFilterRowVisible"
+      [applyFilter]="auto"
+    ></dxo-filter-row>
          <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
           <dxo-paging [pageSize]="10"></dxo-paging>
 <dxo-pager
@@ -100,71 +105,22 @@
         <dxi-item location="before">
           <div class="grid-header " style="font-weight: 600 ;font-size: 20px; margin-left: 12px;">Bill Wise Summary</div>
         </dxi-item>
-        <!-- <dxi-item
-          location="after"
-          locateInMenu="auto"
-          showText="inMenu"
-          widget="dxButton"
-        
-          [options]="{
-            text: 'Refresh',
-            icon: 'refresh',
-            onClick: refresh,
-            stylingMode: 'text',
-            disabled: isEmptyDatagrid,
-            hint: 'Refresh'
-          }"
-        ></dxi-item> -->
-
-        <!-- <dxi-item
-          widget="dxButton"
-          [options]="{
-            text: '',
-            icon: 'filter',
-            onClick: filterClick,
-            disabled: isEmptyDatagrid,
-            hint: 'Search Column'
-          }"
-        ></dxi-item> -->
-
-        <!-- <dxi-item
-          name="columnChooserButton"
-          locateInMenu="auto"
-          [disabled]="isEmptyDatagrid"
-        ></dxi-item> -->
-
-
-        <!-- <dxi-item
-          widget="dxButton"
-          [options]="{
-            text: '',
-            icon: 'formula',
-            onClick: SummaryClick,
-            hint: 'Hide/Show Summary',
-            disabled: isEmptyDatagrid,
-          }"
-        ></dxi-item> -->
-
+       
         <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
-
-        <!-- <dxi-item
-          class="columnfinderclass"
-          widget="dxDropDownButton"
-          [options]="{
-            dataSource: ColumnNames,
-            onItemClick: findColumnLocation,
-            placeholder: 'Search Column',
-            noDataText: 'Load data and try again',
-            disabled: isEmptyDatagrid,
-            hint: 'Column location finder',
-            icon:'columnproperties',
-            dropDownOptions: {
-              width: 'auto',
-              height: '60vh'
-            },
-
-          }"
-        ></dxi-item> -->
+        <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon: isFilterRowVisible ? 'filter' : 'filter',
+          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+          onClick: toggleFilterRow,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+      
       </dxo-toolbar>
       
       <dxo-grouping

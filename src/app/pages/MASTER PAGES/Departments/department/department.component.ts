@@ -52,6 +52,7 @@ export class DepartmentComponent  {
   isAddPop: boolean = false;
   isEditPop: boolean = false;
   Department_Data: any = [];
+    GridSource: any;
 selected_Data:any
   department_Value: any;
   hospital_value: any;
@@ -59,6 +60,9 @@ selected_Data:any
   hospital_Dropdown_list: any=[]
   bill_prefix_value: any;
   id_Value: any;
+   auto: string = 'auto';
+  isFilterRowVisible: boolean = false;
+    isFilterOpened:boolean = true; //filter row enable-desable variable
    readonly allowedPageSizes: any = [ 5,10, 'all'];
      displayMode: any = 'full';
        showPageSizeSelector = true;
@@ -123,10 +127,28 @@ this.formsource.patchValue({
 }
 
 
-  openPopup() {
+
+// toggleFilter = () => {
+//   this.isFilterOpened = !this.isFilterOpened;
+// };
+
+  toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
+
+
+  openPopup=()=> {
     this.isAddPop = true;
  
   }
+
+
+
+
+  // filterClick= ()=>{
+  //   this.isFilterOpened = !this.isFilterOpened;
+    
+  // };
 
 
   formatStatus(data: any) {

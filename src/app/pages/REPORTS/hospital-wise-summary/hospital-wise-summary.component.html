@@ -106,6 +106,19 @@
         </dxi-item>
 
         <dxi-item name="exportButton" [disabled]="isEmptyDatagrid"></dxi-item>
+        <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon: isFilterRowVisible ? 'filter' : 'filter',
+          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+          onClick: toggleFilterRow,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
 
         <!-- <dxi-item
           class="columnfinderclass"
@@ -134,6 +147,10 @@
       <dxo-header-filter [visible]="true">
         <dxo-search [enabled]="true"></dxo-search>
       </dxo-header-filter>
+       <dxo-filter-row
+      [visible]="isFilterRowVisible"
+      [applyFilter]="auto"
+    ></dxo-filter-row>
    
 
 <!-- <dxi-column dataField="DEPARTMENT_NAME" caption="Department Name" dataType="string"></dxi-column> -->
