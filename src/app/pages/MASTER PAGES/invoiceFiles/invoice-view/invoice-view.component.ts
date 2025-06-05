@@ -174,9 +174,7 @@ export class InvoiceViewComponent {
       this.USER = this.userData.USER_TYPE_NAME;
       this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
         }
-    this.formattedInvoiceDate = this.getFormattedDateTime(
-      this.invoiceFormData.INVOICE_DATE
-    );
+
   }
 
     @HostListener('document:keydown.enter', ['$event'])
@@ -186,8 +184,11 @@ export class InvoiceViewComponent {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['invoiceData'] && changes['invoiceData'].currentValue) {
-      console.log('Invoice data updated:', this.invoiceData);
+      console.log('Invoice data updated:', this.invoiceData.INVOICE_DATE);
       this.invoiceEntry = this.invoiceData.INVOICE_ENTRY || [];
+          this.formattedInvoiceDate = this.getFormattedDateTime(
+      new Date(this.invoiceData.INVOICE_DATE)
+    );
     }
   }
 
@@ -296,6 +297,14 @@ convertNumberToWords(amount: number): string {
     this.popupClosed.emit();
   }
 
+    customFormat(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    }).format(value);
+  }
+
 previewAndPrintInvoice(): void {
   const data = this.invoiceData;
   console.log(data, "DATA");
@@ -399,9 +408,9 @@ previewAndPrintInvoice(): void {
               <td>${index + 1}</td>
               <td>${item.ITEM_NAME}</td>
               <td>${item.QUANTITY}</td>
-              <td>${item.UNIT_PRICE}</td>
-              <td>${item.DISCOUNT || 0}</td>
-              <td>${item.AMOUNT}</td>
+              <td style="text-align: right;">${item.UNIT_PRICE}</td>
+              <td style="text-align: right;">${item.DISCOUNT || 0}</td>
+              <td style="text-align: right;">${item.AMOUNT}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -420,7 +429,7 @@ previewAndPrintInvoice(): void {
             <tr>
               <td>${data.SCHEMA_NAME}</td>
               <td>${data.SCHEMA_ACCOUNT_NO || ''}</td>
-              <td>${data.SCHEMA_AMOUNT || ''}</td>
+              <td style="text-align: right;">${data.SCHEMA_AMOUNT || ''}</td>
             </tr>
           </tbody>
         </table>` : ''

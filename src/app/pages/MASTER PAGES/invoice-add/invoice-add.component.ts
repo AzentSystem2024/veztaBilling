@@ -49,6 +49,7 @@ import {
 import notify from 'devextreme/ui/notify';
 import { FormTextboxModule } from 'src/app/components';
 import { DataService } from 'src/app/services';
+import { InvoiceListUpdateService } from 'src/app/services/invoice-list-update.service';
 // import { UserAddComponent } from '../userFiles/user-add/user-add.component';
 
 @Component({
@@ -181,7 +182,9 @@ export class InvoiceAddComponent {
   departmentName: any;
   itemsOfDepartment: any;
 
-  constructor(private dataService: DataService, private ngZone: NgZone) {}
+  constructor(private dataService: DataService, private ngZone: NgZone,
+    private invoiceUpdateService: InvoiceListUpdateService
+  ) {}
 
   ngOnInit() {
     const storedData = sessionStorage.getItem('savedUserData');
@@ -1120,6 +1123,7 @@ this.getDropdownData();
         this.printConfirmVisible = true;
             this.resetInvoiceForm();
         this.getInvoiceNo();
+        this.invoiceUpdateService.triggerUpdate();
       } else {
         notify(
           {
@@ -1430,9 +1434,9 @@ this.getDropdownData();
               <td>${index + 1}</td>
               <td>${item.ITEM_NAME}</td>
               <td>${item.QUANTITY}</td>
-              <td>${item.UNIT_PRICE}</td>
-              <td>${item.DISCOUNT || 0}</td>
-              <td>${item.AMOUNT}</td>
+              <td style="text-align: right;">${item.UNIT_PRICE}</td>
+              <td style="text-align: right;">${item.DISCOUNT || 0}</td>
+              <td style="text-align: right;">${item.AMOUNT}</td>
             </tr>
           `
           ).join('')}
@@ -1455,7 +1459,7 @@ this.getDropdownData();
               <tr>
                 <td>${data.SCHEMA_NAME}</td>
                 <td>${data.SCHEMA_ACCOUNT_NO || ''}</td>
-                <td>${data.SCHEMA_AMOUNT || ''}</td>
+                <td style="text-align: right;">${data.SCHEMA_AMOUNT}</td>
               </tr>
             </tbody>
           </table>
