@@ -1,8 +1,36 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { DxSelectBoxModule, DxTextAreaModule, DxDateBoxModule, DxFormModule, DxTextBoxModule, DxCheckBoxModule, DxRadioGroupModule, DxFileUploaderModule, DxDataGridModule, DxButtonModule, DxValidatorModule, DxProgressBarModule, DxPopupModule, DxDropDownBoxModule, DxToolbarModule, DxTabPanelModule, DxTabsModule, DxNumberBoxModule, DxValidationGroupModule, DxAutocompleteModule, DxTagBoxModule } from 'devextreme-angular';
-import { DxoItemModule, DxoFormItemModule, DxoLookupModule, DxiItemModule, DxiGroupModule } from 'devextreme-angular/ui/nested';
+import {
+  DxSelectBoxModule,
+  DxTextAreaModule,
+  DxDateBoxModule,
+  DxFormModule,
+  DxTextBoxModule,
+  DxCheckBoxModule,
+  DxRadioGroupModule,
+  DxFileUploaderModule,
+  DxDataGridModule,
+  DxButtonModule,
+  DxValidatorModule,
+  DxProgressBarModule,
+  DxPopupModule,
+  DxDropDownBoxModule,
+  DxToolbarModule,
+  DxTabPanelModule,
+  DxTabsModule,
+  DxNumberBoxModule,
+  DxValidationGroupModule,
+  DxAutocompleteModule,
+  DxTagBoxModule,
+} from 'devextreme-angular';
+import {
+  DxoItemModule,
+  DxoFormItemModule,
+  DxoLookupModule,
+  DxiItemModule,
+  DxiGroupModule,
+} from 'devextreme-angular/ui/nested';
 import { FormTextboxModule } from 'src/app/components';
 import { DateWiseSummaryComponent } from '../../dateWiseSummary/date-wise-summary/date-wise-summary.component';
 import { DataService } from 'src/app/services';
@@ -10,12 +38,10 @@ import { DataService } from 'src/app/services';
 @Component({
   selector: 'app-bill-wise-summary',
   templateUrl: './bill-wise-summary.component.html',
-  styleUrls: ['./bill-wise-summary.component.scss']
+  styleUrls: ['./bill-wise-summary.component.scss'],
 })
 export class BillWiseSummaryComponent {
-billWiseSummaryData: any = [];
-
-
+  billWiseSummaryData: any = [];
   selectedRange: any = 'all';
   department_list: any;
   user_details: any = [];
@@ -29,99 +55,63 @@ billWiseSummaryData: any = [];
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
-    ColumnNames: any;
-    today: Date = new Date();
-   yesterday:Date= new Date(new Date().setDate(new Date().getDate() - 1))
-monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
-startDate: Date = new Date(2025, 3, 25);
+  ColumnNames: any;
+  today: Date = new Date();
+  yesterday: Date = new Date(new Date().setDate(new Date().getDate() - 1));
+  monthStart: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    2
+  );
+  startDate: Date = new Date(2025, 3, 25);
   displayMode: any = 'full';
-   readonly allowedPageSizes: any = [ 5,10, 'all'];
-// Today's date (e.g., May 30, 2025)
-monthEnd: Date = new Date();
-isFilterRowVisible:boolean=false
-auto:string='auto'
-// dateRanges = [
-//     { label: 'All', value: 'all' },
-//   { label: 'Today', value: this.today },
-//   { label: 'Yesterday', value: this.yesterday },
-//   {
-//     label: 'This Month',
-//     value: { start: this.monthStart, end: this.monthEnd },
-//   },
-//   { label: 'Custom', value: 'custom' },
-// ];
+  readonly allowedPageSizes: any = [5, 10, 'all'];
+  monthEnd: Date = new Date();
+  isFilterRowVisible: boolean = false;
+  auto: string = 'auto';
+  ToDate_value: any;
+  dataGrid: any;
 
- dateRanges = [
+  //====================Date filter  date Ranges============
+  dateRanges = [
     { label: 'All', value: 'all' },
-    { 
-      label: 'Today', 
-      value: { start: new Date(), end: new Date() } 
+    {
+      label: 'Today',
+      value: { start: new Date(), end: new Date() },
     },
     {
       label: 'Yesterday',
-      value: { 
+      value: {
         start: new Date(new Date().setDate(new Date().getDate() - 1)),
-        end: new Date(new Date().setDate(new Date().getDate() - 1))
-      }
+        end: new Date(new Date().setDate(new Date().getDate() - 1)),
+      },
     },
     {
       label: 'This Month',
       value: { start: this.monthStart, end: this.monthEnd },
     },
-    {  
-      label: 'Custom', 
-      value: 'custom' 
+    {
+      label: 'Custom',
+      value: 'custom',
     },
   ];
 
-
-  ToDate_value: any;
-  dataGrid: any;
-
+//==============================constructor========================
   constructor(private dataservice: DataService, private fb: FormBuilder) {
-   
     this.getUserDetails();
-    this.get_alldata()
+    this.get_alldata();
   }
-get_alldata(){
-       if (this.selectedRange === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    this.get_DataSource(); // Load data immediately
+  //==========================Default Data show on lookup================== 
+  get_alldata() {
+    if (this.selectedRange === 'all') {
+      this.FromDate_value = this.startDate;
+      this.ToDate_value = new Date();
+      console.log('All dates selected - loading complete data');
+      this.get_DataSource(); // Load data immediately
+    }
   }
-}
-  // applyCustomDate() {
-  //   if (!this.fromDate || !this.toDate) {
-  //     alert('Please select both From and To dates.');
-  //     return;
-  //   }
 
-  //   if (new Date(this.fromDate) > new Date(this.toDate)) {
-  //     alert('From Date cannot be after To Date.');
-  //     return;
-  //   }
-  //   this.FromDate_value = this.fromDate;
-  //   console.log('FromDate_value Date Range:', this.FromDate_value);
-  //   this.ToDate_value = this.toDate;
-
-  //   // console.log('ToDate_value Date Range:', this.ToDate_value);
-  //   console.log(
-  //     'Selected Date Range:',
-  //     this.FromDate_value.toISOString().split('T')[0]
-  //   );
-  //   console.log(
-  //     'Selected Date Range:',
-  //     this.ToDate_value.toISOString().split('T')[0]
-  //   );
-
-  //   this.isCustomDatePopupVisible = false;
-  
-  // }
-
-
-
+  //============================Take user Details for get dropdowns of  Hospital and departments=========
   getUserDetails() {
     const user_details = sessionStorage.getItem('savedUserData');
     console.log('User ID:', user_details);
@@ -146,66 +136,11 @@ get_alldata(){
     }
   }
 
-//   onDateRangeChange(event: any) {
-//     const selected = event.value;
-//     console.log(event);
-
-//     if (selected == 'custom') {
-//       this.isCustomDatePopupVisible = true;
-//       console.log('Custom date range selected');
-//       console.log(event.value);
-//       // this.applyCustomDate()
-//     }
-//       else if (selected === 'all') {
-//     // For "All" option, set dates to null or wide range
-//     this.FromDate_value = this.startDate;
-//     this.ToDate_value = new Date()
-//     console.log('All dates selected - loading complete data');
-//     // this.get_DataSource(); // Load data immediately
-//   }
-//     else if (selected?.start && selected?.end) {
-//     // For ranges like "This Month"
-//     this.FromDate_value = this.monthStart
-    
-    
-//     ;
-//     this.ToDate_value = this.monthEnd
-//     console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-//   }
-    
-//     else {
-//       this.FromDate_value = event.value;
-//       console.log('FromDate_value Date Range:', this.FromDate_value);
-//       this.ToDate_value = this.FromDate_value;
-//     }
-//   }
-
-//   get_DataSource() {
-//  const departmentId = (this.Departmens_value ?? []).join(',');
-// const staffId = (this.staff_value ?? []).join(',');
-//     console.log('Selected Department ID:', departmentId);
-//     console.log('Selected Staff ID:', staffId);
-//     console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
-//     console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
-//     const fromDate = this.FromDate_value.toISOString().split('T')[0];
-//     const ToDate = this.ToDate_value.toISOString().split('T')[0];
-//     console.log('Selected FromDate Range:', fromDate,);
-//         console.log('Selected ToDate Range:', ToDate);
-
-    
-//     this.dataservice
-//       .Bill_wise_Api(fromDate, ToDate, departmentId, staffId)
-//       .subscribe((res: any) => {
-//            this.isEmptyDatagrid = false;
-//         this.billWiseSummaryData = res.Data;
-//         console.log('Bill Wise Summary Data:', this.billWiseSummaryData);
-//         console.log(res);
-//       });
-//   }
- onDateRangeChange(event: any) {
+  //===========================Date Range functionality ====================
+  onDateRangeChange(event: any) {
     const selected = event.value;
     console.log(event);
-    
+
     if (selected === 'all') {
       this.FromDate_value = this.startDate;
       this.ToDate_value = new Date();
@@ -219,7 +154,7 @@ get_alldata(){
       this.FromDate_value = new Date(selected.start);
       this.ToDate_value = new Date(selected.end);
       console.log('Date Range:', this.FromDate_value, '-', this.ToDate_value);
-     
+
       return;
     }
 
@@ -233,7 +168,7 @@ get_alldata(){
     console.warn('Unknown date range selection:', selected);
   }
 
-  // Keep your improved applyCustomDate
+  // ==============================Custom date picker=============================
   applyCustomDate() {
     if (!this.fromDate || !this.toDate) {
       alert('Please select both From and To dates.');
@@ -252,25 +187,32 @@ get_alldata(){
     this.ToDate_value = toDate;
 
     this.selectedRange = {
-      label: `${this.formatDate(this.FromDate_value)} - ${this.formatDate(this.ToDate_value)}`,
-      value: 'custom'
+      label: `${this.formatDate(this.FromDate_value)} - ${this.formatDate(
+        this.ToDate_value
+      )}`,
+      value: 'custom',
     };
-    
+
     this.isCustomDatePopupVisible = false;
-  
   }
 
   // Helper method to format dates consistently
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
+
+  //====================Get data api  functionality for bill functionality=========================
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
 
     // Ensure dates are valid Date objects before formatting
-    const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
-    const toDate = this.ToDate_value ? this.formatDate(new Date(this.ToDate_value)) : '';
+    const fromDate = this.FromDate_value
+      ? this.formatDate(new Date(this.FromDate_value))
+      : '';
+    const toDate = this.ToDate_value
+      ? this.formatDate(new Date(this.ToDate_value))
+      : '';
 
     if (!fromDate || !toDate) {
       console.error('Invalid date range');
@@ -287,70 +229,63 @@ get_alldata(){
   }
 
 
-public filterClick = () => {
-  console.log('Clicked');
-  if (this.billWiseSummaryData) {
-    this.isFilterOpened = !this.isFilterOpened;
+
+
+  findColumnLocation(columnName: string) {}
+
+  refresh() {
+    this.dataGrid.instance.refresh();
   }
-};
 
-findColumnLocation(columnName: string) {
-
-}
-refresh(){
-  this.dataGrid.instance.refresh();
-
-}
- onExporting(event: any) {
+  onExporting(event: any) {
     const fileName = 'Bill Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
+  //======================summary of the all amount and counts=========================== 
 
-
-
-summaryColumnsData = {
-  totalItems: [
-     { 
-      column: "GrossAmt", 
-      summaryType: "sum", 
-      displayFormat: " {0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "GrossAmt",
-      alignment: "right"
-    },
-    { 
-      column: "SchemaAmt", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "SchemaAmt",
-      alignment: "right"
-    },
-    { 
-      column: "NetAmt", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "NetAmt",
-      alignment: "right"
-    },
-    { 
-      column: "Cash", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "Cash",
-      alignment: "right"
-    },
-    { 
-      column: "Credit", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "Credit",
-      alignment: "right"
-    },
-     {
+  summaryColumnsData = {
+    totalItems: [
+      {
+        column: 'GrossAmt',
+        summaryType: 'sum',
+        displayFormat: ' {0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'GrossAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'SchemaAmt',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'SchemaAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'NetAmt',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'NetAmt',
+        alignment: 'right',
+      },
+      {
+        column: 'Cash',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Cash',
+        alignment: 'right',
+      },
+      {
+        column: 'Credit',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'Credit',
+        alignment: 'right',
+      },
+      {
         column: 'Upi',
         summaryType: 'sum',
         displayFormat: '{0}',
@@ -358,36 +293,38 @@ summaryColumnsData = {
         showInColumn: 'Upi',
         alignment: 'right',
       },
-  ],
-  calculateCustomSummary: (options) => {
-    if (options.name === "summaryRow") {
-      // Custom logic if needed
-    }
-  }
-};
-
+    ],
+    calculateCustomSummary: (options) => {
+      if (options.name === 'summaryRow') {
+        // Custom logic if needed
+      }
+    },
+  };
+  //========================custom data show on select box of date range===================
 
   onContextMenuPreparing(e: any) {
-  if (e.target === "header") {
-    e.items = e.items || [];
+    if (e.target === 'header') {
+      e.items = e.items || [];
 
-    e.items.push(
-      {
-        text: "Group by This Column",
-        onItemClick: () => {
-          e.component.columnOption(e.column.dataField, "groupIndex", 0);
+      e.items.push(
+        {
+          text: 'Group by This Column',
+          onItemClick: () => {
+            e.component.columnOption(e.column.dataField, 'groupIndex', 0);
+          },
+        },
+        {
+          text: 'Ungroup All',
+          onItemClick: () => {
+            e.component.clearGrouping();
+          },
         }
-      },
-      {
-        text: "Ungroup All",
-        onItemClick: () => {
-          e.component.clearGrouping();
-        }
-      }
-    );
+      );
+    }
   }
-}
-toggleFilterRow = () => {
+  //=======================filter row hide and show functionality=========================
+
+  toggleFilterRow = () => {
     this.isFilterRowVisible = !this.isFilterRowVisible;
   };
 }
@@ -423,7 +360,7 @@ toggleFilterRow = () => {
     DxNumberBoxModule,
     DxValidationGroupModule,
     DxAutocompleteModule,
-    DxTagBoxModule
+    DxTagBoxModule,
   ],
   providers: [],
   declarations: [BillWiseSummaryComponent],

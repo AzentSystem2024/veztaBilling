@@ -232,73 +232,20 @@ auto:string='auto'
         });
     }
   
-    // onDateRangeChange(event: any) {
-    //   const selected = event.value;
-    //   console.log(event);
-  
-    //   if (selected == 'custom') {
-    //     this.isCustomDatePopupVisible = true;
-    //     console.log('Custom date range selected');
-    //     console.log(event.value);
-    //     // this.applyCustomDate()
-    //   } else if (selected === 'all') {
-    //     // For "All" option, set dates to null or wide range
-    //     this.FromDate_value = this.startDate;
-    //     this.ToDate_value = new Date();
-    //     console.log('All dates selected - loading complete data');
-    //     // this.get_DataSource(); // Load data immediately
-    //   } else if (selected?.start && selected?.end) {
-    //     // For ranges like "This Month"
-    //     this.FromDate_value = this.monthStart;
-    //     this.ToDate_value = this.monthEnd;
-    //     console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-    //   } else {
-    //     this.FromDate_value = event.value;
-    //     console.log('FromDate_value Date Range:', this.FromDate_value);
-    //     this.ToDate_value = this.FromDate_value;
-    //   }
-    // }
-  
-    // get_DataSource() {
-    //   const date =
-    //     this.selectedRange === 'custom'
-    //       ? `${this.fromDate} to ${this.toDate}`
-    //       : this.selectedRange;
-  
-    //   const departmentId = (this.Departmens_value ?? []).join(',');
-    //   const staffId = (this.staff_value ?? []).join(',');
-    //   console.log('Selected Department ID:', departmentId);
-    //   console.log('Selected Staff ID:', staffId);
-    //   console.log('Selected Date Range:', date);
-    //   console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
-    //   console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
-    //   const fromDate = this.FromDate_value.toISOString().split('T')[0];
-    //   const ToDate = this.ToDate_value.toISOString().split('T')[0];
-    //   this.dataservice
-    //     .Date_wise_Api(fromDate, ToDate, departmentId, staffId)
-    //     .subscribe((res: any) => {
-    //       this.isEmptyDatagrid = false;
-    //       this.HospitalWiseSummaryData = res.Data;
-    //       console.log('Date Wise Summary Data:', this.HospitalWiseSummaryData);
-    //       console.log(res);
-    //     });
-    // }
-    public filterClick = () => {
-      console.log('Clicked');
-      if (this.HospitalWiseSummaryData) {
-        this.isFilterOpened = !this.isFilterOpened;
-      }
-    };
+
     SummaryClick() {}
     findColumnLocation(columnName: string) {}
     refresh() {
       this.dataGrid.instance.refresh();
     }
+//======================export the data to pdf and excel====================
+
     onExporting(event: any) {
       const fileName = 'Date Wise Summary Report';
       this.dataservice.exportDataGridReport(event, fileName);
     }
     //========== DataGrid Refreshing ================
+      //==========  Summary of all amount and cound of the lookup data ================
   
     summaryColumnsData = {
       totalItems: [
@@ -342,6 +289,8 @@ auto:string='auto'
         }
       },
     };
+
+    //======================fillter row button for Hide and Show=============================
 
 
     toggleFilterRow = () => {

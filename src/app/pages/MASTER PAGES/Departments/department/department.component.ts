@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import notify from 'devextreme/ui/notify';
 import { Router, NavigationStart } from '@angular/router';
@@ -25,6 +25,9 @@ import {
   DxTabsModule,
   DxNumberBoxModule,
   DxTooltipModule,
+  DxValidationGroupModule,
+  DxValidationGroupComponent,
+  
 } from 'devextreme-angular';
 import {
   DxoItemModule,
@@ -46,7 +49,7 @@ import { DataService } from 'src/app/services';
 })
 export class DepartmentComponent  {
     private routerSubscription!: Subscription;
-
+@ViewChild('formValidationGroup') formValidationGroup : DxValidationGroupComponent
     departments: any = [];
   formsource: FormGroup;
   isAddPop: boolean = false;
@@ -69,9 +72,9 @@ selected_Data:any
   constructor(private fb: FormBuilder, private dataservice: DataService,private router: Router) {
     this.formsource = this.fb.group({
       ID: [null],
-      DepartmentName:  ['', Validators.required],
-    Hospital: ['', Validators.required],
-      bill_prefix:["", [Validators.maxLength(3)]],
+     DepartmentName: ['', Validators.required],
+    Hospital: [''],
+      bill_prefix:[''],
       IS_INACTIVE: [false],
     });
 this.department_Value = this.departments.DEPARTMENT;
@@ -86,13 +89,13 @@ this.formsource.patchValue({
     this.hospital_Dropdown()
   }
 
-  ngOnInit() {
-    this.routerSubscription = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.isAddPop = false; // ✅ Close popup on route change
-      }
-    });
-  }
+  // ngOnInit() {
+  //   this.routerSubscription = this.router.events.subscribe((event) => {
+  //     if (event instanceof NavigationStart) {
+  //       this.isAddPop = false; // ✅ Close popup on route change
+  //     }
+  //   });
+  // }
 
   ngOnDestroy() {
     if (this.routerSubscription) {
@@ -139,7 +142,10 @@ this.formsource.patchValue({
 
   openPopup=()=> {
     this.isAddPop = true;
- 
+        setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  });
+  this.formsource.markAllAsTouched();
   }
 
 
@@ -215,27 +221,36 @@ getStatusFlagClass(IS_INACTIVE: boolean): string {
 
 
 addData() {
-  this.formsource.markAllAsTouched();
+ 
+
+    const validationResult = this.formValidationGroup?.instance?.validate();
+
 
   console.log(this.formsource.value);
-  if (!this.formsource.value.DepartmentName || !this.formsource.value.Hospital ) {
-    let errorMessage = 'Please fill all required fields: ';
-    const missingFields = [];
-    
-    if (!this.formsource.value.DepartmentName) missingFields.push('Department Name');
-    if (!this.formsource.value.Hospital) missingFields.push('Hospital');
-    
-    errorMessage += missingFields.join(', ');
 
-    notify(
-      {
-        message: errorMessage,
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 3000,
-      },
-      'error'
-    );
-    return;
+  // if (!this.formsource.value.DepartmentName || !this.formsource.value.Hospital ) {
+  //   let errorMessage = 'Please fill all required fields: ';
+  //   const missingFields = [];
+    
+  //   if (!this.formsource.value.DepartmentName) missingFields.push('Department Name');
+  //   if (!this.formsource.value.Hospital) missingFields.push('Hospital');
+    
+  //   errorMessage += missingFields.join(', ');
+
+  //   notify(
+  //     {
+  //       message: errorMessage,
+  //       position: { at: 'top right', my: 'top right' },
+  //       displayTime: 3000,
+  //     },
+  //     'error'
+  //   );
+  //   return;
+  // }
+
+
+  if (this.formsource.invalid) {
+    this.formsource.markAllAsTouched(); // Angular part
   }
   const department = this.formsource.value.DepartmentName;
   const Hospital = this.formsource.value.Hospital;
@@ -287,8 +302,7 @@ if (Bill_prefix && Bill_prefix.length > 3) {
   }
 
   // Proceed to add
-  this.isAddPop = false;
-
+ 
   console.log(department, Hospital, is_Inactive, Bill_prefix, '====input datas');
 
   this.dataservice
@@ -442,7 +456,8 @@ if (isDuplicate) {
     DxiGroupModule,
     DxNumberBoxModule,
     ReactiveFormsModule,
-    DxTooltipModule 
+    DxTooltipModule ,
+    DxValidationGroupModule,
   ],
   providers: [],
   declarations: [DepartmentComponent],
