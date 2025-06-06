@@ -446,9 +446,8 @@ Delete_User_Api(ID:any){
 
 //=====================Report Api==========================
 Get_user_Details_Api(user_id:any) {
-
   const reqBody = {
-    USER_ID:user_id
+    UserId:user_id
   }
   const getEndpoint = BASE_URL + `Report/initdatas`;
   return this.http.post(getEndpoint, reqBody);
