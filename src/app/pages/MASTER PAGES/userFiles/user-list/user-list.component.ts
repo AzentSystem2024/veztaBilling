@@ -26,6 +26,8 @@ import {
   DxTabPanelComponent,
   DxTabPanelModule,
   DxTreeListModule,
+  DxValidationGroupModule,
+  DxValidationGroupComponent
 } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { FormPopupModule } from 'src/app/components';
@@ -59,7 +61,8 @@ export class UserListComponent {
   hospital_list: any[];
   usertype_list: any[];
   user_Id_value: any;
-
+  auto: string = 'auto';
+  @ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
   @ViewChild(DxDataGridComponent, { static: true }) form!: DxFormComponent;
   @ViewChild('confirmPasswordBox', { static: false })
   confirmPasswordField!: DxTextBoxComponent;
@@ -117,71 +120,9 @@ export class UserListComponent {
   statuses: Function | any[];
   Usermenu: any;
 
-  // tasks:any=[{
-  //    Task_ID:1,
-  //    Task_Subject: 'Invoice',
-  //    Task_Parent_ID: 0,
-  // },
-  // {
-  // Task_ID:5,
-  //    Task_Subject: 'New invoice ',
-  //    Task_Parent_ID: 1,
-  // },
-  // {
-  // Task_ID:6,
-  //    Task_Subject: 'Invoice list',
-  //    Task_Parent_ID: 1,
-  // },
-  // {
-  //   Task_ID:2,
-  //    Task_Subject: 'Masters',
-  //    Task_Parent_ID: 0,
-  // },
-  // {
-  //   Task_ID:7,
-  //    Task_Subject: 'Department',
-  //    Task_Parent_ID: 2,
-  // },
-  // {
-  //   Task_ID:8,
-  //    Task_Subject: 'Hospital',
-  //    Task_Parent_ID: 2,
-  // },
-  // {
-  //   Task_ID:9,
-  //    Task_Subject: 'Items',
-  //    Task_Parent_ID: 2,
-  // },
-  // {
-  //   Task_ID:3,
-  //    Task_Subject: 'Reports',
-  //    Task_Parent_ID: 0,
-  // },
-  // {
-  //   Task_ID:10,
-  //    Task_Subject: 'Datewise summary',
-  //    Task_Parent_ID: 3,
-  // },
-  // {
-  //   Task_ID:11,
-  //    Task_Subject: 'Billwise summary',
-  //    Task_Parent_ID: 3,
-  // },
-  // {
-  //   Task_ID:12,
-  //    Task_Subject: 'Hospitalwise summary',
-  //    Task_Parent_ID: 3,
-  // },
-  // {
-  //   Task_ID:4,
-  //    Task_Subject: 'Plans 2015',
-  //    Task_Parent_ID: 0,
-  // },
-  // {
-  //   Task_ID:13,
-  //    Task_Subject: 'Plans 2015',
-  //    Task_Parent_ID: 4,
-  // }]
+  toggleFilterRow = () => {
+    this.isFilterRowVisible = !this.isFilterRowVisible;
+  };
 
   closePop() {
     this.addPopup = false;
@@ -203,6 +144,7 @@ export class UserListComponent {
     // Reset DevExtreme validation (for dx-text-box)
 
     setTimeout(() => {
+      
       document.querySelectorAll('.dx-validator').forEach((element) => {
         const validatorInstance = (
           window as any
@@ -211,6 +153,7 @@ export class UserListComponent {
           validatorInstance.reset();
         }
       });
+       this.formValidationGroup?.instance?.reset();
       this.selectedMenuIds = [...this.selectedMenuIds]; // reassign for change detection
     }, 100);
   }
@@ -218,19 +161,19 @@ export class UserListComponent {
   constructor(private fb: FormBuilder, private dataservice: DataService) {
     this.formsource = this.fb.group({
       ID: [null, Validators.required], // ✅ Ensure this line exists
-      UserName: ['', Validators.required], // Set default value as empty string ''
-      LoginName: ['', Validators.required],
+      UserName: [null, Validators.required], // Set default value as empty string ''
+      LoginName: [null, Validators.required],
       LoginPassword: [null, Validators.required],
       ConfirmPassword: [null, Validators.required],
       Inactive: [false], // Boolean default false
       DepartmentId: [null, [Validators.required]],
       HospitalId: [null, [Validators.required]],
-      UserType: ['', [Validators.required]],
+      UserType: [null, [Validators.required]],
       AddInvoice: [false],
       ViewInvoice: [false],
       CancelInvoice: [false],
       LastModifiedDate: ['', [Validators.required]],
-      Menus: ['', [Validators.required]],
+      Menu: ['', [Validators.required]],
     });
 
     this.department_dropdown_list();
@@ -510,9 +453,16 @@ export class UserListComponent {
     console.log('Selected Menus:', this.selectedKeys);
   }
 
+  validatePasswordMatch(): boolean {
+  const password = this.formsource.get('LoginPassword')?.value;
+  const confirmPassword = this.formsource.get('ConfirmPassword')?.value;
+  return password === confirmPassword;
+}
+
+
   addData() {
     this.validation = true;
-
+    const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
     console.log('Button Clicked');
     console.log(this.formsource, 'reset');
     const Login_name = this.formsource.get('LoginName')?.value;
@@ -537,8 +487,8 @@ export class UserListComponent {
     const View_invoice = this.formsource.get('ViewInvoice')?.value === true;
     const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
     const Last_modified_date = new Date(); // sends full JS object, not valid JSON
-    const Menu = this.selectedKeys.toString();
-
+    // const Menu = this.selectedKeys.toString();
+  const Menu = this.formsource.get('Menu').toString();
     console.log(Menu);
 
     // const Menus = this.formsource.get('Menus')?.value;
@@ -567,7 +517,6 @@ export class UserListComponent {
       USER_TYPE: Usertype,
       IS_INACTIVE: Is_Inactive,
       DEPARTMENT_ID: Department_Id,
-      // HOSPITAL_ID :  Hospital_Id ?? 0  ,
       HOSPITAL_ID: Hospital_Id,
       ADD_INVOICE: Add_invoice,
       VIEW_INVOICE: View_invoice,
@@ -575,21 +524,21 @@ export class UserListComponent {
       LAST_MODIFIED_USER: 1,
       LAST_MODIFIED_DATE: Last_modified_date,
       // MENUS : Menus
-      // MENUS: Menus || []
       MENUS: Menu,
     };
 
-    if (!User_name || !Login_name || !Login_password || !Usertype) {
-      notify(
-        {
-          message: 'Please fill the field.',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 1000,
-        },
-        'error'
-      );
-      return; // Stop further execution
-    }
+    // if (!User_name || !Login_name || !Login_password || !Usertype) {
+    //   notify(
+    //     {
+    //       message: 'Please fill the field.',
+    //       position: { at: 'top right', my: 'top right' },
+    //       displayTime: 1000,
+    //     },
+    //     'error'
+    //   );
+    //   return; // Stop further execution
+    // }
+    
 
     // 🚫 New condition: Hospital User must select hospital
     if (Usertype === 3 && !Hospital_Id) {
@@ -603,19 +552,6 @@ export class UserListComponent {
       );
       return;
     }
-
-
-  if (Menu == null || Menu === '' || Menu.length === 0) {
-    notify(
-      {
-        message:'Please choose any menu',
-        position:{at: 'top right', my: 'top right'},
-        displayTime: 1500,
-      },
-         'error'
-        );
-    return; // Stop further execution
-  }
 
 
     // 🚫 New condition: Hospital User must select hospital
@@ -660,6 +596,9 @@ export class UserListComponent {
       return; // 🚫 prevent saving
     }
     console.log(payload, 'PAYLOAD');
+
+
+    
     if (Login_name && User_name && Login_password && Usertype) {
       this.dataservice.Insert_User_Api(payload).subscribe((res: any) => {
         console.log(res, 'insert response');
@@ -692,9 +631,12 @@ export class UserListComponent {
     }
   }
 
-  openPopup() {
+  openPopup =()=> {
     this.addPopup = true;
     this.validation = false;
+    setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  });
     this.formsource.reset({
       Inactive: '',
       AddInvoice: '',
@@ -702,8 +644,8 @@ export class UserListComponent {
       CancelInvoice: '',
       DepartmentId: null,
       HospitalId: '',
-      Menu: [''],
     });
+    
   }
 
   onAddPopupClose() {
@@ -714,7 +656,7 @@ export class UserListComponent {
 
   editData() {
     console.log('Edit Button Clicked');
-
+const validationResult = this.formValidationGroup?.instance?.validate();
     // Extract values from the form
     const Id = this.formsource.get('ID')?.value;
     const Login_name = this.formsource.get('LoginName')?.value?.trim();
@@ -806,15 +748,7 @@ export class UserListComponent {
       return;
     }
 
-    // 🚫 New condition: Hospital User must select hospital
-    // if (Usertype === 4 && !Department_Id) {
-    //   notify({
-    //     message: 'Please select the department',
-    //     position: { at: 'top right', my: 'top right' },
-    //     displayTime: 1500,
-    //   }, 'error');
-    //   return;
-    // }
+
 
     if (Usertype === 4 && (!Department_Id || Department_Id === 0)) {
       notify(
@@ -937,6 +871,8 @@ export class UserListComponent {
     ReactiveFormsModule,
     DxTabPanelModule,
     DxTreeListModule,
+    DxValidationGroupModule,
+
   ],
   providers: [],
   exports: [UserListComponent],

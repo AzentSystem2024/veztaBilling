@@ -42,7 +42,11 @@
     ></dxo-pager>
 
 
-<dxo-filter-row [visible]="showFilterRow" [applyFilter]="currentFilter"></dxo-filter-row>
+<dxo-filter-row
+      [visible]="isFilterRowVisible"
+      [applyFilter]="auto"
+    ></dxo-filter-row>
+
 
     <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
@@ -65,20 +69,40 @@
       </dxo-popup>
     </dxo-editing>
 
+
     <dxo-toolbar>
       <dxi-item
         location="before"
         text="Users"
       ></dxi-item>
 
-      <dxi-item location="after" locateInMenu="auto">
-        <dx-button
-          icon="plus"
-          type="default"
-          stylingMode="contained"
-          (onClick)="openPopup()"
-        ></dx-button>
-      </dxi-item>
+<dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon: isFilterRowVisible ? 'filter' : 'filter',
+          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+          onClick: toggleFilterRow,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
+
+      <dxi-item
+        location="after"
+        locateInMenu="auto"
+        showText="inMenu"
+        widget="dxButton"
+        [options]="{
+          icon:'plus',
+          hint: 'Add popup',
+          onClick: openPopup,
+          stylingMode: 'text',
+          elementAttr: { class: 'commonButtons' }
+        }"
+      ></dxi-item>
     </dxo-toolbar>
  
     <dxi-column
@@ -128,14 +152,18 @@
    <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
 <dxi-item title="General">
   <div class="tab-content"  style="display: flex;" >
-  <dx-form [formGroup]="formsource" width="600">
+    <dx-validation-group #formValidationGroup>
+  <dx-form [formGroup]="formsource" width="580">
     <dxi-item class="fields">
       <dx-text-box
         type="text"
         formControlName="UserName"
         class="form-control mt-1"
         label="UserName"
-        labelMode="floating"></dx-text-box>
+        labelMode="floating">
+       <dx-validator>
+          <dxi-validation-rule type="required" message="User Name is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
     </dxi-item>
     <dxi-item class="fields">
       <dx-text-box
@@ -144,7 +172,10 @@
         class="form-control mt-1"
         label="LoginName"
         labelMode="floating"
-      ></dx-text-box>
+      >
+    <dx-validator>
+          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
     </dxi-item>
 
 <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
@@ -171,7 +202,9 @@
           }
         }
       ]"> 
-    
+    <dx-validator>
+          <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-text-box> 
      </dxi-item> 
 
@@ -199,6 +232,15 @@
         }
       ]"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
+       </dx-validator>   <dx-validator> <dxi-validation-rule
+        type="custom"
+        [validationCallback]="validatePasswordMatch.bind(this)"
+        message="Passwords do not match">
+      </dxi-validation-rule>
+        </dx-validator>
+        
     </dx-text-box>
     </dxi-item>
    </dxi-item>
@@ -244,6 +286,9 @@
         [items]="usertype_list"
         (onValueChanged)="onUserTypeChange($event)"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="User Type is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-select-box
     ></dxi-item>
 
@@ -268,6 +313,9 @@
         formControlName="HospitalId"
        (onValueChanged)="onHospitalValue($event)"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-select-box>
     </dxi-item> 
 
@@ -296,10 +344,10 @@
       </dx-select-box>
     </dxi-item> 
   </dxi-item>   
-
-
-          
-  </dx-form>
+      
+   
+    </dx-form>
+    </dx-validation-group>
   </div>
   </dxi-item>
 
@@ -357,14 +405,18 @@
     <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
 <dxi-item title="General">
   <div class="tab-content" style="display: flex;" >
-  <dx-form [formGroup]="formsource" width="600px">
+    <dx-validation-group #formValidationGroup>
+  <dx-form [formGroup]="formsource" width="580px">
     <dxi-item class="fields">
       <dx-text-box
         type="text"
         formControlName="UserName"
         class="form-control mt-1"
         label="UserName"
-        labelMode="floating"></dx-text-box>
+        labelMode="floating">
+      <dx-validator>
+          <dxi-validation-rule type="required" message="User Name is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
     </dxi-item>
     <dxi-item class="fields">
       <dx-text-box
@@ -373,7 +425,10 @@
         class="form-control mt-1"
         label="LoginName"
         labelMode="floating"
-      ></dx-text-box>
+      >
+    <dx-validator>
+          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
     </dxi-item>
 
 
@@ -401,7 +456,9 @@
           }
         }
       ]"> 
-    
+    <dx-validator>
+          <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-text-box> 
      </dxi-item> 
 
@@ -429,6 +486,9 @@
         }
       ]"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
+        </dx-validator>
     </dx-text-box>
     </dxi-item>
     </dxi-item>
@@ -469,6 +529,9 @@
         [items]="usertype_list"
         (onValueChanged)="onUserTypeChange($event)"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="User Type is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-select-box
     ></dxi-item>
 
@@ -492,6 +555,9 @@
         [searchEnabled]="true"
        (onValueChanged)="onHospitalValue($event)"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Hospital is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-select-box>
     </dxi-item> 
     <!-- DROPDOWN DEPARTMENt -->
@@ -511,13 +577,16 @@
         [searchEnabled]="true"
         formControlName="DepartmentId"
       >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Department is required"></dxi-validation-rule>
+        </dx-validator>
       </dx-select-box>
     </dxi-item> 
     </dxi-item> 
 
   
   </dx-form>
-  
+  </dx-validation-group>
 </div></dxi-item>   
 
  <!-- SECOND TAB -->
