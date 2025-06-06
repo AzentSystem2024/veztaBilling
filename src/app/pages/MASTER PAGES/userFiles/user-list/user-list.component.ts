@@ -408,44 +408,44 @@ export class UserListComponent {
 
     this.dataservice.get_usermenu_Api(userId).subscribe((response: any) => {
       // console.log(response,'usermenu response');
-      this.Usermenu = this.transformMenuToFlatTreeWithContinuousIDs(response);
+      this.Usermenu = response;
       console.log(this.Usermenu, 'usermenu response');
     });
   }
 
   //============ change the format of menu item list to the plan structure =========
-  transformMenuToFlatTreeWithContinuousIDs(data) {
-    const result = [];
-    const mainMenuMap = new Map();
-    let currentId = 1;
+  // transformMenuToFlatTreeWithContinuousIDs(data) {
+  //   const result = [];
+  //   const mainMenuMap = new Map();
+  //   let currentId = 1;
 
-    data.forEach((item) => {
-      if (!mainMenuMap.has(item.MAIN_MENU_ID)) {
-        mainMenuMap.set(item.MAIN_MENU_ID, currentId);
-        result.push({
-          ID: currentId,
-          Head_ID: null,
-          Name: item.MAIN_MENU_NAME,
-          Main_Name: item.MAIN_MENU_NAME,
-          Selected: 0,
-        });
-        currentId++;
-      }
-    });
+  //   data.forEach((item) => {
+  //     if (!mainMenuMap.has(item.MAIN_MENU_ID)) {
+  //       mainMenuMap.set(item.MAIN_MENU_ID, currentId);
+  //       result.push({
+  //         ID: currentId,
+  //         Head_ID: null,
+  //         Name: item.MAIN_MENU_NAME,
+  //         Main_Name: item.MAIN_MENU_NAME,
+  //         Selected: 0,
+  //       });
+  //       currentId++;
+  //     }
+  //   });
 
-    data.forEach((item) => {
-      result.push({
-        ID: currentId,
-        Head_ID: mainMenuMap.get(item.MAIN_MENU_ID),
-        Name: item.MENU_NAME,
-        Main_Name: item.MAIN_MENU_NAME,
-        Selected: item.SELECTED,
-      });
-      currentId++;
-    });
+  //   data.forEach((item) => {
+  //     result.push({
+  //       ID: currentId,
+  //       Head_ID: mainMenuMap.get(item.MAIN_MENU_ID),
+  //       Name: item.MENU_NAME,
+  //       Main_Name: item.MAIN_MENU_NAME,
+  //       Selected: item.SELECTED,
+  //     });
+  //     currentId++;
+  //   });
 
-    return result;
-  }
+  //   return result;
+  // }
 
   onSelectionChanged(e: any) {
     this.selectedKeys = e.component.getSelectedRowKeys(); // array of selected IDs
@@ -461,7 +461,7 @@ export class UserListComponent {
 
 
   addData() {
-    this.validation = true;
+    // this.validation = true;
     const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
     console.log('Button Clicked');
     console.log(this.formsource, 'reset');
@@ -527,17 +527,6 @@ export class UserListComponent {
       MENUS: Menu,
     };
 
-    // if (!User_name || !Login_name || !Login_password || !Usertype) {
-    //   notify(
-    //     {
-    //       message: 'Please fill the field.',
-    //       position: { at: 'top right', my: 'top right' },
-    //       displayTime: 1000,
-    //     },
-    //     'error'
-    //   );
-    //   return; // Stop further execution
-    // }
     
 
     // 🚫 New condition: Hospital User must select hospital

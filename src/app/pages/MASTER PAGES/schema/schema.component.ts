@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxTextBoxModule, DxValidationGroupComponent, DxValidationGroupModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import { Router, NavigationStart } from '@angular/router';
@@ -15,7 +15,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./schema.component.scss']
 })
 export class SchemaComponent { 
-
+@ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
   dataSource: any = [];
 
   PopupWidth = 400;
@@ -87,6 +87,9 @@ onDiscountChange(event: any) {
 
 openPopup=()=>{
   this.addPopup = true;
+  setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  });
   this.formsource.reset({
     Inactive: ""
   });
@@ -148,23 +151,12 @@ this.dataservice.get_SchemaData_List().subscribe((response:any)=>{
 
 
 addData(){
-
+ const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
   const Schema = this.formsource.value.Schema
   const Discount = this.formsource.value.Discount
   const Inactive =this.formsource.value.Inactive
 
-   if (!Schema || !Discount) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
-
+   
 
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
@@ -221,22 +213,11 @@ return data.SCHEMA_NAME?.toLowerCase() === Schema.toLowerCase()
 
 
 editData(){
+   const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
 const ID = this.formsource.value.Id
 const Schema = this.formsource.value.Schema
 const Discount = this.formsource.value.Discount
 const Inactive =this.formsource.value.Inactive
-
-if (!Schema || !Discount) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.SCHEMA_NAME.toLowerCase() === Schema.toLowerCase()  && data.ID !== ID //Exclude the current hospital
@@ -302,7 +283,7 @@ toggleFilterRow = () => {
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxTextBoxModule ,DxButtonModule,DxValidatorModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule, DxTextBoxModule ,DxButtonModule,DxValidatorModule,DxValidationGroupModule, CommonModule, DxNumberBoxModule,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [SchemaComponent],

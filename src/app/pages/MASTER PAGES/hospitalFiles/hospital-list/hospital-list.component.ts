@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxToolbarModule, DxValidatorModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridComponent, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxToolbarModule, DxValidationGroupComponent, DxValidationGroupModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -24,7 +24,7 @@ onEditingStart(event : any) {
     this.editPopup=true;
     this.select_Hospital_Data(event)
 }
-  
+  @ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
 @ViewChild(DxDataGridComponent, { static: true })
     
   dataGrid!: DxDataGridComponent;
@@ -53,6 +53,9 @@ auto: string = 'auto';
 
 openPopup=()=>{
   this.addPopup=true
+   setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  });
   this.formsource.reset({
     Inactive: "" // Set the checkbox back to unchecked
   });
@@ -164,21 +167,22 @@ this.dataservice.get_HospitalData_List().subscribe((response:any)=>{
 }
 
 addData(){
+  const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
   const Hospital = this.formsource.value.Hospital
   const Inactive =this.formsource.value.Inactive
 
   
-if (!Hospital) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
+// if (!Hospital) {
+//     notify(
+//       {
+//         message: 'Please fill the field.',
+//         position: { at: 'top right', my: 'top right' },
+//         displayTime: 1000,
+//       },
+//       'error'
+//     );
+//     return; // Stop further execution
+//   }
 
   // Convert Inactive to boolean
   const isInactiveBoolean = Inactive === 'true' || Inactive === true;
@@ -226,22 +230,11 @@ isfilterButton(){
   }
 
 editData(){
+  const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
 const ID = this.formsource.value.Id
 const Hospital = this.formsource.value.Hospital
 const Inactive =this.formsource.value.Inactive
 
-
-if (!Hospital) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.HOSPITAL_NAME.toLowerCase() === Hospital.toLowerCase() && data.ID !== ID //Exclude the current hospital
@@ -326,7 +319,7 @@ toggleFilterRow = () => {
 @NgModule({
   imports: [
     DxDataGridModule, DxButtonModule,CommonModule,DxValidatorModule ,DxTextBoxModule,DxPopupModule, 
-    DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,DxToolbarModule,
+    DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,DxToolbarModule,DxValidationGroupModule,
 ],
   providers: [],
   exports: [HospitalListComponent],

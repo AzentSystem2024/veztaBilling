@@ -154,11 +154,15 @@
     [shading]="true"               
   [hideOnOutsideClick]="false"
     >
+    <dx-validation-group #formValidationGroup>
     <dx-form [formGroup]="formsource" class="mt-3">
       
       <dxi-item>
         <dx-text-box
-        formControlName="Schema" label="SchemaName" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
+        formControlName="Schema" label="SchemaName" class=" form-control" type="text"  labelMode="floating" >
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Schema is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
       <!-- </input> -->
       </dxi-item>
      
@@ -168,6 +172,9 @@
     [max]="100"
     [showSpinButtons]="true"
   >
+  <dx-validator>
+          <dxi-validation-rule type="required" message="Discount is required"></dxi-validation-rule>
+        </dx-validator>
 </dx-number-box>
       </dxi-item>
 
@@ -178,7 +185,7 @@
               </div>
         </dxi-item>
     </dx-form>
-     
+     </dx-validation-group>
     </dx-popup>
 
 
@@ -195,15 +202,23 @@
         [shading]="true"               
   [hideOnOutsideClick]="false"
       >
+      <dx-validation-group #formValidationGroup>
         <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <dx-text-box formControlName="Schema" label="Schema" class=" form-control" type="text" labelMode="floating"></dx-text-box>
+            <dx-text-box formControlName="Schema" label="Schema" class=" form-control" type="text" labelMode="floating">
+              <dx-validator>
+          <dxi-validation-rule type="required" message="Schema is required"></dxi-validation-rule>
+        </dx-validator>
+            </dx-text-box>
           </dxi-item>
 
           <dxi-item >
         <dx-number-box
          [(value)]="formsource.get('Discount').value"
-  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" label="Discount" labelMode="floating"></dx-number-box>
+  (onValueChanged)="onDiscountChange($event)" class=" form-control mt-3" type="text" label="Discount" labelMode="floating">
+        <dx-validator>
+          <dxi-validation-rule type="required" message="Discount is required"></dxi-validation-rule>
+        </dx-validator></dx-number-box>
         </dxi-item>
         
           <dxi-item>
@@ -223,4 +238,5 @@
             <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
         </dx-form>
+        </dx-validation-group>
       </dx-popup>

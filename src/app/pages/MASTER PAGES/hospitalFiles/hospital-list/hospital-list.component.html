@@ -152,11 +152,14 @@
     [shading]="true"               
   [hideOnOutsideClick]="false"
     >
+    <dx-validation-group #formValidationGroup>
     <dx-form [formGroup]="formsource" class="mt-3">
       
       <dxi-item>
       <dx-text-box formControlName="Hospital" label="Hospital Name" class=" form-control" type="text" labelMode="floating">
-      </dx-text-box>
+      <dx-validator>
+          <dxi-validation-rule type="required" message="Hospital is required"></dxi-validation-rule>
+        </dx-validator></dx-text-box>
       </dxi-item>
 
       <dxi-item>
@@ -166,7 +169,7 @@
               </div>
               </dxi-item>
     </dx-form>
-     
+     </dx-validation-group>
     </dx-popup>
     
     <!-- Edit hospital -->
@@ -182,9 +185,14 @@
         [shading]="true"               
   [hideOnOutsideClick]="false"
       >
+       <dx-validation-group #formValidationGroup>
         <dx-form [formGroup]="formsource" class="mt-3">
           <dxi-item>
-            <dx-text-box formControlName="Hospital" label="Hospital Name" class=" form-control" type="text"  labelMode="floating" ></dx-text-box>
+            <dx-text-box formControlName="Hospital" label="Hospital Name" class=" form-control" type="text"  labelMode="floating" >
+              <dx-validator>
+          <dxi-validation-rule type="required" message="Hospital is required"></dxi-validation-rule>
+        </dx-validator>
+            </dx-text-box>
           </dxi-item>
       
           <dxi-item>
@@ -204,5 +212,6 @@
             <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
           </dxi-item>
         </dx-form>
+        </dx-validation-group>
       </dx-popup>
     

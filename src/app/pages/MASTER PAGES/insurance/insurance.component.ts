@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxFormModule, DxPopupModule, DxTextBoxModule, DxValidationGroupComponent, DxValidationGroupModule, DxValidatorModule } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { EditingStartEvent, RowRemovedEvent } from 'devextreme/ui/data_grid';
 import notify from 'devextreme/ui/notify';
@@ -13,7 +13,7 @@ import { DataService } from 'src/app/services';
   styleUrls: ['./insurance.component.scss']
 })
 export class InsuranceComponent {
-
+@ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
   PopupWidth = 400;
    Insurance_Value: any;
    Status: any;
@@ -29,6 +29,9 @@ auto: string = 'auto';
 isFilterRowVisible :boolean=false
   openPopup=()=>{
   this.addPopup = true
+  setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  });
   this.formsource.reset({
     Inactive: ""
   });
@@ -154,22 +157,11 @@ if(ID){
 }
 
 addData(){
+  const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
   const Insurance = this.formsource.value.Insurance
   const Inactive =this.formsource.value.Inactive
    const isInactiveBoolean = Inactive === 'true' || Inactive === true;
 
-   
-if (!Insurance) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
   
 const isDuplicate = this.dataSource.some((data:any)=>{
 return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase()
@@ -207,22 +199,11 @@ return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase()
 }
 
 editData(){
+  const validationResult = this.formValidationGroup?.instance?.validate(); // Call DevExtreme validation
 const ID = this.formsource.value.Id
 const Insurance = this.formsource.value.Insurance
 const Inactive =this.formsource.value.Inactive
 
-
-if (!Insurance) {
-    notify(
-      {
-        message: 'Please fill the field.',
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 1000,
-      },
-      'error'
-    );
-    return; // Stop further execution
-  }
 
 const isDuplicate = this.dataSource.some((data:any)=>{
   return data.INSURANCE_NAME.toLowerCase() === Insurance.toLowerCase() && data.ID !== ID //Exclude the current hospital
@@ -268,7 +249,7 @@ toggleFilterRow = () => {
 
 @NgModule({
   imports: [
-    DxDataGridModule, DxButtonModule,DxTextBoxModule ,CommonModule ,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
+    DxDataGridModule,DxValidatorModule, DxValidationGroupModule,DxButtonModule,DxTextBoxModule ,CommonModule ,DxPopupModule, DxFormModule, DxCheckBoxModule, DxoToolbarModule, ReactiveFormsModule,
 ],
   providers: [],
   exports: [InsuranceComponent],

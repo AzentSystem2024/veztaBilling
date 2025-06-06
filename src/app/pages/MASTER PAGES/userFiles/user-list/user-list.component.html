@@ -1,5 +1,4 @@
 <div class="view-wrapper list-page">
-  
   <dx-data-grid
     #gridRef
     id="dataGrid"
@@ -12,8 +11,13 @@
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
     (onEditingStart)="onEditingStart($event)"
-     (onRowRemoved)="deleteData($event)"
-   [loadPanel]="{ enabled: true, text: 'Loading...', showIndicator: true, showPane: true }"
+    (onRowRemoved)="deleteData($event)"
+    [loadPanel]="{
+      enabled: true,
+      text: 'Loading...',
+      showIndicator: true,
+      showPane: true
+    }"
     [elementAttr]="{ class: 'custom-popup' }"
     [pager]="{
       showInfo: true,
@@ -23,11 +27,7 @@
   >
     <dxo-scrolling mode="standard"></dxo-scrolling>
     <!-- export -->
-    <dxo-export
-      [enabled]="true"
-      [formats]="['xlsx', 'pdf']"
-    >
-    </dxo-export>
+    <dxo-export [enabled]="true" [formats]="['xlsx', 'pdf']"> </dxo-export>
 
     <dxo-search-panel
       [visible]="true"
@@ -41,12 +41,10 @@
       [allowedPageSizes]="[10, 20, 30, 40]"
     ></dxo-pager>
 
-
-<dxo-filter-row
+    <dxo-filter-row
       [visible]="isFilterRowVisible"
       [applyFilter]="auto"
     ></dxo-filter-row>
-
 
     <dxo-header-filter [visible]="true">
       <dxo-search [enabled]="true"></dxo-search>
@@ -69,14 +67,10 @@
       </dxo-popup>
     </dxo-editing>
 
-
     <dxo-toolbar>
-      <dxi-item
-        location="before"
-        text="Users"
-      ></dxi-item>
+      <dxi-item location="before" text="Users"></dxi-item>
 
-<dxi-item
+      <dxi-item
         location="after"
         locateInMenu="auto"
         showText="inMenu"
@@ -96,7 +90,7 @@
         showText="inMenu"
         widget="dxButton"
         [options]="{
-          icon:'plus',
+          icon: 'plus',
           hint: 'Add popup',
           onClick: openPopup,
           stylingMode: 'text',
@@ -104,7 +98,7 @@
         }"
       ></dxi-item>
     </dxo-toolbar>
- 
+
     <dxi-column
       dataField="SlNo"
       [width]="80"
@@ -112,11 +106,10 @@
       [allowEditing]="false"
       alignment="left"
     >
-      
     </dxi-column>
     <dxi-column dataField="USER_NAME" caption="User Name"></dxi-column>
     <dxi-column dataField="LOGIN_NAME" caption="Login Name"></dxi-column>
-    
+
     <dxi-column
       dataField="IS_INACTIVE"
       caption="Status"
@@ -127,7 +120,7 @@
         class="fas fa-flag"
         [ngClass]="getStatusFlagClass(cellData.value)"
         [attr.title]="cellData.value"
-        style="margin-left: 10px; cursor: default;"
+        style="margin-left: 10px; cursor: default"
       ></i>
     </div>
   </dx-data-grid>
@@ -142,112 +135,127 @@
   [shading]="false"
   [showCloseButton]="true"
   (onHiding)="onAddPopupClose()"
-  [shading]="true"               
+  [shading]="true"
   [hideOnOutsideClick]="false"
 >
-
-
- 
   <!-- INPUT FIELD -->
-   <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
-<dxi-item title="General">
-  <div class="tab-content"  style="display: flex;" >
-    <dx-validation-group #formValidationGroup>
-  <dx-form [formGroup]="formsource" width="580">
-    <dxi-item class="fields">
-      <dx-text-box
-        type="text"
-        formControlName="UserName"
-        class="form-control mt-1"
-        label="UserName"
-        labelMode="floating">
-       <dx-validator>
-          <dxi-validation-rule type="required" message="User Name is required"></dxi-validation-rule>
-        </dx-validator></dx-text-box>
-    </dxi-item>
-    <dxi-item class="fields">
-      <dx-text-box
-        type="text"
-        formControlName="LoginName"
-        class="form-control mt-1"
-        label="LoginName"
-        labelMode="floating"
-      >
-    <dx-validator>
-          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
-        </dx-validator></dx-text-box>
-    </dxi-item>
+  <dx-tab-panel
+    [(selectedIndex)]="selectedTabIndex"
+    [animationEnabled]="true"
+    [width]="600"
+  >
+    <dxi-item title="General">
+      <div class="tab-content" style="display: flex">
+        <dx-validation-group #formValidationGroup>
+          <dx-form [formGroup]="formsource" width="580">
+            <dxi-item class="fields">
+              <dx-text-box
+                type="text"
+                formControlName="UserName"
+                class="form-control mt-1"
+                label="UserName"
+                labelMode="floating"
+              >
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="User Name is required"
+                  ></dxi-validation-rule> </dx-validator
+              ></dx-text-box>
+            </dxi-item>
+            <dxi-item class="fields">
+              <dx-text-box
+                type="text"
+                formControlName="LoginName"
+                class="form-control mt-1"
+                label="LoginName"
+                labelMode="floating"
+              >
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="Login Name is required"
+                  ></dxi-validation-rule> </dx-validator
+              ></dx-text-box>
+            </dxi-item>
 
-<dxi-item itemType="group" [colCount]="2" [colSpan]="2">
-    <dxi-item
+            <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
+              <dxi-item [editorOptions]="{ mode: 'password' }">
+                <dx-text-box
+                  formControlName="LoginPassword"
+                  label="Password"
+                  labelMode="floating"
+                  class="form-control mt-1"
+                  [height]="35"
+                  [inputAttr]="{ autocomplete: 'new-password' }"
+                  [mode]="passwordMode"
+                  [buttons]="[
+                    {
+                      name: 'togglePassword',
+                      location: 'after',
+                      options: {
+                        icon:
+                          passwordMode === 'password'
+                            ? 'fas fa-eye'
+                            : 'fas fa-eye-slash',
+                        stylingMode: 'text',
+                        onClick: togglePasswordVisibility
+                      }
+                    }
+                  ]"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Password is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-text-box>
+              </dxi-item>
 
-      [editorOptions]="{ mode: 'password' }"
-    >
-    <dx-text-box
-        formControlName="LoginPassword"
-        label="Password"
-        labelMode="floating"
-        class="form-control mt-1"
-        [height]="35"
-        [inputAttr]="{ autocomplete: 'new-password' }"
-        [mode]="passwordMode"
-        [buttons]="[
-        {
-          name: 'togglePassword',
-          location: 'after',
-          options: {
-            icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
-            stylingMode: 'text',
-            onClick: togglePasswordVisibility
-          }
-        }
-      ]"> 
-    <dx-validator>
-          <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-text-box> 
-     </dxi-item> 
+              <dxi-item [editorOptions]="{ mode: 'password' }">
+                <dx-text-box
+                  [mode]="confirmPasswordMode"
+                  formControlName="ConfirmPassword"
+                  label="Confirm Password"
+                  labelMode="floating"
+                  class="form-control mt-1"
+                  [height]="35"
+                  [buttons]="[
+                    {
+                      name: 'togglePassword',
+                      location: 'after',
+                      options: {
+                        icon:
+                          confirmPasswordMode === 'password'
+                            ? 'fas fa-eye'
+                            : 'fas fa-eye-slash',
+                        stylingMode: 'text',
+                        onClick: toggleConfirmPasswordVisibility
+                      }
+                    }
+                  ]"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Confirm Password is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="custom"
+                      [validationCallback]="validatePasswordMatch.bind(this)"
+                      message="Passwords do not match"
+                    >
+                    </dxi-validation-rule>
+                  </dx-validator>
+                </dx-text-box>
+              </dxi-item>
+            </dxi-item>
 
-     <dxi-item
-
-      [editorOptions]="{ mode: 'password' }"
-    >
-    
-      <dx-text-box
-        [mode]="confirmPasswordMode"
-        formControlName="ConfirmPassword"
-        label="Confirm Password"
-        labelMode="floating"
-        class="form-control mt-1"
-        [height]="35"
-        [buttons]="[
-        {
-          name: 'togglePassword',
-          location: 'after',
-          options: {
-            icon: confirmPasswordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
-            stylingMode: 'text',
-            onClick: toggleConfirmPasswordVisibility
-          }
-        }
-      ]"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
-       </dx-validator>   <dx-validator> <dxi-validation-rule
-        type="custom"
-        [validationCallback]="validatePasswordMatch.bind(this)"
-        message="Passwords do not match">
-      </dxi-validation-rule>
-        </dx-validator>
-        
-    </dx-text-box>
-    </dxi-item>
-   </dxi-item>
-
-<dxi-item class="checkbox-row" >
-
-      <!-- <dx-check-box
+            <dxi-item class="checkbox-row">
+              <!-- <dx-check-box
         class="mt-1"
         formControlName="AddInvoice"
         [elementAttr]="{ 'aria-label': 'Unchecked' }"
@@ -262,128 +270,140 @@
         id="checboxadd"
       ></dx-check-box>
 <label for="checboxadd" class="me-3" >Can View Invoice</label> -->
-      
-      <dx-check-box
-        class="mt-1"
-        formControlName="CancelInvoice"
-        [elementAttr]="{ 'aria-label': 'Unchecked' }"
-        id="checboxadd"
-      ></dx-check-box>
-      <label for="checboxadd" class="me-3" >Can Cancel Invoice</label>
-      </dxi-item>
-    
-    <!-- DROPDOWN ROLES -->
-     <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
-     <dxi-item > 
-      <dx-select-box
-        label="UserType"
-        labelMode="floating"
-        alignment="center"
-        [(value)]="selectedUserType"
-        formControlName="UserType"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        [items]="usertype_list"
-        (onValueChanged)="onUserTypeChange($event)"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="User Type is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-select-box
-    ></dxi-item>
 
+              <dx-check-box
+                class="mt-1"
+                formControlName="CancelInvoice"
+                [elementAttr]="{ 'aria-label': 'Unchecked' }"
+                id="checboxadd"
+              ></dx-check-box>
+              <label for="checboxadd" class="me-3">Can Cancel Invoice</label>
+            </dxi-item>
 
-     <!-- DROPDOWN HOSPITAL -->
+            <!-- DROPDOWN ROLES -->
+            <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
+              <dxi-item>
+                <dx-select-box
+                  label="UserType"
+                  labelMode="floating"
+                  alignment="center"
+                  [(value)]="selectedUserType"
+                  formControlName="UserType"
+                  valueExpr="ID"
+                  displayExpr="DESCRIPTION"
+                  [items]="usertype_list"
+                  (onValueChanged)="onUserTypeChange($event)"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="User Type is required"
+                    ></dxi-validation-rule>
+                  </dx-validator> </dx-select-box
+              ></dxi-item>
 
-     <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) --> 
-     <dxi-item>
-      <dx-select-box
-        [showClearButton]="true"
-        [visible]="selectedUserType===3 || selectedUserType===4"
-        [items]="hospital_list"
-        valueExpr="ID"
-        [(value)]="selectedHospitalId"
-        displayExpr="DESCRIPTION"
-        label="Select Hospital"
-        labelMode="floating"
-        labelLocation="left"
-        [showSelectionControls]="true"
-        applyValueMode="instantly"
-        [searchEnabled]="true"
-        formControlName="HospitalId"
-       (onValueChanged)="onHospitalValue($event)"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-select-box>
-    </dxi-item> 
+              <!-- DROPDOWN HOSPITAL -->
 
+              <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) -->
+              <dxi-item>
+                <dx-select-box
+                  [showClearButton]="true"
+                  [visible]="selectedUserType === 3 || selectedUserType === 4"
+                  [items]="hospital_list"
+                  valueExpr="ID"
+                  [(value)]="selectedHospitalId"
+                  displayExpr="DESCRIPTION"
+                  label="Select Hospital"
+                  labelMode="floating"
+                  labelLocation="left"
+                  [showSelectionControls]="true"
+                  applyValueMode="instantly"
+                  [searchEnabled]="true"
+                  formControlName="HospitalId"
+                  (onValueChanged)="onHospitalValue($event)"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Login Name is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-select-box>
+              </dxi-item>
 
+              <!-- DROPDOWN DEPARTMENt -->
 
-    <!-- DROPDOWN DEPARTMENt -->
+              <!-- Department Dropdown (Visible Only When "Hospital" is Selected) -->
+              <dxi-item>
+                <dx-select-box
+                  [showClearButton]="true"
+                  [visible]="selectedUserType === 4"
+                  [items]="department_list"
+                  valueExpr="ID"
+                  [(value)]="selectedDepartmentId"
+                  displayExpr="DESCRIPTION"
+                  label="Select Department"
+                  labelMode="floating"
+                  labelLocation="left"
+                  [showSelectionControls]="true"
+                  applyValueMode="instantly"
+                  [searchEnabled]="true"
+                  formControlName="DepartmentId"
+                >
+                </dx-select-box>
+              </dxi-item>
+            </dxi-item>
+          </dx-form>
+        </dx-validation-group>
+      </div>
+    </dxi-item>
 
-    <!-- Department Dropdown (Visible Only When "Hospital" is Selected) -->
-    <dxi-item>
-      <dx-select-box
-        [showClearButton]="true"
-        [visible]="selectedUserType===4"
-        [items]="department_list"
-        valueExpr="ID"
-        [(value)]="selectedDepartmentId"
-        displayExpr="DESCRIPTION"
-        label="Select Department"
-        labelMode="floating"
-        labelLocation="left"
-        [showSelectionControls]="true"
-        applyValueMode="instantly"
-        [searchEnabled]="true"
-        formControlName="DepartmentId"
-        
-      >
-      </dx-select-box>
-    </dxi-item> 
-  </dxi-item>   
-      
-   
-    </dx-form>
-    </dx-validation-group>
-  </div>
+    <!-- SECOND TAB -->
+    <dxi-item title="Menu Access">
+      <div class="tab-content">
+        <dx-tree-list
+          [dataSource]="Usermenu"
+          keyExpr="MENU_ID"
+          [columnAutoWidth]="true"
+          [wordWrapEnabled]="true"
+          [showBorders]="true"
+          width="580px"
+          height="257px"
+          (onSelectionChanged)="onSelectionChanged($event)"
+        >
+          <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
+
+          <dxi-column
+            dataField="MENU_NAME"
+            caption="Menu"
+            [width]="'300'"
+          ></dxi-column>
+          <dxi-column
+            dataField="MAIN_MENU_NAME"
+            caption="Menu Group"
+            [width]="'250'"
+          ></dxi-column>
+        </dx-tree-list>
+      </div>
+    </dxi-item>
+  </dx-tab-panel>
+  <!-- BUTTONS -->
+  <dxi-item class="d-flex justify-content-end mt-1">
+    <button
+      class="btn me-1 text-dark border border-1 equal-button"
+      (click)="closePop()"
+    >
+      Cancel
+    </button>
+    <dx-button
+      class="equal-button"
+      text="Save"
+      type="default"
+      stylingMode="contained"
+      (onClick)="addData()"
+    ></dx-button>
   </dxi-item>
-
-
-   <!-- SECOND TAB -->
-<dxi-item title="Menu Access">
-<div class="tab-content">
- <dx-tree-list
-  [dataSource]="Usermenu"
-  keyExpr="ID"
-  parentIdExpr="Head_ID"
-  [columnAutoWidth]="true"
-  [wordWrapEnabled]="true"
-  [showBorders]="true"
-    width="580px"
-  height="257px"
-   (onSelectionChanged)="onSelectionChanged($event)"
->
-  <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
-
-  <dxi-column dataField="Name" [width]="'auto'"></dxi-column>
-
-</dx-tree-list>
-  </div>
-</dxi-item>   
- 
-
-   </dx-tab-panel> 
-    <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-1">
-            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
-              Cancel
-            </button>
-            <dx-button class="equal-button" text="Save" type="default" stylingMode="contained" (onClick)="addData()"></dx-button>
-          </dxi-item>
-</dx-popup> 
+</dx-popup>
 
 <!-- ===================Update User========== -->
 <dx-popup
@@ -395,237 +415,262 @@
   [showCloseButton]="true"
   [shading]="false"
   (onHidden)="closePop()"
-  [shading]="true"               
+  [shading]="true"
   [hideOnOutsideClick]="false"
-> 
-
-
- 
+>
   <!-- INPUT FIELD -->
-    <dx-tab-panel [(selectedIndex)]="selectedTabIndex" [animationEnabled]="true" [width]="600">
-<dxi-item title="General">
-  <div class="tab-content" style="display: flex;" >
-    <dx-validation-group #formValidationGroup>
-  <dx-form [formGroup]="formsource" width="580px">
-    <dxi-item class="fields">
-      <dx-text-box
-        type="text"
-        formControlName="UserName"
-        class="form-control mt-1"
-        label="UserName"
-        labelMode="floating">
-      <dx-validator>
-          <dxi-validation-rule type="required" message="User Name is required"></dxi-validation-rule>
-        </dx-validator></dx-text-box>
-    </dxi-item>
-    <dxi-item class="fields">
-      <dx-text-box
-        type="text"
-        formControlName="LoginName"
-        class="form-control mt-1"
-        label="LoginName"
-        labelMode="floating"
-      >
-    <dx-validator>
-          <dxi-validation-rule type="required" message="Login Name is required"></dxi-validation-rule>
-        </dx-validator></dx-text-box>
-    </dxi-item>
+  <dx-tab-panel
+    [(selectedIndex)]="selectedTabIndex"
+    [animationEnabled]="true"
+    [width]="600"
+  >
+    <dxi-item title="General">
+      <div class="tab-content" style="display: flex">
+        <dx-validation-group #formValidationGroup>
+          <dx-form [formGroup]="formsource" width="580px">
+            <dxi-item class="fields">
+              <dx-text-box
+                type="text"
+                formControlName="UserName"
+                class="form-control mt-1"
+                label="UserName"
+                labelMode="floating"
+              >
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="User Name is required"
+                  ></dxi-validation-rule> </dx-validator
+              ></dx-text-box>
+            </dxi-item>
+            <dxi-item class="fields">
+              <dx-text-box
+                type="text"
+                formControlName="LoginName"
+                class="form-control mt-1"
+                label="LoginName"
+                labelMode="floating"
+              >
+                <dx-validator>
+                  <dxi-validation-rule
+                    type="required"
+                    message="Login Name is required"
+                  ></dxi-validation-rule> </dx-validator
+              ></dx-text-box>
+            </dxi-item>
 
+            <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
+              <dxi-item [editorOptions]="{ mode: 'password' }">
+                <dx-text-box
+                  formControlName="LoginPassword"
+                  label="Password"
+                  labelMode="floating"
+                  class="form-control mt-1"
+                  [height]="35"
+                  [inputAttr]="{ autocomplete: 'new-password' }"
+                  [mode]="passwordMode"
+                  [buttons]="[
+                    {
+                      name: 'togglePassword',
+                      location: 'after',
+                      options: {
+                        icon:
+                          passwordMode === 'password'
+                            ? 'fas fa-eye'
+                            : 'fas fa-eye-slash',
+                        stylingMode: 'text',
+                        onClick: togglePasswordVisibility
+                      }
+                    }
+                  ]"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Password is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-text-box>
+              </dxi-item>
 
-    <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
-    <dxi-item
+              <dxi-item [editorOptions]="{ mode: 'password' }">
+                <dx-text-box
+                  [mode]="confirmPasswordMode"
+                  formControlName="ConfirmPassword"
+                  label="Confirm Password"
+                  labelMode="floating"
+                  class="form-control mt-1"
+                  [height]="35"
+                  [buttons]="[
+                    {
+                      name: 'togglePassword',
+                      location: 'after',
+                      options: {
+                        icon:
+                          confirmPasswordMode === 'password'
+                            ? 'fas fa-eye'
+                            : 'fas fa-eye-slash',
+                        stylingMode: 'text',
+                        onClick: toggleConfirmPasswordVisibility
+                      }
+                    }
+                  ]"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Confirm Password is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-text-box>
+              </dxi-item>
+            </dxi-item>
 
-      [editorOptions]="{ mode: 'password' }"
-    >
-    <dx-text-box
-        formControlName="LoginPassword"
-        label="Password"
-        labelMode="floating"
-        class="form-control mt-1"
-        [height]="35"
-        [inputAttr]="{ autocomplete: 'new-password' }"
-        [mode]="passwordMode"
-        [buttons]="[
-        {
-          name: 'togglePassword',
-          location: 'after',
-          options: {
-            icon: passwordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
-            stylingMode: 'text',
-            onClick: togglePasswordVisibility
-          }
-        }
-      ]"> 
-    <dx-validator>
-          <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-text-box> 
-     </dxi-item> 
+            <!-- ACTIVE CHECKBOX -->
+            <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
+              <dxi-item class="checkbox-row">
+                <dx-check-box
+                  formControlName="Inactive"
+                  class="mt-2"
+                  [elementAttr]="{ 'aria-label': 'Unchecked' }"
+                  id="checkboxadd"
+                ></dx-check-box>
+                <label for="checboxadd" class="me-3">Inactive</label>
+              </dxi-item>
 
-     <dxi-item
+              <dxi-item class="checkbox-row">
+                <dx-check-box
+                  class="mt-1"
+                  formControlName="CancelInvoice"
+                  [elementAttr]="{ 'aria-label': 'Unchecked' }"
+                  id="checboxadd"
+                ></dx-check-box>
+                <label for="checboxadd" class="me-3">Can Cancel Invoice</label>
+              </dxi-item>
+            </dxi-item>
 
-      [editorOptions]="{ mode: 'password' }"
-    >
-    
-      <dx-text-box
-        [mode]="confirmPasswordMode"
-        formControlName="ConfirmPassword"
-        label="Confirm Password"
-        labelMode="floating"
-        class="form-control mt-1"
-        [height]="35"
-        [buttons]="[
-        {
-          name: 'togglePassword',
-          location: 'after',
-          options: {
-            icon: confirmPasswordMode === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash',
-            stylingMode: 'text',
-            onClick: toggleConfirmPasswordVisibility
-          }
-        }
-      ]"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="Confirm Password is required"></dxi-validation-rule>
-        </dx-validator>
-    </dx-text-box>
-    </dxi-item>
-    </dxi-item>
+            <!-- DROPDOWN ROLES -->
+            <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
+              <dxi-item>
+                <dx-select-box
+                  label="UserType"
+                  labelMode="floating"
+                  alignment="center"
+                  formControlName="UserType"
+                  valueExpr="ID"
+                  displayExpr="DESCRIPTION"
+                  [items]="usertype_list"
+                  (onValueChanged)="onUserTypeChange($event)"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="User Type is required"
+                    ></dxi-validation-rule>
+                  </dx-validator> </dx-select-box
+              ></dxi-item>
 
-     <!-- ACTIVE CHECKBOX -->
-      <dxi-item itemType="group" [colCount]="2" [colSpan]="2">
-    <dxi-item class="checkbox-row">
-      <dx-check-box
-        formControlName="Inactive"
-        class="mt-2"
-        [elementAttr]="{ 'aria-label': 'Unchecked' }"
-        id="checkboxadd"
-      ></dx-check-box>
-      <label for="checboxadd" class="me-3">Inactive</label>
-    </dxi-item>
-   
-<dxi-item class="checkbox-row" >
-      <dx-check-box
-        class="mt-1"
-        formControlName="CancelInvoice"
-        [elementAttr]="{ 'aria-label': 'Unchecked' }"
-        id="checboxadd"
-      ></dx-check-box>
-      <label for="checboxadd" class="me-3" >Can Cancel Invoice</label>
-      </dxi-item>
-      </dxi-item>
-    
-    <!-- DROPDOWN ROLES -->
-     <dxi-item itemType="group" [colCount]="3" [colSpan]="3">
-     <dxi-item > 
-      <dx-select-box
-        label="UserType"
-        labelMode="floating"
-        alignment="center"
-        formControlName="UserType"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        [items]="usertype_list"
-        (onValueChanged)="onUserTypeChange($event)"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="User Type is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-select-box
+              <!-- DROPDOWN HOSPITAL -->
+
+              <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) -->
+              <dxi-item>
+                <dx-select-box
+                  [showClearButton]="true"
+                  [visible]="selectedUserType === 3 || selectedUserType === 4"
+                  [items]="hospital_list"
+                  valueExpr="ID"
+                  displayExpr="DESCRIPTION"
+                  label="Select Hospital"
+                  labelMode="floating"
+                  formControlName="HospitalId"
+                  labelLocation="left"
+                  [showSelectionControls]="true"
+                  applyValueMode="instantly"
+                  [searchEnabled]="true"
+                  (onValueChanged)="onHospitalValue($event)"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Hospital is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-select-box>
+              </dxi-item>
+              <!-- DROPDOWN DEPARTMENt -->
+              <!-- Department Dropdown (Visible Only When "Hospital" is Selected) -->
+              <dxi-item>
+                <dx-select-box
+                  [showClearButton]="true"
+                  [visible]="selectedUserType === 4"
+                  [items]="department_list"
+                  valueExpr="ID"
+                  displayExpr="DESCRIPTION"
+                  label="Select Department"
+                  labelMode="floating"
+                  labelLocation="left"
+                  [showSelectionControls]="true"
+                  applyValueMode="instantly"
+                  [searchEnabled]="true"
+                  formControlName="DepartmentId"
+                >
+                  <dx-validator>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Department is required"
+                    ></dxi-validation-rule>
+                  </dx-validator>
+                </dx-select-box>
+              </dxi-item>
+            </dxi-item>
+          </dx-form>
+        </dx-validation-group></div
     ></dxi-item>
 
+    <!-- SECOND TAB -->
+    <dxi-item title="Menu Access">
+      <div class="tab-content">
+        <dx-tree-list
+          [dataSource]="Usermenu"
+          keyExpr="MENU_ID"
+          [columnAutoWidth]="true"
+          [wordWrapEnabled]="true"
+          [showBorders]="true"
+          width="580px"
+          height="253px"
+          [selectedRowKeys]="selectedMenuIds"
+          (onSelectionChanged)="onSelectionChanged($event)"
+        >
+          <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
 
-     <!-- DROPDOWN HOSPITAL -->
-
-     <!-- Hospital Dropdown (Visible Only When "Hospital" is Selected) --> 
-     <dxi-item>
-      <dx-select-box
-        [showClearButton]="true"
-        [visible]="selectedUserType === 3 || selectedUserType === 4 "
-        [items]="hospital_list"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        label="Select Hospital"
-        labelMode="floating"
-        formControlName="HospitalId"
-        labelLocation="left"
-        [showSelectionControls]="true"
-        applyValueMode="instantly"
-        [searchEnabled]="true"
-       (onValueChanged)="onHospitalValue($event)"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="Hospital is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-select-box>
-    </dxi-item> 
-    <!-- DROPDOWN DEPARTMENt -->
-    <!-- Department Dropdown (Visible Only When "Hospital" is Selected) -->
-    <dxi-item>
-      <dx-select-box
-        [showClearButton]="true"
-        [visible]="selectedUserType===4"
-        [items]="department_list"
-        valueExpr="ID"
-        displayExpr="DESCRIPTION"
-        label="Select Department"
-        labelMode="floating"
-        labelLocation="left"
-        [showSelectionControls]="true"
-        applyValueMode="instantly"
-        [searchEnabled]="true"
-        formControlName="DepartmentId"
-      >
-      <dx-validator>
-          <dxi-validation-rule type="required" message="Department is required"></dxi-validation-rule>
-        </dx-validator>
-      </dx-select-box>
-    </dxi-item> 
-    </dxi-item> 
-
-  
-  </dx-form>
-  </dx-validation-group>
-</div></dxi-item>   
-
- <!-- SECOND TAB -->
-<dxi-item title="Menu Access">
-
-  <div class="tab-content">
- <dx-tree-list
-  [dataSource]="Usermenu"
-  keyExpr="ID"
-  parentIdExpr="Head_ID"
-  [columnAutoWidth]="true"
-  [wordWrapEnabled]="true"
-  [showBorders]="true"
-  width="580px"
-  height="253px"
-  [selectedRowKeys]="selectedMenuIds"
-   (onSelectionChanged)="onSelectionChanged($event)"
->
-  <dxo-selection mode="multiple" [recursive]="true"></dxo-selection>
-
-  <dxi-column dataField="Name" [width]="'auto'"></dxi-column>
-
-  
-</dx-tree-list>
-  </div>
-</dxi-item>   
- 
-
+          <dxi-column
+            dataField="MENU_NAME"
+            caption="Menu"
+            [width]="'300'"
+          ></dxi-column>
+          <dxi-column
+            dataField="MAIN_MENU_NAME"
+            caption="Menu Group"
+            [width]="'250'"
+          ></dxi-column>
+        </dx-tree-list>
+      </div>
+    </dxi-item>
   </dx-tab-panel>
-            <!-- BUTTONS -->
-    <dxi-item class="d-flex justify-content-end mt-2">
-            <button class="btn me-1 text-dark border border-1 equal-button" (click)="closePop()">
-              Cancel
-            </button>
-            <dx-button class="equal-button" text="Update" type="default" stylingMode="contained" (onClick)="editData()"></dx-button>
-          </dxi-item> 
- 
-</dx-popup> 
-
-
-
-
+  <!-- BUTTONS -->
+  <dxi-item class="d-flex justify-content-end mt-2">
+    <button
+      class="btn me-1 text-dark border border-1 equal-button"
+      (click)="closePop()"
+    >
+      Cancel
+    </button>
+    <dx-button
+      class="equal-button"
+      text="Update"
+      type="default"
+      stylingMode="contained"
+      (onClick)="editData()"
+    ></dx-button>
+  </dxi-item>
+</dx-popup>
