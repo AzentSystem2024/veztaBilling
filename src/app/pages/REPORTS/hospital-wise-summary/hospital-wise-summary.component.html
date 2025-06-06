@@ -1,4 +1,7 @@
 <div class="salary-grid-wrapper" style="padding: 10px">
+
+  <!-- ============================= report input parameters==================== -->
+
   <div class="form-flex-wrapper">
     <div class="form-item">
       <dx-select-box
@@ -57,14 +60,13 @@
       ></dx-button>
     </div>
   </div>
-
+<!-- ================================grid of this component========================== -->
   <div class="grid-container">
     <dx-data-grid
       [dataSource]="HospitalWiseSummaryData"
        width="100%"
       height="83vh"
       [showBorders]="true"
-     
       [showRowLines]="false"
       [allowColumnResizing]="false"
       [columnAutoWidth]="true"
@@ -119,25 +121,6 @@
           elementAttr: { class: 'commonButtons' }
         }"
       ></dxi-item>
-
-        <!-- <dxi-item
-          class="columnfinderclass"
-          widget="dxDropDownButton"
-          [options]="{
-            dataSource: ColumnNames,
-            onItemClick: findColumnLocation,
-            placeholder: 'Search Column',
-            noDataText: 'Load data and try again',
-            disabled: isEmptyDatagrid,
-            hint: 'Column location finder',
-            icon:'columnproperties',
-            dropDownOptions: {
-              width: 'auto',
-              height: '60vh'
-            },
-
-          }"
-        ></dxi-item> -->
       </dxo-toolbar>
       <dxo-grouping
         [autoExpandAll]="false"
@@ -165,7 +148,7 @@
   </div>
 </div>
 
-<!-- =================header filter======================== -->
+<!-- ==================date filter's Custom popup======================== -->
 <dx-popup
   [(visible)]="isCustomDatePopupVisible"
   [width]="'300px'"

@@ -139,7 +139,9 @@
     ></dxo-pager>
   </dx-data-grid>
 </div>
-<!-- //=======================Add items====================== --><dx-popup
+<!-- //=======================Add items====================== -->
+ 
+<dx-popup
   [title]="'Item'"
   [(visible)]="isAddPop"
   [width]="360"
@@ -149,6 +151,7 @@
   [hideOnOutsideClick]="false"    
   (onHiding)="closePopup()"
 >
+  <dx-validation-group #formValidationGroup>
   <form [formGroup]="formsource">
     <!-- Code -->
 
@@ -161,13 +164,13 @@
       label="Code"
       labelMode="floating"
       style="margin-top: 20px"
-    ></dx-text-box>
-    <dx-validator>
-      <dxi-validation-rule
-        type="required"
-        message="Please select payment mode"
-      ></dxi-validation-rule>
-    </dx-validator>
+    ><dx-validator>
+          <dxi-validation-rule
+            type="required"
+            message="This field is required"
+          ></dxi-validation-rule> </dx-validator
+      ></dx-text-box>
+ 
 
     <!-- Item Name -->
 
@@ -181,11 +184,41 @@
       labelMode="floating"
       style="margin-top: 20px"
     >
+    <dx-validator>
+          <dxi-validation-rule
+            type="required"
+            message="This field is required"
+          ></dxi-validation-rule> </dx-validator
+      >
     </dx-text-box>
 
     <!-- Department -->
+     <dx-tag-box
+  [showClearButton]="true"
+  [items]="department_list"
+  valueExpr="ID"
+  displayExpr="DESCRIPTION"
+  [showSelectionControls]="true"
+  applyValueMode="instantly"
+  [multiline]="false"
+  [searchEnabled]="true"
+  formControlName="department_id"
+  style="margin-top: 20px"
+  width="100%"
+    [isValid]="!formSubmitted || formsource.get('department_id')?.valid"
+  label="Department"
+  labelMode="floating"
+>
+ <dx-validator *ngIf="formSubmitted">
+    <dxi-validation-rule 
+      type="required" 
+      message="Department is required">
+    </dxi-validation-rule>
+  </dx-validator>
+</dx-tag-box>
 
-    <dx-tag-box
+<!-- 
+    <dx-tag-box 
       [showClearButton]="true"
       [items]="department_list"
       valueExpr="ID"
@@ -200,18 +233,28 @@
       label="Department"
       labelMode="floating"
     >
-    </dx-tag-box>
+    <dx-validator>
+          <dxi-validation-rule
+            type="required"
+            message="This field is required"
+          ></dxi-validation-rule> </dx-validator
+      >
+    </dx-tag-box> -->
 
     <!-- Price -->
     <div style="display: flex; align-items: center; margin-bottom: 20px">
-      <dx-radio-group
-        [items]="select_option"
-        [valueExpr]="'value'"
-        [displayExpr]="'text'"
-        layout="horizontal"
-        formControlName="is_fixed"
-      >
-      </dx-radio-group>
+        <dx-radio-group
+    [items]="select_option"
+    [valueExpr]="'value'"
+    [displayExpr]="'text'"
+    layout="horizontal"
+    formControlName="is_fixed"
+  >
+  
+
+  </dx-radio-group>
+
+   
       <dx-number-box
         valueChangeEvent="input"
         [inputAttr]="{ style: 'text-align: right;' }"
@@ -219,27 +262,19 @@
         formControlName="price"
         label="Price"
         labelMode="floating"
-      >
+        [isValid]="!formsource.get('is_fixed')?.value || formsource.get('price')?.value > 0"
+      > 
       </dx-number-box>
     </div>
-    <!-- Inactive Checkbox -->
-    <!-- <div style="display: flex; align-items: center; margin-bottom: 16px;">
-      <label style="width: 120px;">Inactive</label>
-      <dx-check-box
-        formControlName="IS_INACTIVE"
-        [elementAttr]="{ 'aria-label': 'Unchecked' }"
-        id="checboxadd"
-      ></dx-check-box>
-    </div> -->
-
+ 
     <!-- Action Buttons -->
     <div class="d-flex justify-content-end mt-5">
-      <button
+      <dx-button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
       >
         Cancel
-      </button>
+      </dx-button>
       <dx-button
         text="Save"
         class="equal-button"
@@ -249,6 +284,7 @@
       ></dx-button>
     </div>
   </form>
+  </dx-validation-group>
 </dx-popup>
 
 <!-- // =========== Edit the Items================ -->
@@ -262,6 +298,7 @@
   [hideOnOutsideClick]="false"    
  
 >
+  <dx-validation-group #formValidationGroup>
   <form>
     <!-- Code -->
 
@@ -274,7 +311,12 @@
       style="margin-top: 20px"
       label="Code"
       labelMode="floating"
-    ></dx-text-box>
+    > <dx-validator>
+          <dxi-validation-rule
+            type="required"
+            message="This field is required"
+          ></dxi-validation-rule> </dx-validator
+      ></dx-text-box>
 
     <!-- Item Name -->
     <dx-text-box
@@ -286,7 +328,12 @@
       labelMode="floating"
       style="margin-top: 20px"
       [(value)]="name_value"
-    ></dx-text-box>
+    > <dx-validator>
+          <dxi-validation-rule
+            type="required"
+            message="This field is required"
+          ></dxi-validation-rule> </dx-validator
+      ></dx-text-box>
 
     <!-- Department -->
 
@@ -304,7 +351,13 @@
       width="100%"
       label="Department"
       labelMode="floating"
-    >
+       [isValid]="!formSubmitted || formsource.get('department_id')?.valid"
+    ><dx-validator *ngIf="formSubmitted">
+    <dxi-validation-rule 
+      type="required" 
+      message="Department is required">
+    </dxi-validation-rule>
+  </dx-validator>
     </dx-tag-box>
 
     <!-- Price -->
@@ -339,12 +392,12 @@
 
     <div class="d-flex justify-content-end mt-5">
   <!-- Cancel Button -->
-      <button
+      <dx-button
         class="btn me-1 text-dark border border-1 equal-button"
         (click)="closePopup()"
       >
         Cancel
-      </button>
+      </dx-button>
 
 
       <!-- Save Button -->
@@ -357,4 +410,5 @@
       ></dx-button>
     </div>
   </form>
+  </dx-validation-group>
 </dx-popup>

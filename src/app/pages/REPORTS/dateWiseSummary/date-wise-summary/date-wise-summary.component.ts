@@ -76,10 +76,11 @@ auto:string='auto'
     new Date().getMonth(),
     2
   );
-  startDate: Date = new Date(2025, 3, 25); // Months are 0-indexed (0 = January)
-  // Start of the year (e.g., January 1, 2025)
-  // Today's date (e.g., May 30, 2025)
+  startDate: Date = new Date(2025, 3, 25); 
   monthEnd: Date = new Date();
+
+    //======================= Date Ranges of date filter =========================
+
    dateRanges = [
     { label: 'All', value: 'all' },
     { 
@@ -102,19 +103,8 @@ auto:string='auto'
       value: 'custom' 
     },
   ];
-  // dateRanges = [
-  //   { label: 'All', value: 'all' },
-  //   { label: 'Today', value: new Date() },
-  //   {
-  //     label: 'Yesterday',
-  //     value: new Date(new Date().setDate(new Date().getDate() - 1)),
-  //   },
-  //   {
-  //     label: 'This Month',
-  //     value: { start: this.monthStart, end: this.monthEnd },
-  //   },
-  //   { label: this.customRangeLabel, value: 'custom' },
-  // ];
+
+ 
   ToDate_value: any;
 
   constructor(private dataservice: DataService, private fb: FormBuilder) {
@@ -123,32 +113,8 @@ auto:string='auto'
     this.get_alldata();
   }
 
-  // applyCustomDate() {
-  //   if (!this.fromDate || !this.toDate) {
-  //     alert('Please select both From and To dates.');
-  //     return;
-  //   }
+  //======================= Default loading Data on LookUp (All Data)=========================
 
-  //   if (new Date(this.fromDate) > new Date(this.toDate)) {
-  //     alert('From Date cannot be after To Date.');
-  //     return;
-  //   }
-  //   this.FromDate_value = this.fromDate;
-  //   console.log('FromDate_value Date Range:', this.FromDate_value);
-  //   this.ToDate_value = this.toDate;
-
-  //   // console.log('ToDate_value Date Range:', this.ToDate_value);
-  //   console.log(
-  //     'Selected Date Range:',
-  //     this.FromDate_value.toISOString().split('T')[0]
-  //   );
-  //   console.log(
-  //     'Selected Date Range:',
-  //     this.ToDate_value.toISOString().split('T')[0]
-  //   );
-
-  //   this.isCustomDatePopupVisible = false;
-  // }
 
   get_alldata() {
     if (this.selectedRange === 'all') {
@@ -159,6 +125,8 @@ auto:string='auto'
       this.get_DataSource(); // Load data immediately
     }
   }
+
+  //=======================User Details  ===============================
 
   getUserDetails() {
     const user_details = sessionStorage.getItem('savedUserData');
@@ -183,6 +151,9 @@ auto:string='auto'
       });
     }
   }
+
+  //=======================  date Range  change functionality  of Date Range dropdow ========================
+
 
  onDateRangeChange(event: any) {
     const selected = event.value;
@@ -211,11 +182,11 @@ auto:string='auto'
       return;
     }
 
-    // Default case (shouldn't happen with proper setup)
-    console.warn('Unknown date range selection:', selected);
+    
   }
 
   // Keep your improved applyCustomDate
+  //============================== Functions for apply custom date=================================
   applyCustomDate() {
     if (!this.fromDate || !this.toDate) {
       alert('Please select both From and To dates.');
@@ -246,6 +217,10 @@ auto:string='auto'
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
+
+
+
+  //========================= get lookup data==============================
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
@@ -266,59 +241,7 @@ auto:string='auto'
         this.dateWiseSummaryData = res.Data;
         console.log('Date Wise Summary Data:', this.dateWiseSummaryData);
       });
-  }
-
-  // onDateRangeChange(event: any) {
-  //   const selected = event.value;
-  //   console.log(event);
-
-  //   if (selected == 'custom') {
-  //     this.isCustomDatePopupVisible = true;
-  //     console.log('Custom date range selected');
-  //     console.log(event.value);
-  //     // this.applyCustomDate()
-  //   } else if (selected === 'all') {
-  //     // For "All" option, set dates to null or wide range
-  //     this.FromDate_value = this.startDate;
-  //     this.ToDate_value = new Date();
-  //     console.log('All dates selected - loading complete data');
-  //     // this.get_DataSource(); // Load data immediately
-  //   } else if (selected?.start && selected?.end) {
-  //     // For ranges like "This Month"
-  //     this.FromDate_value = this.monthStart;
-  //     this.ToDate_value = this.monthEnd;
-  //     console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-  //   } else {
-  //     this.FromDate_value = event.value;
-  //     console.log('FromDate_value Date Range:', this.FromDate_value);
-  //     this.ToDate_value = this.FromDate_value;
-  //   }
-  // }
-
-  // get_DataSource() {
-  //   const date =
-  //     this.selectedRange === 'custom'
-  //       ? `${this.fromDate} to ${this.toDate}`
-  //       : this.selectedRange;
-
-  //   const departmentId = (this.Departmens_value ?? []).join(',');
-  //   const staffId = (this.staff_value ?? []).join(',');
-  //   console.log('Selected Department ID:', departmentId);
-  //   console.log('Selected Staff ID:', staffId);
-  //   console.log('Selected Date Range:', date);
-  //   console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
-  //   console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
-  //   const fromDate = this.FromDate_value.toISOString().split('T')[0];
-  //   const ToDate = this.ToDate_value.toISOString().split('T')[0];
-  //   this.dataservice
-  //     .Date_wise_Api(fromDate, ToDate, departmentId, staffId)
-  //     .subscribe((res: any) => {
-  //       this.isEmptyDatagrid = false;
-  //       this.dateWiseSummaryData = res.Data;
-  //       console.log('Date Wise Summary Data:', this.dateWiseSummaryData);
-  //       console.log(res);
-  //     });
-  // }
+  }                                                                    
   public filterClick = () => {
     console.log('Clicked');
     if (this.dateWiseSummaryData) {
@@ -334,7 +257,7 @@ auto:string='auto'
     const fileName = 'Date Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
-  //========== DataGrid Refreshing ================
+  //==========summery of all Amount and counts ================
 
   summaryColumnsData = {
     totalItems: [
@@ -401,6 +324,7 @@ auto:string='auto'
       }
     },
   };
+  //=======================filter row hide and show functionality=========================
 
 
   toggleFilterRow = () => {
