@@ -123,3 +123,8 @@
   border-radius: 8px 8px 0 0;
   margin-top: 3px;
 }
+
+.required-field .dx-label::after {
+  content: ' *';
+  color: red;
+}

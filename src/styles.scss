@@ -701,6 +701,19 @@ body {
     padding: 5px;
     border-radius: 8px;
 }
+.dx-tab.dx-tab-selected {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    font-weight: bold;
+    margin-left: 25px;
+}
+
+.dx-tabpanel .dx-tabpanel-tab {
+    flex-basis: unset;
+    flex-grow: 0;
+    margin-left: 25px;
+    flex-shrink: 0;
+}
 
 // .dx-datagrid-header-panel .dx-toolbar-text-auto-hide .dx-button.dx-button-has-icon {
 //     border-radius: 4px;
