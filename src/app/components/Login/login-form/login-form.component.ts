@@ -109,7 +109,7 @@ export class LoginFormComponent {
               .navigate([redirectPath])
               .then(() => {
                 console.log('Navigation to dashboard successful');
-                window.location.reload();
+                // window.location.reload();
               })
               .catch((err) => {
                 console.error('Navigation failed:', err);

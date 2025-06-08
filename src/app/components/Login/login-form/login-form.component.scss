@@ -1,120 +1,318 @@
-html, body {
+// html, body {
+//   margin: 0;
+//   padding: 0;
+//   height: 100%;
+//   width: 100%;
+// }
+
+// .login-page {
+//   // background-image: url("/assets/Images/cover.png");
+//     background-image:url("/assets/Images/cover.png"), url("/assets/Images/login.png"), ;
+//   background-size: 68%, 150%;;
+//   background-position: center -40px , center;
+//   background-repeat: no-repeat;
+//   height: 100vh;
+//   width: 100vw;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+
+//   // Nested correctly
+//   .login-box {
+//     // background-color: rgba(255, 255, 255, 0.9);
+//     background-color: var(--base-bg);
+//     padding: 2rem;
+//     border-radius: 12px;
+//     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+//     width: 100%;
+//     max-width: 400px;
+//   }
+
+//   .login-title {
+//     text-align: center;
+//     font-size: 1.8rem;
+//     font-weight: bold;
+//     margin-bottom: 1.5rem;
+//     color: black;
+//   }
+
+//   .reset-link {
+//     margin-top: 1rem;
+//     text-align: center;
+//   }
+// }
+
+
+// ::ng-deep .dx-button {
+//   // background-color: #1890ff !important;
+//   color: #fff !important;
+//   border-radius: 6px !important;
+//   font-weight: 600;
+//   font-size: 15px;
+//   padding: 10px 0;
+//   transition: background 0.2s ease;
+
+//   &:hover {
+//     background-color: #1677cc !important;
+//   }
+// }
+// ::ng-deep .dx-texteditor {
+//   background-color: #f9f9f9 !important;
+//   border-radius: 6px !important;
+//   padding: 6px 10px;
+//   font-size: 14px;
+//   color: #333 !important;
+// }
+
+// ::ng-deep .dx-texteditor-input {
+//   color: #000 !important;
+// }
+
+// .password-toggle-button .dx-icon {
+//   font-size: 18px;
+//   color: #999;
+// }
+
+// .password-toggle-button .dx-icon:hover {
+//   // color: #1890ff;
+// }
+
+// ::ng-deep .dx-invalid-message {
+//   color: red !important; /* Change text color to red */
+//   // background-color: #ffcccc !important; /* Light red background */
+//   // border: 1px solid red !important; /* Red border */
+//   // font-weight: bold;
+//   padding: 5px;
+//   border-radius: 4px;
+// }
+
+// @media (max-width: 480px) {
+//   .login-page {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     height: 100vh; /* Ensures full height */
+//     padding: 0 10px; /* Adds padding to prevent cutoff */
+//   }
+
+//   .login-box {
+//     width: 100% !important; /* Ensure it takes the full width */
+//     max-width: 350px; /* Restrict max width to keep it centered */
+//     padding: 20px;
+//     background: #fff; /* Keep background intact */
+//     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+//     border-radius: 8px;
+//   }
+
+//   .dx-form {
+//     width: 100%;
+//   }
+
+//   .dx-textbox,
+//   .dx-button {
+//     width: 100% !important;
+//   }
+
+//   .reset-link {
+//     text-align: center;
+//     margin-top: 10px;
+//   }
+// }
+
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
 }
 
+/* ======================== */
+/*  TWO-COLUMN WRAPPER      */
+/* ======================== */
 .login-page {
-  // background-image: url("/assets/Images/cover.png");
-    background-image:url("/assets/Images/cover.png"), url("/assets/Images/login.png"), ;
-  background-size: 68%, cover;
-  background-position: center -40px , center;
-  background-repeat: no-repeat;
+  display: flex;
   height: 100vh;
   width: 100vw;
+  position: relative;
+  overflow: hidden;
+
+  /* ---------- LEFT SIDE ---------- */
+  .left-side {
+    flex: 0 0 60%;
+    position: relative;
+    z-index: 1;
+    
+
+    .login-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('/assets/Images/billing.jpg');
+      opacity: 100%;
+      background-size: 120%;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 1;
+    }
+
+    .cover-img {
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      width: 600px;
+      height: 750px;
+      transform: translate(-50%, -50%);
+      // background-image: url('/assets/Images/billing.jpg');
+      background-size: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 2;
+    }
+  }
+
+  /* ---------- CURVED SVG SEPARATOR ---------- */
+
+/* Curved Separator */
+
+
+  /* ---------- RIGHT SIDE ---------- */
+.right-side {
+  flex: 0 0 40%;
+  background-color: #f5f9ff; /* Change from blue to white */
+  // background-color: #619cf5; 
   display: flex;
   justify-content: center;
   align-items: center;
-
-  // Nested correctly
-  .login-box {
-    // background-color: rgba(255, 255, 255, 0.9);
-    // background-color: var(--base-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .login-title {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
-    color: black;
-  }
-
-  .reset-link {
-    margin-top: 1rem;
-    text-align: center;
-  }
+  position: relative;
+  box-shadow: -8px 0 16px rgba(0, 0, 0, 0.1); /* subtle shadow to separate */
 }
 
+.login-box {
+  background-color: #fffdfd;  /* White card */
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.right-content {
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  padding: 40px 30px; /* more padding for breathing space */
+}
 
+.hospital-logo {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 0.75rem;
+}
+
+.hospital-name {
+  color: black; /* Bootstrap primary blue */
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+  letter-spacing: 1px;
+}
+
+.login-caption {
+  font-size: 1.25rem;
+  color: #212529; /* dark text */
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* slightly bigger gap */
+}
+
+.btn-sign-in {
+  // background-color: #0d6efd !important; /* Bootstrap primary blue */
+  background-image: url('/assets/Images/bluebg.jpg') !important;
+  border: none !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 12px 0 !important;
+  border-radius: 8px !important;
+  transition: background-color 0.3s ease !important;
+  height: 44px;
+}
+
+.btn-sign-in:hover {
+  background-color: #0b5ed7 !important;
+}
+
+}
+
+/* ===================== */
+/*  DEVEXTREME OVERRIDES */
+/* ===================== */
 ::ng-deep .dx-button {
-  // background-color: #1890ff !important;
   color: #fff !important;
-  border-radius: 6px !important;
+  border-radius: 999px !important;
   font-weight: 600;
   font-size: 15px;
   padding: 10px 0;
   transition: background 0.2s ease;
 
   &:hover {
-    background-color: #1677cc !important;
+    // background-color: #1677cc !important;
   }
 }
+
 ::ng-deep .dx-texteditor {
-  background-color: #f9f9f9 !important;
-  border-radius: 6px !important;
-  padding: 6px 10px;
-  font-size: 14px;
-  color: #333 !important;
+  background-color: transparent !important;
+  border: 0.5px solid #c0c0c0 !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;       /* Less vertical padding */
+  font-size: 10px !important;
+  height: 30px !important;           /* Total height of the input */
+  box-shadow: none !important;
 }
 
 ::ng-deep .dx-texteditor-input {
-  color: #000 !important;
+  line-height: 20px !important;      /* Adjust line height */
+  height: 20px !important;           /* Reduce input box height */
+  padding: 0 !important;
 }
+
+
 
 .password-toggle-button .dx-icon {
   font-size: 18px;
-  color: #999;
-}
-
-.password-toggle-button .dx-icon:hover {
-  // color: #1890ff;
+  // color: #999;
 }
 
 ::ng-deep .dx-invalid-message {
-  color: red !important; /* Change text color to red */
-  // background-color: #ffcccc !important; /* Light red background */
-  // border: 1px solid red !important; /* Red border */
-  // font-weight: bold;
+  color: red !important;
   padding: 5px;
   border-radius: 4px;
 }
 
-@media (max-width: 480px) {
+/* ===================== */
+/*     RESPONSIVE (<768px)    */
+/* ===================== */
+@media (max-width: 768px) {
   .login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Ensures full height */
-    padding: 0 10px; /* Adds padding to prevent cutoff */
-  }
+    flex-direction: column;
 
-  .login-box {
-    width: 100% !important; /* Ensure it takes the full width */
-    max-width: 350px; /* Restrict max width to keep it centered */
-    padding: 20px;
-    background: #fff; /* Keep background intact */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
+    .left-side {
+      display: none;
+    }
 
-  .dx-form {
-    width: 100%;
-  }
+    .right-side {
+      flex: 1 1 100%;
+      width: 100%;
+      padding: 20px;
+      background-color: #f5f9ff;
 
-  .dx-textbox,
-  .dx-button {
-    width: 100% !important;
-  }
-
-  .reset-link {
-    text-align: center;
-    margin-top: 10px;
+      .right-content {
+        max-width: 100%;
+      }
+    }
   }
 }
+
