@@ -84,7 +84,34 @@ export class LoginFormComponent {
           if (response.flag === 1) {
             // Save user data once
             localStorage.setItem('userData', JSON.stringify(response));
-localStorage.setItem('userMenus', JSON.stringify(response.Menus));
+const menus = response.Menus;
+// full response from login API
+localStorage.setItem('loginResponse', JSON.stringify(response));
+
+// save all menus
+localStorage.setItem('allMenus', JSON.stringify(response.Menus));
+
+// filter allowed menus
+const allowedMenuNames = [];
+
+if (response.ADD_INVOICE || response.VIEW_INVOICE) {
+  allowedMenuNames.push('Invoice List');
+}
+if (response.ADD_INVOICE) {
+  allowedMenuNames.push('New Invoice');
+}
+// Add more based on logic...
+
+// now filter actual allowed menu objects
+const userMenus = response.Menus.filter(menu =>
+  allowedMenuNames.includes(menu.MENU_NAME)
+);
+
+// store allowed menus
+localStorage.setItem('userMenus', JSON.stringify(userMenus));
+
+localStorage.setItem('allMenus', JSON.stringify(menus));
+localStorage.setItem('userMenus', JSON.stringify(menus));
 
             const savedUserData = JSON.parse(
               localStorage.getItem('userData') || '{}'
