@@ -366,6 +366,7 @@
         <dx-tree-list
           [dataSource]="Usermenu"
           keyExpr="MENU_ID"
+          parentIdExpr="MAIN_MENU_ID"
           [columnAutoWidth]="true"
           [wordWrapEnabled]="true"
           [showBorders]="true"
@@ -379,11 +380,6 @@
             dataField="MENU_NAME"
             caption="Menu"
             [width]="'300'"
-          ></dxi-column>
-          <dxi-column
-            dataField="MAIN_MENU_NAME"
-            caption="Menu Group"
-            [width]="'250'"
           ></dxi-column>
         </dx-tree-list>
       </div>
@@ -644,7 +640,8 @@
       <div class="tab-content">
         <dx-tree-list
           [dataSource]="Usermenu"
-          keyExpr="MENU_ID"
+          keyExpr="MENU_ID"  
+          parentIdExpr="MAIN_MENU_ID"     
           [columnAutoWidth]="true"
           [wordWrapEnabled]="true"
           [showBorders]="true"
@@ -659,11 +656,6 @@
             dataField="MENU_NAME"
             caption="Menu"
             [width]="'300'"
-          ></dxi-column>
-          <dxi-column
-            dataField="MAIN_MENU_NAME"
-            caption="Menu Group"
-            [width]="'250'"
           ></dxi-column>
         </dx-tree-list>
       </div>

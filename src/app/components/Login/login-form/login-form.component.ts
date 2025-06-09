@@ -84,7 +84,7 @@ export class LoginFormComponent {
           if (response.flag === 1) {
             // Save user data once
             localStorage.setItem('userData', JSON.stringify(response));
-localStorage.setItem('userMenus', JSON.stringify(response.Menus));
+            localStorage.setItem('userMenus', JSON.stringify(response.Menus));
 
             const savedUserData = JSON.parse(
               localStorage.getItem('userData') || '{}'
