@@ -1,6 +1,19 @@
 <div class="login-page">
-    <div class="login-box">
-        <div class="login-title">Login</div>
+  <!-- LEFT SIDE -->
+  <div class="left-side">
+    <div class="login-bg"></div>
+    <div class="cover-img"></div>
+  </div>
+
+  
+  <!-- RIGHT SIDE -->
+  <div class="right-side">
+    <div class="right-content">
+      <div class="login-box">
+      <img src="/assets/Images/mchLogo.png" class="hospital-logo" alt="Logo" />
+      <h2 class="hospital-name">VEZTA BILLING</h2>
+      <p class="login-caption">Log in</p>
+
       <form class="login-form" (submit)="onSubmit($event)">
         <dx-form
           [formData]="formData"
@@ -10,48 +23,64 @@
         >
           <!-- Username Field -->
           <dxi-item
-          dataField="LOGIN_NAME"
+            dataField="LOGIN_NAME"
             editorType="dxTextBox"
             [editorOptions]="{
-              placeholder: 'User Name',
-              stylingMode: 'filled'
+              placeholder: 'Username',
+        
+                  buttons: [{
+      name: 'userIcon',
+      location: 'before',
+      options: {
+        icon: 'user', 
+        stylingMode: 'text',
+        disabled: true, 
+        cssClass: 'input-icon'
+      }
+    }]
             }"
           >
-            <dxi-validation-rule
-              type="required"
-              message="Username is required"
-            ></dxi-validation-rule>
+            <dxi-validation-rule type="required" message="Username is required"></dxi-validation-rule>
             <dxo-label [visible]="false"></dxo-label>
           </dxi-item>
-  
+
           <!-- Password Field -->
           <dxi-item
-          dataField="PASSWORD"
-          editorType="dxTextBox"
-          [editorOptions]="{
-            placeholder: 'Password',
-            stylingMode: 'filled',
-            mode: isPasswordVisible ? 'text' : 'password',
-            buttons: [{
-              name: 'passwordToggle',
-              location: 'after',
-              options: {
-                icon: isPasswordVisible ? 'fas fa-eye' : 'fas fa-eye-slash',
-                onClick: togglePasswordVisibility,
-                stylingMode: 'text',
-                cssClass: 'password-toggle-button'  
-              }
-            }]
-          }"
-        >
-          <dxi-validation-rule
-            type="required"
-            message="Password is required"
-          ></dxi-validation-rule>
-          <dxo-label [visible]="false"></dxo-label>
-        </dxi-item>
-  
-          <!-- Sign In Button -->
+  dataField="PASSWORD"
+  editorType="dxTextBox"
+  [editorOptions]="{
+    placeholder: 'Password',
+    stylingMode: 'outlined',
+    mode: isPasswordVisible ? 'text' : 'password',
+    buttons: [
+      {
+        name: 'lockIcon',
+        location: 'before',
+        options: {
+          icon: 'lock',
+          stylingMode: 'text',
+          disabled: true,
+          cssClass: 'input-icon'
+        }
+      },
+      {
+        name: 'passwordToggle',
+        location: 'after',
+        options: {
+          icon: isPasswordVisible ? 'fas fa-eye' : 'fas fa-eye-slash',
+          onClick: togglePasswordVisibility,
+          stylingMode: 'text',
+          cssClass: 'password-toggle-button'
+        }
+      }
+    ]
+  }"
+>
+  <dxi-validation-rule type="required" message="Password is required"></dxi-validation-rule>
+  <dxo-label [visible]="false"></dxo-label>
+</dxi-item>
+
+          <!-- Log In Button -->
           <dxi-item itemType="button">
             <dxo-button-options
               width="100%"
@@ -59,25 +88,25 @@
               cssClass="btn-sign-in"
               [useSubmitBehavior]="true"
               [template]="'signInTemplate'"
-            >
-            </dxo-button-options>
+            ></dxo-button-options>
           </dxi-item>
-  
+
+          <!-- Button Template -->
           <ng-container *dxTemplate="let item of 'signInTemplate'">
             <span class="dx-button-text">
               <ng-container *ngIf="loading; else notLoading">
-                <dx-load-indicator
-                  width="30px"
-                  height="30px"
-                  [visible]="true"
-                ></dx-load-indicator>
+                <dx-load-indicator width="30px" height="30px" [visible]="true"></dx-load-indicator>
               </ng-container>
               <ng-template #notLoading>Log In</ng-template>
             </span>
           </ng-container>
         </dx-form>
-      </form>
 
+        <!-- <div class="reset-link">
+          <a [routerLink]="resetLink">Forgot your password?</a>
+        </div> -->
+      </form>
+      </div>
     </div>
   </div>
-  
+</div>

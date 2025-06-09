@@ -69,3 +69,23 @@
     }
   }
 }
+.date-range-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.ml-3 {
+  margin-left: 12px;
+}
+
+.p-4 {
+  padding: 16px;
+}
+
