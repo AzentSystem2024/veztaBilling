@@ -27,7 +27,9 @@ import {
   DxTabPanelModule,
   DxTreeListModule,
   DxValidationGroupModule,
-  DxValidationGroupComponent
+  DxValidationGroupComponent,
+  DxLoadPanelModule,
+  DxLoadIndicatorModule
 } from 'devextreme-angular';
 import { DxoToolbarModule } from 'devextreme-angular/ui/nested';
 import { FormPopupModule } from 'src/app/components';
@@ -50,6 +52,8 @@ type EditorOptions = DxTextBoxTypes.Properties;
 })
 export class UserListComponent {
   [x: string]: any;
+  isLoading: any;
+  isEditPopupLoading: boolean = false;
 
   UserType: any;
   user: any;
@@ -263,6 +267,8 @@ export class UserListComponent {
     return row.data.ID !== 1;
   }
 
+  
+
   onEditingStart(event: any) {
     event.cancel = true;
 
@@ -279,6 +285,11 @@ export class UserListComponent {
 
   fetch_selectedRow_Data(e: any) {
     const ID = e.data.ID;
+ this.isEditPopupLoading = true;
+this.editPopup = true;
+
+const minLoadingTime = 500; // in milliseconds
+  const startTime = Date.now();
 
     this.dataservice.Select_UserData_Api(ID).subscribe((res: any) => {
       // console.log(res, 'result');
@@ -314,13 +325,21 @@ export class UserListComponent {
         (m: any) => Number(m.SELECTED) === 1
       );
       this.selectedMenuIds = this.selectedMenus.map((m: any) => m.MENU_ID);
-
+ this.isEditPopupLoading = false;
       // console.log(this.formsource.value);
     });
     this.selectedUserType = e.data.USER_TYPE;
     // this.user_Id_value = e.data.USER_TYPE;
     this.selectedHospitalId = e.data.HOSPITAL_ID;
     this.editPopup = true;
+
+     // Ensure minimum loading time
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(minLoadingTime - elapsed, 0);
+
+    setTimeout(() => {
+      this.isEditPopupLoading = false;
+    }, remaining);
   }
 
   //=======DROPDOWN=========
@@ -624,6 +643,8 @@ export class UserListComponent {
   openPopup =()=> {
     this.addPopup = true;
     this.validation = false;
+
+     this.isEditPopupLoading = true;
     setTimeout(() => {
     this.formValidationGroup?.instance?.reset();
   });
@@ -862,7 +883,8 @@ const validationResult = this.formValidationGroup?.instance?.validate();
     DxTabPanelModule,
     DxTreeListModule,
     DxValidationGroupModule,
-
+    DxLoadPanelModule,
+    DxLoadIndicatorModule
   ],
   providers: [],
   exports: [UserListComponent],
