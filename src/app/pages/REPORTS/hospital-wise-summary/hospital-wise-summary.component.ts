@@ -68,7 +68,9 @@ auto:string='auto'
     ];
 
     ToDate_value: any;
+  Hospital_List: any[]=[];
   
+   Hospital_value: any;
     constructor(private dataservice: DataService, private fb: FormBuilder) {
       this.getUserDetails();
   
@@ -128,7 +130,8 @@ auto:string='auto'
   
           console.log(this.user_details.Departments);
           this.DepartmentData = this.user_details.Departments;
-  
+    console.log(this.user_details.Hospitals)
+        this.Hospital_List=this.user_details.Hospitals
           console.log('Department Data:', this.DepartmentData);
           this.staff_Data = this.user_details.Users;
           console.log('Staff Data:', this.staff_Data);

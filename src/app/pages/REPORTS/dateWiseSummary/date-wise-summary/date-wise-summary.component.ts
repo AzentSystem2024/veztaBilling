@@ -63,48 +63,49 @@ export class DateWiseSummaryComponent {
   fromDate: string | number | Date = new Date();
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
-    ColumnNames: any;
+  ColumnNames: any;
   isFilterOpened: boolean = false;
   customRangeLabel: string = 'Custom';
-      displayMode: any = 'full';
-   readonly allowedPageSizes: any = [ 5,10, 'all'];
-   isFilterRowVisible:boolean=false
-auto:string='auto'
+  displayMode: any = 'full';
+   Hospital_List:any=[];
+    Hospital_value:any;
+  readonly allowedPageSizes: any = [5, 10, 'all'];
+  isFilterRowVisible: boolean = false;
+  auto: string = 'auto';
   yesterday: Date = new Date(new Date().setDate(new Date().getDate() - 1));
   monthStart: Date = new Date(
     new Date().getFullYear(),
     new Date().getMonth(),
     2
   );
-  startDate: Date = new Date(2025, 3, 25); 
+  startDate: Date = new Date(2025, 3, 25);
   monthEnd: Date = new Date();
 
-    //======================= Date Ranges of date filter =========================
+  //======================= Date Ranges of date filter =========================
 
-   dateRanges = [
+  dateRanges = [
     { label: 'All', value: 'all' },
-    { 
-      label: 'Today', 
-      value: { start: new Date(), end: new Date() } 
+    {
+      label: 'Today',
+      value: { start: new Date(), end: new Date() },
     },
     {
       label: 'Yesterday',
-      value: { 
+      value: {
         start: new Date(new Date().setDate(new Date().getDate() - 1)),
-        end: new Date(new Date().setDate(new Date().getDate() - 1))
-      }
+        end: new Date(new Date().setDate(new Date().getDate() - 1)),
+      },
     },
     {
       label: 'This Month',
       value: { start: this.monthStart, end: this.monthEnd },
     },
-    {  
-      label: 'Custom', 
-      value: 'custom' 
+    {
+      label: 'Custom',
+      value: 'custom',
     },
   ];
 
- 
   ToDate_value: any;
 
   constructor(private dataservice: DataService, private fb: FormBuilder) {
@@ -114,7 +115,6 @@ auto:string='auto'
   }
 
   //======================= Default loading Data on LookUp (All Data)=========================
-
 
   get_alldata() {
     if (this.selectedRange === 'all') {
@@ -142,6 +142,9 @@ auto:string='auto'
         this.department_list = this.user_details.Departments;
         console.log('Department List:', this.department_list);
 
+        console.log(this.user_details.Hospitals);
+        this.Hospital_List = this.user_details.Hospitals;
+
         console.log(this.user_details.Departments);
         this.DepartmentData = this.user_details.Departments;
 
@@ -154,11 +157,10 @@ auto:string='auto'
 
   //=======================  date Range  change functionality  of Date Range dropdow ========================
 
-
- onDateRangeChange(event: any) {
+  onDateRangeChange(event: any) {
     const selected = event.value;
     console.log(event);
-    
+
     if (selected === 'all') {
       this.FromDate_value = this.startDate;
       this.ToDate_value = new Date();
@@ -172,7 +174,7 @@ auto:string='auto'
       this.FromDate_value = new Date(selected.start);
       this.ToDate_value = new Date(selected.end);
       console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-     
+
       return;
     }
 
@@ -181,8 +183,6 @@ auto:string='auto'
       this.isCustomDatePopupVisible = true;
       return;
     }
-
-    
   }
 
   // Keep your improved applyCustomDate
@@ -205,12 +205,13 @@ auto:string='auto'
     this.ToDate_value = toDate;
 
     this.selectedRange = {
-      label: `${this.formatDate(this.FromDate_value)} - ${this.formatDate(this.ToDate_value)}`,
-      value: 'custom'
+      label: `${this.formatDate(this.FromDate_value)} - ${this.formatDate(
+        this.ToDate_value
+      )}`,
+      value: 'custom',
     };
-    
+
     this.isCustomDatePopupVisible = false;
-  
   }
 
   // Helper method to format dates consistently
@@ -218,16 +219,18 @@ auto:string='auto'
     return date.toISOString().split('T')[0];
   }
 
-
-
   //========================= get lookup data==============================
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
-
+const hospital_id=(this.Hospital_value?? []).join(',');
     // Ensure dates are valid Date objects before formatting
-    const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
-    const toDate = this.ToDate_value ? this.formatDate(new Date(this.ToDate_value)) : '';
+    const fromDate = this.FromDate_value
+      ? this.formatDate(new Date(this.FromDate_value))
+      : '';
+    const toDate = this.ToDate_value
+      ? this.formatDate(new Date(this.ToDate_value))
+      : '';
 
     if (!fromDate || !toDate) {
       console.error('Invalid date range');
@@ -235,13 +238,13 @@ auto:string='auto'
     }
 
     this.dataservice
-      .Date_wise_Api(fromDate, toDate, departmentId, staffId)
+      .Date_wise_Api(fromDate, toDate, departmentId, staffId,hospital_id)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.dateWiseSummaryData = res.Data;
         console.log('Date Wise Summary Data:', this.dateWiseSummaryData);
       });
-  }                                                                    
+  }
   public filterClick = () => {
     console.log('Clicked');
     if (this.dateWiseSummaryData) {
@@ -309,7 +312,7 @@ auto:string='auto'
         showInColumn: 'Credit',
         alignment: 'right',
       },
-          {
+      {
         column: 'Upi',
         summaryType: 'sum',
         displayFormat: '{0}',
@@ -326,10 +329,9 @@ auto:string='auto'
   };
   //=======================filter row hide and show functionality=========================
 
-
   toggleFilterRow = () => {
     this.isFilterRowVisible = !this.isFilterRowVisible;
-  };
+  };
 }
 
 @NgModule({

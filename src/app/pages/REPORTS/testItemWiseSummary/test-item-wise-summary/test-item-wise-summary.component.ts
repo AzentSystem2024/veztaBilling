@@ -30,6 +30,8 @@ itemWiseSummaryData: any = [];
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
   isFilterRowVisible:boolean=false
+    Hospital_List:any[]=[]
+  Hospital_value:any
 auto:string='auto'
     ColumnNames: any;
    startDate: Date = new Date(2025, 3, 25);
@@ -96,73 +98,7 @@ get_alldata(){
   }
 }
 
-//   applyCustomDate() {
-//     if (!this.fromDate || !this.toDate) {
-//       alert('Please select both From and To dates.');
-//       return;
-//     }
 
-//     if (new Date(this.fromDate) > new Date(this.toDate)) {
-//       alert('From Date cannot be after To Date.');
-//       return;
-//     }
-//     this.FromDate_value = this.fromDate;
-//     console.log('FromDate_value Date Range:', this.FromDate_value);
-//     this.ToDate_value = this.toDate;
-        
-
-//     // console.log('ToDate_value Date Range:', this.ToDate_value);
-
-//     // this.selectedfromDate=  this.FromDate_value.toISOString().split('T')[0]
-//     // this.selectedToDate=   this.ToDate_value.toISOString().split('T')[0]
-     
-//  this.selectedRange = {
-//     label: `${this.FromDate_value.toISOString().split('T')[0]} to ${this.ToDate_value.toISOString().split('T')[0]}`,
-//     value: 'custom'
-//   };
-//     console.log(
-//       'Selected Date Range:',
-//       this.FromDate_value.toISOString().split('T')[0]
-//     );
-//     console.log(
-//       'Selected Date Range:',
-//       this.ToDate_value.toISOString().split('T')[0]
-//     );
-//     this.isCustomDatePopupVisible = false;
-  
-//   }
-// applyCustomDate() {
-//   if (!this.fromDate || !this.toDate) {
-//     alert('Please select both From and To dates.');
-//     return;
-//   }
-
-//   // Convert to Date objects if they aren't already
-//   const fromDate = new Date(this.fromDate);
-//   const toDate = new Date(this.toDate);
-
-//   if (fromDate > toDate) {
-//     alert('From Date cannot be after To Date.');
-//     return;
-//   }
-
-//   // Store as Date objects
-//   this.FromDate_value = fromDate;
-//   this.ToDate_value = toDate;
-
-//   console.log('FromDate_value Date Range:', this.FromDate_value);
-//   console.log('ToDate_value Date Range:', this.ToDate_value);
-
-//   this.selectedRange = {
-//     label: `${this.FromDate_value.toISOString().split('T')[0]} to ${this.ToDate_value.toISOString().split('T')[0]}`,
-//     value: 'custom'
-//   };
-
-//   console.log('Selected Date Range From:', this.FromDate_value.toISOString().split('T')[0]);
-//   console.log('Selected Date Range To:', this.ToDate_value.toISOString().split('T')[0]);
-  
-//   this.isCustomDatePopupVisible = false;
-// }
 
 
 
@@ -179,7 +115,8 @@ get_alldata(){
         console.log('User Details Data:', this.user_details);
         this.department_list = this.user_details.Departments;
         console.log('Department List:', this.department_list);
-
+ console.log(this.user_details.Hospitals)
+        this.Hospital_List=this.user_details.Hospitals
         console.log(this.user_details.Departments);
         this.DepartmentData = this.user_details.Departments;
 
@@ -301,6 +238,7 @@ get_alldata(){
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
+    const hospitalId=this.Hospital_value
 
     // Ensure dates are valid Date objects before formatting
     const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
@@ -312,7 +250,7 @@ get_alldata(){
     }
 
     this.dataservice
-      .item_wise_Api(fromDate, toDate, departmentId, staffId)
+      .item_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.itemWiseSummaryData = res.Data;
