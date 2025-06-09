@@ -333,33 +333,33 @@ return
   //=================Update Functionality=============================
 
   update_item_Data() {
-    if (
-      !this.code_value ||
-      !this.name_value ||
-      this.department_id_value == 0 ||
-      this.is_fixed_value === null
-    ) {
-      let errorMessage = 'Please fill all required fields: ';
-      const missingFields = [];
+    // if (
+    //   !this.code_value ||
+    //   !this.name_value ||
+    //   this.department_id_value == 0 ||
+    //   this.is_fixed_value === null
+    // ) {
+    //   let errorMessage = 'Please fill all required fields: ';
+    //   const missingFields = [];
 
-      if (!this.code_value) missingFields.push('Item Code');
-      if (!this.name_value) missingFields.push('Item Name');
-      if (this.department_id_value == 0) missingFields.push('Department');
-      if (this.is_fixed_value === null)
-        missingFields.push('please select fixed or variable');
+    //   if (!this.code_value) missingFields.push('Item Code');
+    //   if (!this.name_value) missingFields.push('Item Name');
+    //   if (this.department_id_value == 0) missingFields.push('Department');
+    //   if (this.is_fixed_value === null)
+    //     missingFields.push('please select fixed or variable');
 
-      errorMessage += missingFields.join(', ');
+    //   errorMessage += missingFields.join(', ');
 
-      notify(
-        {
-          message: errorMessage,
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 3000,
-        },
-        'error'
-      );
-      return;
-    }
+    //   notify(
+    //     {
+    //       message: errorMessage,
+    //       position: { at: 'top right', my: 'top right' },
+    //       displayTime: 3000,
+    //     },
+    //     'error'
+    //   );
+    //   return;
+    // }
 
     //   const is_fixed = this.formsource.value.is_fixed;
     //  let item_price = this.formsource.value.price;

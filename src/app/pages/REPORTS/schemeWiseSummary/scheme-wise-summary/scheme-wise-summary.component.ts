@@ -22,6 +22,8 @@ export class SchemeWiseSummaryComponent {
   staff_value: any;
   FromDate_value: any;
   staff_Data: any = [];
+  Hospital_List:any[]=[]
+  Hospital_value:any
   isCustomDatePopupVisible: boolean = false;
   fromDate: string | number | Date = new Date();
   toDate: string | number | Date = new Date();
@@ -181,6 +183,7 @@ get_alldata(){
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
+    const hospitalId=this.Hospital_value ;
 
     // Ensure dates are valid Date objects before formatting
     const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
@@ -192,7 +195,7 @@ get_alldata(){
     }
 
     this.dataservice
-      .Schema_wise_Api(fromDate, toDate, departmentId, staffId)
+      .Schema_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.schemawisedData = res.Data;
@@ -217,6 +220,9 @@ get_alldata(){
 
         console.log(this.user_details.Departments);
         this.DepartmentData = this.user_details.Departments;
+
+        console.log(this.user_details.Hospitals)
+        this.Hospital_List=this.user_details.Hospitals
 
         console.log('Department Data:', this.DepartmentData);
         this.staff_Data = this.user_details.Users;

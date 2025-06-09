@@ -66,21 +66,11 @@ auto:string='auto'
         value: 'custom' 
       },
     ];
-    // dateRanges = [
-    //   { label: 'All', value: 'all' },
-    //   { label: 'Today', value: new Date() },
-    //   {
-    //     label: 'Yesterday',
-    //     value: new Date(new Date().setDate(new Date().getDate() - 1)),
-    //   },
-    //   {
-    //     label: 'This Month',
-    //     value: { start: this.monthStart, end: this.monthEnd },
-    //   },
-    //   { label: this.customRangeLabel, value: 'custom' },
-    // ];
+
     ToDate_value: any;
+  Hospital_List: any[]=[];
   
+   Hospital_value: any;
     constructor(private dataservice: DataService, private fb: FormBuilder) {
       this.getUserDetails();
   
@@ -115,9 +105,9 @@ auto:string='auto'
     // }
   
     get_alldata() {
-      if (this.selectedRange === 'all') {
+      if (this.selectedRange === 'Today') {
         // For "All" option, set dates to null or wide range
-        this.FromDate_value = this.startDate;
+        this.FromDate_value = new Date();
         this.ToDate_value = new Date();
         console.log('All dates selected - loading complete data');
         this.get_DataSource(); // Load data immediately
@@ -140,7 +130,8 @@ auto:string='auto'
   
           console.log(this.user_details.Departments);
           this.DepartmentData = this.user_details.Departments;
-  
+    console.log(this.user_details.Hospitals)
+        this.Hospital_List=this.user_details.Hospitals
           console.log('Department Data:', this.DepartmentData);
           this.staff_Data = this.user_details.Users;
           console.log('Staff Data:', this.staff_Data);

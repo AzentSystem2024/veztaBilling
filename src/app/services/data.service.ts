@@ -459,7 +459,7 @@ search_paramers_Api() {
   }
 }
 
-Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any) {
+Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospital_id:any) {
   const reqBody = {
     
   "REPORT_ID": "DATEWISESUMMARY",
@@ -467,13 +467,14 @@ Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any) {
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "USER_ID": staffId,
+  "HOSPITAL_ID":hospital_id,
   "SL_FROM": 0,
   "SL_TO": 0
   }
   const getEndpoint = BASE_URL+`Report/datewise`;
   return this.http.post(getEndpoint,reqBody);
 }
-Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,){
     const reqBody = {
     
   "REPORT_ID": "SCHEMAWISESUMMARY",
@@ -481,6 +482,7 @@ Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "USER_ID": staffId,
+   "HOSPITAL_ID":hospitalId,
   "SL_FROM": 0,
   "SL_TO": 0
   }
@@ -488,7 +490,7 @@ Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   return this.http.post(getEndpoint,reqBody);
 }
 
-Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,){
  const reqBody = {
     
   "REPORT_ID": "BILLWISESUMMARY",
@@ -496,6 +498,7 @@ Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "USER_ID": staffId,
+   "HOSPITAL_ID":hospitalId,
   "SL_FROM": 0,
   "SL_TO": 0
   }
@@ -503,13 +506,14 @@ Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   return this.http.post(getEndpoint,reqBody);
 }
 
-item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any){
   const reqBody = {
     
   "REPORT_ID": "ITEMWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
+  "HOSPITAL_ID":hospitalId,
   "USER_ID":staffId ,
   "SL_FROM": 0,
   "SL_TO": 0
