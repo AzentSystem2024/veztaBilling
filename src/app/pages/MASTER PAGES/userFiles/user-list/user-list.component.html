@@ -109,7 +109,9 @@
     </dxi-column>
     <dxi-column dataField="USER_NAME" caption="User Name"></dxi-column>
     <dxi-column dataField="LOGIN_NAME" caption="Login Name"></dxi-column>
-
+    <dxi-column dataField="USER_TYPE_NAME" caption="User Type"></dxi-column>
+    <dxi-column dataField="HOSPITAL_NAME" caption="Hospital"></dxi-column>
+    <dxi-column dataField="DEPARTMENT_NAME" caption="Department"></dxi-column>
     <dxi-column
       dataField="IS_INACTIVE"
       caption="Status"
@@ -416,8 +418,17 @@
   [shading]="false"
   (onHidden)="closePop()"
   [shading]="true"
-  [hideOnOutsideClick]="false"
+  [hideOnOutsideClick]="false" 
 >
+<dx-load-panel
+  [visible]="isEditPopupLoading"
+  [showIndicator]="true"
+  [showPane]="true"
+  [shading]="true"
+  [position]="{ of: '#editPopupContainer' }"
+  message="Loading..."
+></dx-load-panel>
+<div id="editPopupContainer" *ngIf="!isEditPopupLoading">
   <!-- INPUT FIELD -->
   <dx-tab-panel
     [(selectedIndex)]="selectedTabIndex"
@@ -427,6 +438,7 @@
     <dxi-item title="General">
       <div class="tab-content" style="display: flex">
         <dx-validation-group #formValidationGroup>
+          
           <dx-form [formGroup]="formsource" width="580px">
             <dxi-item class="fields">
               <dx-text-box
@@ -673,4 +685,5 @@
       (onClick)="editData()"
     ></dx-button>
   </dxi-item>
+  </div>
 </dx-popup>
