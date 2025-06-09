@@ -73,6 +73,7 @@ export class ItemComponent {
   isFilterRowVisible: boolean = false;
   isFormSubmitted = false;
   @ViewChild('formValidationGroup') formValidationGroup : DxValidationGroupComponent
+  @ViewChild('priceBoxRef', { static: false }) priceBoxRef: any;
   constructor(
     private dataservice: DataService,
     private fb: FormBuilder,
@@ -211,7 +212,8 @@ export class ItemComponent {
 
     const is_fixed = this.formsource.value.is_fixed;
     let item_price = this.formsource.value.price;
- if (is_fixed && item_price <= 0) {
+
+ if (is_fixed && item_price <= 1) {
     this.formsource.get('price')?.setErrors({ invalidPrice: true });
     
 return
@@ -219,30 +221,12 @@ return
   else{
      item_price = 0;
   }
-    // if (is_fixed === true) {
-    //   if (item_price == null || item_price === '' || item_price <= 1) {
-    //     notify(
-    //       {
-    //         message: 'Fixed items must have a price greater than 1',
-    //         position: { at: 'top right', my: 'top right' },
-    //         displayTime: 3000,
-    //       },
-    //       'error'
-    //     );
-    //     return;
-    //   }
-    // } else {
-    //   // For variable items, set null/empty price to 0
-    //   if (item_price == null || item_price === '') {
-    //     item_price = 0;
-    //   }
-    // }
 
     const item_code = this.formsource.value.code.toString();
     const name = this.formsource.value.item_name;
     const is_inactive = this.formsource.value.IS_INACTIVE;
     const dep_id = this.formsource.value.department_id.join(',');
-      item_price = this.formsource.value.price;
+      item_price = this.formsource.value.price ??0;
     const codeDuplicate = this.items_source?.some(
       (item: any) =>
         (item.ITEM_CODE?.trim().toLowerCase() || '') ===
@@ -333,63 +317,20 @@ return
   //=================Update Functionality=============================
 
   update_item_Data() {
-    // if (
-    //   !this.code_value ||
-    //   !this.name_value ||
-    //   this.department_id_value == 0 ||
-    //   this.is_fixed_value === null
-    // ) {
-    //   let errorMessage = 'Please fill all required fields: ';
-    //   const missingFields = [];
-
-    //   if (!this.code_value) missingFields.push('Item Code');
-    //   if (!this.name_value) missingFields.push('Item Name');
-    //   if (this.department_id_value == 0) missingFields.push('Department');
-    //   if (this.is_fixed_value === null)
-    //     missingFields.push('please select fixed or variable');
-
-    //   errorMessage += missingFields.join(', ');
-
-    //   notify(
-    //     {
-    //       message: errorMessage,
-    //       position: { at: 'top right', my: 'top right' },
-    //       displayTime: 3000,
-    //     },
-    //     'error'
-    //   );
-    //   return;
-    // }
-
-    //   const is_fixed = this.formsource.value.is_fixed;
-    //  let item_price = this.formsource.value.price;
+   
     const is_fixed = this.is_fixed_value;
     let item_price = this.price_value;
-    if (is_fixed === true) {
-      if (item_price == null || item_price === '' || item_price <= 1) {
-        notify(
-          {
-            message: 'Fixed items must have a price greater than 1',
-            position: { at: 'top right', my: 'top right' },
-            displayTime: 3000,
-          },
-          'error'
-        );
-        return;
-      }
-    } else {
-      // For variable items, set null/empty price to 0
-      if (item_price == null || item_price === '') {
-        item_price = 0;
-      }
-    }
 
+
+
+      //  const isValid = this.priceBoxRef.instance.validate().isValid;
+  // if (!isValid) return;
     const id = this.selected_data.ID;
-
     const item_code = this.code_value.toString();
     const name = this.name_value;
     const is_inactive = this.is_inactve_value;
     const dep_id = this.department_id_value.join(',');
+    item_price=this.price_value??0
     const codeDuplicate = this.items_source?.some((item: any) => {
       if (item.ID === id) return false; // Skip current item when editing
       return (
@@ -427,6 +368,7 @@ return
       );
       return;
     }
+ 
 
     this.dataservice
       .update_items_Api(
@@ -455,6 +397,12 @@ return
   }
 
 
+validatePriceselect(e: any): boolean {
+  if (this.is_fixed_value) {
+    return e.value > 1;
+  }
+  return true; // Valid if not fixed
+}
 
   //======================Delete Functionality====================
     delete_Items_Data(event: any) {

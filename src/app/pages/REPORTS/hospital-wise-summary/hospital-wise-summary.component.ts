@@ -15,7 +15,7 @@ export class HospitalWiseSummaryComponent {
    @ViewChild(DxDataGridComponent, { static: true })
     dataGrid: DxDataGridComponent;
     HospitalWiseSummaryData: any = [];
-    selectedRange: any = 'all';
+    selectedRange: any = 'Today';
     department_list: any;
     user_details: any = [];
     DepartmentData: any = [];
@@ -45,7 +45,7 @@ auto:string='auto'
     // Today's date (e.g., May 30, 2025)
     monthEnd: Date = new Date();
      dateRanges = [
-      { label: 'All', value: 'all' },
+    
       { 
         label: 'Today', 
         value: { start: new Date(), end: new Date() } 
@@ -61,6 +61,7 @@ auto:string='auto'
         label: 'This Month',
         value: { start: this.monthStart, end: this.monthEnd },
       },
+        { label: 'All', value: 'all' },
       {  
         label: 'Custom', 
         value: 'custom' 
@@ -74,45 +75,19 @@ auto:string='auto'
     constructor(private dataservice: DataService, private fb: FormBuilder) {
       this.getUserDetails();
   
-      this.get_alldata();
+      this.get_today_data();
     }
   
-    // applyCustomDate() {
-    //   if (!this.fromDate || !this.toDate) {
-    //     alert('Please select both From and To dates.');
-    //     return;
-    //   }
   
-    //   if (new Date(this.fromDate) > new Date(this.toDate)) {
-    //     alert('From Date cannot be after To Date.');
-    //     return;
-    //   }
-    //   this.FromDate_value = this.fromDate;
-    //   console.log('FromDate_value Date Range:', this.FromDate_value);
-    //   this.ToDate_value = this.toDate;
-  
-    //   // console.log('ToDate_value Date Range:', this.ToDate_value);
-    //   console.log(
-    //     'Selected Date Range:',
-    //     this.FromDate_value.toISOString().split('T')[0]
-    //   );
-    //   console.log(
-    //     'Selected Date Range:',
-    //     this.ToDate_value.toISOString().split('T')[0]
-    //   );
-  
-    //   this.isCustomDatePopupVisible = false;
-    // }
-  
-    get_alldata() {
-      if (this.selectedRange === 'Today') {
-        // For "All" option, set dates to null or wide range
-        this.FromDate_value = new Date();
-        this.ToDate_value = new Date();
-        console.log('All dates selected - loading complete data');
-        this.get_DataSource(); // Load data immediately
-      }
-    }
+get_today_data(){
+       if (this.selectedRange === 'Today') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = new Date;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    this.get_DataSource(); // Load data immediately
+  }
+}
   
     getUserDetails() {
       const user_details = sessionStorage.getItem('savedUserData');
@@ -204,6 +179,7 @@ auto:string='auto'
     get_DataSource() {
       const departmentId = (this.Departmens_value ?? []).join(',');
       const staffId = (this.staff_value ?? []).join(',');
+      const hospitalId=(this.Hospital_value ?? []).join(',')
   
       // Ensure dates are valid Date objects before formatting
       const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
@@ -215,7 +191,7 @@ auto:string='auto'
       }
   
       this.dataservice
-        .hospital_wise_Api(fromDate, toDate, departmentId, staffId)
+        .hospital_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
         .subscribe((res: any) => {
           this.isEmptyDatagrid = false;
           this.HospitalWiseSummaryData = res.Data;

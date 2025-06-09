@@ -262,7 +262,7 @@
         formControlName="price"
         label="Price"
         labelMode="floating"
-        [isValid]="!formsource.get('is_fixed')?.value || formsource.get('price')?.value > 0"
+        [isValid]="!formsource.get('is_fixed')?.value || formsource.get('price')?.value > 1"
       > 
       </dx-number-box>
     </div>
@@ -363,21 +363,31 @@
     <!-- Price -->
     <div style="display: flex; align-items: center; margin-bottom: 16px">
       <dx-radio-group
-        [items]="select_option"
-        [valueExpr]="'value'"
-        [displayExpr]="'text'"
-        layout="horizontal"
-        [(value)]="is_fixed_value"
-      ></dx-radio-group>
-      <dx-number-box
-        valueChangeEvent="input"
-        [inputAttr]="{ style: 'text-align: right;' }"
-        style="margin-left: 10px; width: 100px"
-        [(value)]="price_value"
-        label="Price"
-        labelMode="floating"
-      >
-      </dx-number-box>
+    [items]="select_option"
+    [valueExpr]="'value'"
+    [displayExpr]="'text'"
+    layout="horizontal"
+    [(value)]="is_fixed_value"
+  ></dx-radio-group>
+
+<dx-number-box
+  #priceBoxRef
+  valueChangeEvent="input"
+  [inputAttr]="{ style: 'text-align: right;' }"
+  style="margin-left: 10px; width: 100px"
+  [(value)]="price_value"
+  label="Price"
+  labelMode="floating"
+>
+  <dx-validator>
+    <dxi-validation-rule
+      type="custom"
+      [validationCallback]="validatePriceselect.bind(this)"
+      message="Price must be greater than 0 when Fixed is selected"
+    ></dxi-validation-rule>
+  </dx-validator>
+</dx-number-box>
+
     </div>
 
     <!-- Inactive Checkbox -->
