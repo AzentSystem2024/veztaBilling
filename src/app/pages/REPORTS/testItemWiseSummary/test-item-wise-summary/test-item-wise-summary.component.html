@@ -1,7 +1,7 @@
 <div class="salary-grid-wrapper" style="padding: 10px">
   
   <div class="form-flex-wrapper">
-    <div class="form-item">
+       <div class="form-item">
       <dx-select-box
         [(value)]="selectedRange"
         [dataSource]="dateRanges"
@@ -10,12 +10,28 @@
           [acceptCustomValue]="true"
         label="Date Range"
         labelMode="floating"
-        [width]="250"
+        [width]="220"
           [searchEnabled]="true"
               [acceptCustomValue]="true"
         (onValueChanged)="onDateRangeChange($event)"
       ></dx-select-box>
     </div>
+
+     <div class="form-item">
+      <dx-tag-box
+        [items]="Hospital_List"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Hospital"
+        labelMode="floating"
+        [(value)]="Hospital_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="230"
+      ></dx-tag-box>
+    </div>
+ 
 
     <div class="form-item">
       <dx-tag-box
@@ -28,7 +44,7 @@
         [showSelectionControls]="true"
         [multiline]="false"
         [searchEnabled]="true"
-        [width]="250"
+        [width]="200"
       ></dx-tag-box>
     </div>
 
@@ -37,7 +53,7 @@
         [items]="staff_Data"
         valueExpr="Id"
         displayExpr="Description"
-        label="Select Staff"
+        label="Select User"
         labelMode="floating"
         [(value)]="staff_value"
         [showSelectionControls]="true"
