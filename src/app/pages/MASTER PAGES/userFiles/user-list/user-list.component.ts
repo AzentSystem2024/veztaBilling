@@ -283,55 +283,118 @@ export class UserListComponent {
     // this.editPopup = true;
   }
 
-  fetch_selectedRow_Data(e: any) {
-    const ID = e.data.ID;
- this.isEditPopupLoading = true;
-this.editPopup = true;
+//   fetch_selectedRow_Data(e: any) {
+//     const ID = e.data.ID;
+//  this.isEditPopupLoading = true;
+// this.editPopup = true;
 
 
 
-    this.dataservice.Select_UserData_Api(ID).subscribe((res: any) => {
-      // console.log(res, 'result');
+//     this.dataservice.Select_UserData_Api(ID).subscribe((res: any) => {
+//       // console.log(res, 'result');
 
-      this.selectedData = res.Data;
-      console.log('==selected data==', this.selectedData[0]);
+//       this.selectedData = res.Data;
+   
 
-      this.selectedDepartmentId = this.selectedData[0].DEPARTMENT_ID;
-      console.log(this.selectedDepartmentId, 'selectedDepartmentId');
-      console.log(this.selectedData[0], 'selected data');
+//       console.log('==selected data==', this.selectedData[0]);
 
-      this.formsource.patchValue({
-        ID: res.Data[0].ID,
-        Id: res.Data[0].ID,
-        UserName: res.Data[0].USER_NAME,
-        LoginName: res.Data[0].LOGIN_NAME,
-        LoginPassword: res.Data[0].LOGIN_PWD,
-        ConfirmPassword: res.Data[0].LOGIN_PWD, // Set the Discount value from your data
-        Inactive: res.Data[0].IS_INACTIVE,
-        UserType: res.Data[0].USER_TYPE,
-        HospitalId: res.Data[0].HOSPITAL_ID,
-        DepartmentId: parseInt(res.Data[0].DEPARTMENT_ID),
-        AddInvoice: res.Data[0].ADD_INVOICE,
-        ViewInvoice: res.Data[0].VIEW_INVOICE,
-        CancelInvoice: res.Data[0].CANCEL_INVOICE,
-        LastModifiedDate: res.Data[0].LAST_MODIFIED_DATE,
-        Menus: res.Data[0].MENUS,
-      });
-      this.username_value_edit = this.selectedData[0].USER_NAME;
-      console.log(this.username_value_edit);
+//       this.selectedDepartmentId = this.selectedData[0].DEPARTMENT_ID;
+     
+// console.log('User data:', res.Data[0]);
 
-      this.selectedMenus = res.Data[0].MENUS.filter(
+//       this.formsource.patchValue({
+//         ID: res.Data[0].ID,
+//         Id: res.Data[0].ID,
+//         UserName: res.Data[0].USER_NAME,
+//         LoginName: res.Data[0].LOGIN_NAME,
+//         LoginPassword: res.Data[0].LOGIN_PWD,
+//         ConfirmPassword: res.Data[0].LOGIN_PWD, // Set the Discount value from your data
+//         Inactive: res.Data[0].IS_INACTIVE,
+//         UserType: res.Data[0].USER_TYPE,
+//         HospitalId: res.Data[0].HOSPITAL_ID,
+//         DepartmentId: parseInt(res.Data[0].DEPARTMENT_ID),
+//         AddInvoice: res.Data[0].ADD_INVOICE,
+//         ViewInvoice: res.Data[0].VIEW_INVOICE,
+//         CancelInvoice: res.Data[0].CANCEL_INVOICE,
+//         LastModifiedDate: res.Data[0].LAST_MODIFIED_DATE,
+//         Menus: res.Data[0].MENUS,
+//       });
+//       console.log(this.DepartmentId,"department id");
+      
+//       this.username_value_edit = this.selectedData[0].USER_NAME;
+//       console.log(this.username_value_edit);
+
+//       this.selectedMenus = res.Data[0].MENUS.filter(
+//         (m: any) => Number(m.SELECTED) === 1
+//       );
+//       this.selectedMenuIds = this.selectedMenus.map((m: any) => m.MENU_ID);
+//  this.isEditPopupLoading = false;
+//       // console.log(this.formsource.value);
+//     });
+//     this.selectedUserType = e.data.USER_TYPE;
+//     // this.user_Id_value = e.data.USER_TYPE;
+//     this.selectedHospitalId = e.data.HOSPITAL_ID;
+//     this.editPopup = true;
+//   }
+
+async fetch_selectedRow_Data(e: any) {
+  const ID = e.data.ID;
+  this.isEditPopupLoading = true;
+  this.editPopup = true;
+  
+  // Set these first for dropdown visibility
+  this.selectedUserType = e.data.USER_TYPE;
+  this.selectedHospitalId = e.data.HOSPITAL_ID;
+
+  try {
+    // Convert observable to promise with await
+    const res: any = await this.dataservice.Select_UserData_Api(ID).toPromise();
+    
+    this.selectedData = res.Data;
+    console.log('==selected data==', this.selectedData[0]);
+
+    // Ensure department ID is properly typed (match department_list's ID type)
+    const departmentId = res.Data[0].DEPARTMENT_ID;
+    const formattedDeptId = this.department_list?.some(d => d.ID === departmentId) 
+      ? departmentId 
+      : parseInt(departmentId);
+
+    this.formsource.patchValue({
+      ID: res.Data[0].ID,
+      UserName: res.Data[0].USER_NAME,
+      LoginName: res.Data[0].LOGIN_NAME,
+      LoginPassword: res.Data[0].LOGIN_PWD,
+      ConfirmPassword: res.Data[0].LOGIN_PWD,
+      Inactive: res.Data[0].IS_INACTIVE,
+      UserType: res.Data[0].USER_TYPE,
+      HospitalId: res.Data[0].HOSPITAL_ID,
+      DepartmentId: formattedDeptId,  // Use the properly typed ID
+      AddInvoice: res.Data[0].ADD_INVOICE,
+      ViewInvoice: res.Data[0].VIEW_INVOICE,
+      CancelInvoice: res.Data[0].CANCEL_INVOICE,
+      LastModifiedDate: res.Data[0].LAST_MODIFIED_DATE,
+      Menus: res.Data[0].MENUS,
+    });
+
+ this.selectedMenus = res.Data[0].MENUS.filter(
         (m: any) => Number(m.SELECTED) === 1
       );
       this.selectedMenuIds = this.selectedMenus.map((m: any) => m.MENU_ID);
  this.isEditPopupLoading = false;
-      // console.log(this.formsource.value);
-    });
-    this.selectedUserType = e.data.USER_TYPE;
-    // this.user_Id_value = e.data.USER_TYPE;
-    this.selectedHospitalId = e.data.HOSPITAL_ID;
-    this.editPopup = true;
+    
+    // Force update DevExtreme dropdown if needed
+    await new Promise(resolve => setTimeout(resolve, 50));
+    if (this.deptSelectBox) {
+      this.deptSelectBox.instance.option('value', formattedDeptId);
+    }
+
+  } catch (error) {
+    console.error('Error loading user data:', error);
+  } finally {
+    this.isEditPopupLoading = false;
   }
+}
+
 
   //=======DROPDOWN=========
   department_dropdown_list() {
@@ -344,7 +407,7 @@ this.editPopup = true;
   this.formsource.patchValue({
     DepartmentId: parseInt(res.Data[0].DEPARTMENT_ID)
   });
-}, 0);
+});
       });
   }
 
