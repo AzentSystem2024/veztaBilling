@@ -340,9 +340,16 @@ this.editPopup = true;
       .subscribe((res: any) => {
         console.log(res, '=========department_dropdown_list========');
         this.department_list = res;
+        setTimeout(() => {
+  this.formsource.patchValue({
+    DepartmentId: parseInt(res.Data[0].DEPARTMENT_ID)
+  });
+}, 0);
       });
   }
 
+
+  
   getDepartment_list() {
     this.dataservice.get_department_List().subscribe((res: any) => {
       console.log(res);
