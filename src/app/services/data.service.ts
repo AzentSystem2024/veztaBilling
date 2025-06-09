@@ -522,7 +522,7 @@ item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:a
  const getEndpoint = BASE_URL+`Report/itemwise`;
   return this.http.post(getEndpoint,reqBody);
 }
-hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any){
  const reqBody = {
     
   "REPORT_ID": "HOSPITALWISESUMMARY",
@@ -530,6 +530,7 @@ hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "USER_ID": staffId,
+   "HOSPITAL_ID":hospitalId,
   "SL_FROM": 0,
   "SL_TO": 0
   }

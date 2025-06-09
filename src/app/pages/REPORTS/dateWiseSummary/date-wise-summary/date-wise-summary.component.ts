@@ -51,7 +51,7 @@ export class DateWiseSummaryComponent {
   @ViewChild(DxDataGridComponent, { static: true })
   dataGrid: DxDataGridComponent;
   dateWiseSummaryData: any = [];
-  selectedRange: any = 'all';
+  selectedRange: any = 'Today';
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
@@ -84,11 +84,12 @@ export class DateWiseSummaryComponent {
   //======================= Date Ranges of date filter =========================
 
   dateRanges = [
-    { label: 'All', value: 'all' },
+  
     {
       label: 'Today',
       value: { start: new Date(), end: new Date() },
     },
+    
     {
       label: 'Yesterday',
       value: {
@@ -100,6 +101,7 @@ export class DateWiseSummaryComponent {
       label: 'This Month',
       value: { start: this.monthStart, end: this.monthEnd },
     },
+      { label: 'All', value: 'all' },
     {
       label: 'Custom',
       value: 'custom',
@@ -111,20 +113,21 @@ export class DateWiseSummaryComponent {
   constructor(private dataservice: DataService, private fb: FormBuilder) {
     this.getUserDetails();
 
-    this.get_alldata();
+    this.get_today_data();
   }
 
   //======================= Default loading Data on LookUp (All Data)=========================
 
-  get_alldata() {
-    if (this.selectedRange === 'all') {
-      // For "All" option, set dates to null or wide range
-      this.FromDate_value = this.startDate;
-      this.ToDate_value = new Date();
-      console.log('All dates selected - loading complete data');
-      this.get_DataSource(); // Load data immediately
-    }
+  
+get_today_data(){
+       if (this.selectedRange === 'Today') {
+    // For "All" option, set dates to null or wide range
+    this.FromDate_value = new Date;
+    this.ToDate_value = new Date()
+    console.log('All dates selected - loading complete data');
+    this.get_DataSource(); // Load data immediately
   }
+}
 
   //=======================User Details  ===============================
 
@@ -270,7 +273,7 @@ const hospital_id=(this.Hospital_value?? []).join(',');
         displayFormat: '{0}',
         valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
         showInColumn: 'NoOfBills',
-        alignment: 'left',
+        alignment: 'Right',
       },
       {
         column: 'GrossAmt',

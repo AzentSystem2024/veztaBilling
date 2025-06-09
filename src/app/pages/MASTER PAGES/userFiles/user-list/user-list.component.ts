@@ -288,8 +288,7 @@ export class UserListComponent {
  this.isEditPopupLoading = true;
 this.editPopup = true;
 
-const minLoadingTime = 500; // in milliseconds
-  const startTime = Date.now();
+
 
     this.dataservice.Select_UserData_Api(ID).subscribe((res: any) => {
       // console.log(res, 'result');
@@ -332,14 +331,6 @@ const minLoadingTime = 500; // in milliseconds
     // this.user_Id_value = e.data.USER_TYPE;
     this.selectedHospitalId = e.data.HOSPITAL_ID;
     this.editPopup = true;
-
-     // Ensure minimum loading time
-    const elapsed = Date.now() - startTime;
-    const remaining = Math.max(minLoadingTime - elapsed, 0);
-
-    setTimeout(() => {
-      this.isEditPopupLoading = false;
-    }, remaining);
   }
 
   //=======DROPDOWN=========
@@ -508,7 +499,9 @@ const minLoadingTime = 500; // in milliseconds
     const Last_modified_date = new Date(); // sends full JS object, not valid JSON
     // const Menu = this.selectedKeys.toString();
   // const Menu = this.formsource.get('Menu').toString();
-  const Menu = this.selectedKeys.toString();
+  // const Menu = this.selectedKeys.toString();
+  const Menu = this.selectedKeys ? this.selectedKeys.toString() : '';
+
     console.log(Menu);
 
     // const Menus = this.formsource.get('Menus')?.value;
@@ -690,7 +683,9 @@ const validationResult = this.formValidationGroup?.instance?.validate();
     const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
     const Last_modified_date = new Date(); // sends full JS object, not valid JSON
 
-    const Menu = this.selectedKeys.toString();
+    // const Menu = this.selectedKeys.toString();
+    const Menu = this.selectedKeys ? this.selectedKeys.toString() : '';
+
 
     // Debug log
     console.log(

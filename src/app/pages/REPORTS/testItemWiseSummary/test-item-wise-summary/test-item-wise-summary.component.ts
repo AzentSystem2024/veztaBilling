@@ -1,8 +1,36 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { DxSelectBoxModule, DxTextAreaModule, DxDateBoxModule, DxFormModule, DxTextBoxModule, DxCheckBoxModule, DxRadioGroupModule, DxFileUploaderModule, DxDataGridModule, DxButtonModule, DxValidatorModule, DxProgressBarModule, DxPopupModule, DxDropDownBoxModule, DxToolbarModule, DxTabPanelModule, DxTabsModule, DxNumberBoxModule, DxValidationGroupModule, DxAutocompleteModule, DxTagBoxModule } from 'devextreme-angular';
-import { DxoItemModule, DxoFormItemModule, DxoLookupModule, DxiItemModule, DxiGroupModule } from 'devextreme-angular/ui/nested';
+import {
+  DxSelectBoxModule,
+  DxTextAreaModule,
+  DxDateBoxModule,
+  DxFormModule,
+  DxTextBoxModule,
+  DxCheckBoxModule,
+  DxRadioGroupModule,
+  DxFileUploaderModule,
+  DxDataGridModule,
+  DxButtonModule,
+  DxValidatorModule,
+  DxProgressBarModule,
+  DxPopupModule,
+  DxDropDownBoxModule,
+  DxToolbarModule,
+  DxTabPanelModule,
+  DxTabsModule,
+  DxNumberBoxModule,
+  DxValidationGroupModule,
+  DxAutocompleteModule,
+  DxTagBoxModule,
+} from 'devextreme-angular';
+import {
+  DxoItemModule,
+  DxoFormItemModule,
+  DxoLookupModule,
+  DxiItemModule,
+  DxiGroupModule,
+} from 'devextreme-angular/ui/nested';
 import { FormTextboxModule } from 'src/app/components';
 import { SchemeWiseSummaryComponent } from '../../schemeWiseSummary/scheme-wise-summary/scheme-wise-summary.component';
 import { DataService } from 'src/app/services';
@@ -11,12 +39,11 @@ import * as bootstrap from 'bootstrap';
 @Component({
   selector: 'app-test-item-wise-summary',
   templateUrl: './test-item-wise-summary.component.html',
-  styleUrls: ['./test-item-wise-summary.component.scss']
+  styleUrls: ['./test-item-wise-summary.component.scss'],
 })
 export class TestItemWiseSummaryComponent {
-
-itemWiseSummaryData: any = []; 
- selectedRange: any = 'all';
+  itemWiseSummaryData: any = [];
+  selectedRange: any = 'Today';
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
@@ -29,78 +56,65 @@ itemWiseSummaryData: any = [];
   toDate: string | number | Date = new Date();
   isEmptyDatagrid: boolean = true;
   isFilterOpened: boolean = false;
-  isFilterRowVisible:boolean=false
-    Hospital_List:any[]=[]
-  Hospital_value:any
-auto:string='auto'
-    ColumnNames: any;
-   startDate: Date = new Date(2025, 3, 25);
-     monthStart: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 2);
-       displayMode: any = 'full';
-   readonly allowedPageSizes: any = [ 5,10, 'all'];
-// Today's date (e.g., May 30, 2025)
-ToDate_value: any;
+  isFilterRowVisible: boolean = false;
+  Hospital_List: any[] = [];
+  Hospital_value: any;
+  auto: string = 'auto';
+  ColumnNames: any;
+  startDate: Date = new Date(2025, 3, 25);
+  monthStart: Date = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    2
+  );
+  displayMode: any = 'full';
+  readonly allowedPageSizes: any = [5, 10, 'all'];
+  // Today's date (e.g., May 30, 2025)
+  ToDate_value: any;
   dataGrid: any;
   selectedfromDate: any;
   selectedToDate: any;
-monthEnd: Date = new Date();
-  // dateRanges = [
-  //    { label: 'All', value: 'all' },
-  //   { label: 'Today', value: new Date() },
-  //   {
-  //     label: 'Yesterday',
-  //     value: new Date(new Date().setDate(new Date().getDate() - 1)),
-  //   },
-  //   {
-  //   label: 'This Month',
-  //   value: { start: this.monthStart, end: this.monthEnd },
-  // },
-  //   {  label:'Custom', value: 'custom' },
-  // ];
-    dateRanges = [
-    { label: 'All', value: 'all' },
-    { 
-      label: 'Today', 
-      value: { start: new Date(), end: new Date() } 
+  monthEnd: Date = new Date();
+
+  dateRanges = [
+    {
+      label: 'Today',
+      value: { start: new Date(), end: new Date() },
     },
+
+   
     {
       label: 'Yesterday',
-      value: { 
+      value: {
         start: new Date(new Date().setDate(new Date().getDate() - 1)),
-        end: new Date(new Date().setDate(new Date().getDate() - 1))
-      }
+        end: new Date(new Date().setDate(new Date().getDate() - 1)),
+      },
     },
     {
       label: 'This Month',
       value: { start: this.monthStart, end: this.monthEnd },
     },
-    {  
-      label: 'Custom', 
-      value: 'custom' 
+     { label: 'All', value: 'all' },
+    {
+      label: 'Custom',
+      value: 'custom',
     },
   ];
-  
 
   constructor(private dataservice: DataService, private fb: FormBuilder) {
-   
     this.getUserDetails();
-    this.get_alldata();
+    this.get_today_data();
   }
 
-  
-get_alldata(){
-       if (this.selectedRange === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    this.get_DataSource(); // Load data immediately
+  get_today_data() {
+    if (this.selectedRange === 'Today') {
+      // For "All" option, set dates to null or wide range
+      this.FromDate_value = new Date();
+      this.ToDate_value = new Date();
+      console.log('All dates selected - loading complete data');
+      this.get_DataSource(); // Load data immediately
+    }
   }
-}
-
-
-
-
 
   getUserDetails() {
     const user_details = sessionStorage.getItem('savedUserData');
@@ -115,8 +129,8 @@ get_alldata(){
         console.log('User Details Data:', this.user_details);
         this.department_list = this.user_details.Departments;
         console.log('Department List:', this.department_list);
- console.log(this.user_details.Hospitals)
-        this.Hospital_List=this.user_details.Hospitals
+        console.log(this.user_details.Hospitals);
+        this.Hospital_List = this.user_details.Hospitals;
         console.log(this.user_details.Departments);
         this.DepartmentData = this.user_details.Departments;
 
@@ -126,7 +140,7 @@ get_alldata(){
       });
     }
   }
- openCustomDateModal() {
+  openCustomDateModal() {
     const modalElement = document.getElementById('customDateModal');
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
@@ -155,28 +169,25 @@ get_alldata(){
   //   else if (selected?.start && selected?.end) {
   //   // For ranges like "This Month"
   //   this.FromDate_value = this.monthStart
-    
-    
+
   //   ;
   //   this.ToDate_value = this.monthEnd
   //   console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
   // }
 
   //     else {
-      
-      
-      
+
   //     console.log('Custom date range selected');
   //     console.log(event.value);
   //     this.isCustomDatePopupVisible = true;
   //     // this.applyCustomDate
-  //   } 
+  //   }
 
   // }
-    onDateRangeChange(event: any) {
+  onDateRangeChange(event: any) {
     const selected = event.value;
     console.log(event);
-    
+
     if (selected === 'all') {
       this.FromDate_value = this.startDate;
       this.ToDate_value = new Date();
@@ -190,7 +201,7 @@ get_alldata(){
       this.FromDate_value = new Date(selected.start);
       this.ToDate_value = new Date(selected.end);
       console.log('Date Range:', this.FromDate_value, 'to', this.ToDate_value);
-     
+
       return;
     }
 
@@ -223,12 +234,13 @@ get_alldata(){
     this.ToDate_value = toDate;
 
     this.selectedRange = {
-      label: `${this.formatDate(this.FromDate_value)} to ${this.formatDate(this.ToDate_value)}`,
-      value: 'custom'
+      label: `${this.formatDate(this.FromDate_value)} to ${this.formatDate(
+        this.ToDate_value
+      )}`,
+      value: 'custom',
     };
-    
+
     this.isCustomDatePopupVisible = false;
-  
   }
 
   // Helper method to format dates consistently
@@ -238,11 +250,14 @@ get_alldata(){
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
-    const hospitalId=this.Hospital_value
-
+    const hospitalId = (this.Hospital_value ?? []).join(',');
     // Ensure dates are valid Date objects before formatting
-    const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
-    const toDate = this.ToDate_value ? this.formatDate(new Date(this.ToDate_value)) : '';
+    const fromDate = this.FromDate_value
+      ? this.formatDate(new Date(this.FromDate_value))
+      : '';
+    const toDate = this.ToDate_value
+      ? this.formatDate(new Date(this.ToDate_value))
+      : '';
 
     if (!fromDate || !toDate) {
       console.error('Invalid date range');
@@ -250,95 +265,90 @@ get_alldata(){
     }
 
     this.dataservice
-      .item_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
+      .item_wise_Api(fromDate, toDate, departmentId, staffId, hospitalId)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.itemWiseSummaryData = res.Data;
         console.log('Date Wise Summary Data:', this.itemWiseSummaryData);
       });
   }
-//   get_DataSource() {
-//     // const date =
-//     //   this.selectedRange === 'custom'
-//     //     ? `${this.fromDate} to ${this.toDate}`
-//     //     : this.selectedRange;
-// const departmentId = (this.Departmens_value ?? []).join(',');
-// const staffId = (this.staff_value ?? []).join(',');
-//     console.log('Selected Department ID:', departmentId);
-//     console.log('Selected Staff ID:', staffId);
-//     // console.log('Selected Date Range:', date);
-//     console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
-//     console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
-//       // Add null checks and ensure dates are properly formatted
-//   const fromDate = this.FromDate_value ? new Date(this.FromDate_value).toISOString().split('T')[0] : '';
-//   const ToDate = this.ToDate_value ? new Date(this.ToDate_value).toISOString().split('T')[0] : '';
+  //   get_DataSource() {
+  //     // const date =
+  //     //   this.selectedRange === 'custom'
+  //     //     ? `${this.fromDate} to ${this.toDate}`
+  //     //     : this.selectedRange;
+  // const departmentId = (this.Departmens_value ?? []).join(',');
+  // const staffId = (this.staff_value ?? []).join(',');
+  //     console.log('Selected Department ID:', departmentId);
+  //     console.log('Selected Staff ID:', staffId);
+  //     // console.log('Selected Date Range:', date);
+  //     console.log('From Date:', this.FromDate_value.toISOString().split('T')[0]);
+  //     console.log('To Date:', this.ToDate_value.toISOString().split('T')[0]);
+  //       // Add null checks and ensure dates are properly formatted
+  //   const fromDate = this.FromDate_value ? new Date(this.FromDate_value).toISOString().split('T')[0] : '';
+  //   const ToDate = this.ToDate_value ? new Date(this.ToDate_value).toISOString().split('T')[0] : '';
 
-//     this.dataservice
-//       .item_wise_Api(fromDate, ToDate, departmentId, staffId)
-//       .subscribe((res: any) => {
-//            this.isEmptyDatagrid = false;
-//         this.itemWiseSummaryData = res.Data;
-//         console.log('Date Wise Summary Data:', this.itemWiseSummaryData);
-//         console.log(res);
-//       });
-//   }
-public filterClick = () => {
-  console.log('Clicked');
-  if (this.itemWiseSummaryData) {
-    this.isFilterOpened = !this.isFilterOpened;
+  //     this.dataservice
+  //       .item_wise_Api(fromDate, ToDate, departmentId, staffId)
+  //       .subscribe((res: any) => {
+  //            this.isEmptyDatagrid = false;
+  //         this.itemWiseSummaryData = res.Data;
+  //         console.log('Date Wise Summary Data:', this.itemWiseSummaryData);
+  //         console.log(res);
+  //       });
+  //   }
+  public filterClick = () => {
+    console.log('Clicked');
+    if (this.itemWiseSummaryData) {
+      this.isFilterOpened = !this.isFilterOpened;
+    }
+  };
+  SummaryClick() {}
+  findColumnLocation(columnName: string) {}
+  refresh() {
+    this.dataGrid.instance.refresh();
   }
-};
-SummaryClick(){
-
-}
-findColumnLocation(columnName: string) {
-
-}
-refresh(){
-  this.dataGrid.instance.refresh();
-
-}
- onExporting(event: any) {
+  onExporting(event: any) {
     const fileName = 'Test Item Wise Summary Report';
     this.dataservice.exportDataGridReport(event, fileName);
   }
   summaryColumnsData = {
-  totalItems: [
-     { 
-    column: "QUANTITY", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "QUANTITY",
-      alignment: "right"
+    totalItems: [
+      {
+        column: 'QUANTITY',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'QUANTITY',
+        alignment: 'right',
+      },
+
+      {
+        column: 'NO_OF_BILLS',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'NO_OF_BILLS',
+        alignment: 'left',
+      },
+      {
+        column: 'AMOUNT',
+        summaryType: 'sum',
+        displayFormat: '{0}',
+        valueFormat: { type: 'fixedPoint', precision: 2, useGrouping: true },
+        showInColumn: 'AMOUNT',
+        alignment: 'right',
+      },
+    ],
+    calculateCustomSummary: (options) => {
+      if (options.name === 'summaryRow') {
+        // Custom logic if needed
+      }
     },
-       
-       { 
-      column: "NO_OF_BILLS", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "NO_OF_BILLS",
-      alignment: "left"
-    },
-    { 
-      column: "AMOUNT", 
-      summaryType: "sum", 
-      displayFormat: "{0}",
-      valueFormat: { type: "fixedPoint", precision: 2, useGrouping: true },
-      showInColumn: "AMOUNT",
-      alignment: "right"
-    },
-  ],
-  calculateCustomSummary: (options) => {
-    if (options.name === "summaryRow") {
-      // Custom logic if needed
-    }
-  }
-};
-toggleFilterRow = () => {
+  };
+  toggleFilterRow = () => {
     this.isFilterRowVisible = !this.isFilterRowVisible;
-  };
+  };
 }
 
 @NgModule({
@@ -373,7 +383,7 @@ toggleFilterRow = () => {
     DxNumberBoxModule,
     DxValidationGroupModule,
     DxAutocompleteModule,
-    DxTagBoxModule
+    DxTagBoxModule,
   ],
   providers: [],
   declarations: [TestItemWiseSummaryComponent],

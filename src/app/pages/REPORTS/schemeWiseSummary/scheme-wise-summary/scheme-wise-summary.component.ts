@@ -14,7 +14,7 @@ import { DataService } from 'src/app/services';
 })
 export class SchemeWiseSummaryComponent {
   schemawisedData: any = [];
-  selectedRange: any = 'all';
+  selectedRange: any = 'Today';
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
@@ -53,11 +53,11 @@ auto:string='auto'
   //   { label: 'Custom', value: 'custom' },
   // ];
    dateRanges = [
-    { label: 'All', value: 'all' },
     { 
       label: 'Today', 
       value: { start: new Date(), end: new Date() } 
     },
+     
     {
       label: 'Yesterday',
       value: { 
@@ -65,10 +65,13 @@ auto:string='auto'
         end: new Date(new Date().setDate(new Date().getDate() - 1))
       }
     },
+     
+
     {
       label: 'This Month',
       value: { start: this.monthStart, end: this.monthEnd },
     },
+     { label: 'All', value: 'all' }, 
     {  
       label: 'Custom', 
       value: 'custom' 
@@ -80,17 +83,17 @@ auto:string='auto'
   constructor(private dataservice: DataService, private fb: FormBuilder) {
    
     this.getUserDetails();
-    this.get_alldata();
+    this.get_today_data();
   }
-get_alldata(){
-       if (this.selectedRange === 'all') {
-    // For "All" option, set dates to null or wide range
-    this.FromDate_value = this.startDate;
-    this.ToDate_value = new Date()
-    console.log('All dates selected - loading complete data');
-    this.get_DataSource(); // Load data immediately
+  get_today_data() {
+    if (this.selectedRange === 'Today') {
+      // For "All" option, set dates to null or wide range
+      this.FromDate_value = new Date();
+      this.ToDate_value = new Date();
+      console.log('All dates selected - loading complete data');
+      this.get_DataSource(); // Load data immediately
+    }
   }
-}
   // applyCustomDate() {
   //   if (!this.fromDate || !this.toDate) {
   //     alert('Please select both From and To dates.');
@@ -183,7 +186,7 @@ get_alldata(){
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
-    const hospitalId=this.Hospital_value ;
+    const hospitalId=(this.Hospital_value  ?? []).join(',');
 
     // Ensure dates are valid Date objects before formatting
     const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
