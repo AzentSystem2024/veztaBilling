@@ -488,7 +488,8 @@ export class UserListComponent {
     const Cancel_invoice = this.formsource.get('CancelInvoice')?.value === true;
     const Last_modified_date = new Date(); // sends full JS object, not valid JSON
     // const Menu = this.selectedKeys.toString();
-  const Menu = this.formsource.get('Menu').toString();
+  // const Menu = this.formsource.get('Menu').toString();
+  const Menu = this.selectedKeys.toString();
     console.log(Menu);
 
     // const Menus = this.formsource.get('Menus')?.value;
