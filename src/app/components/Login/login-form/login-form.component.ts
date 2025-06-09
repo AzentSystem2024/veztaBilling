@@ -84,6 +84,7 @@ export class LoginFormComponent {
           if (response.flag === 1) {
             // Save user data once
             localStorage.setItem('userData', JSON.stringify(response));
+localStorage.setItem('userMenus', JSON.stringify(response.Menus));
 
             const savedUserData = JSON.parse(
               localStorage.getItem('userData') || '{}'
@@ -109,7 +110,7 @@ export class LoginFormComponent {
               .navigate([redirectPath])
               .then(() => {
                 console.log('Navigation to dashboard successful');
-                // window.location.reload();
+                window.location.reload();
               })
               .catch((err) => {
                 console.error('Navigation failed:', err);
