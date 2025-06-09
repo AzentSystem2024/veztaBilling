@@ -46,7 +46,9 @@ export class BillWiseSummaryComponent {
   department_list: any;
   user_details: any = [];
   DepartmentData: any = [];
+  Hospital_List:any=[];
   Departmens_value: any;
+  Hospital_value:any;
   staff_value: any;
   FromDate_value: any;
   staff_Data: any = [];
@@ -128,7 +130,8 @@ export class BillWiseSummaryComponent {
 
         console.log(this.user_details.Departments);
         this.DepartmentData = this.user_details.Departments;
-
+        console.log(this.user_details.Hospitals)
+        this.Hospital_List=this.user_details.Hospitals
         console.log('Department Data:', this.DepartmentData);
         this.staff_Data = this.user_details.Users;
         console.log('Staff Data:', this.staff_Data);
@@ -205,6 +208,7 @@ export class BillWiseSummaryComponent {
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
+    const hospitalId=(this.Hospital_value ?? []).join(',')
 
     // Ensure dates are valid Date objects before formatting
     const fromDate = this.FromDate_value
@@ -220,7 +224,7 @@ export class BillWiseSummaryComponent {
     }
 
     this.dataservice
-      .Bill_wise_Api(fromDate, toDate, departmentId, staffId)
+      .Bill_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.billWiseSummaryData = res.Data;

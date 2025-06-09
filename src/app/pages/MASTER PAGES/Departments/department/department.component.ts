@@ -256,17 +256,17 @@ addData() {
   const Hospital = this.formsource.value.Hospital;
   const is_Inactive = this.formsource.value.IS_INACTIVE;
   const Bill_prefix = this.formsource.value.bill_prefix;
-if (Bill_prefix && Bill_prefix.length > 3) {
-  notify(
-    {
-      message: 'Bill prefix can be maximum 3 characters.',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 1000,
-    },
-    'error'
-  );
-  return; // Stop further execution
-}
+// if (Bill_prefix && Bill_prefix.length > 3) {
+//   notify(
+//     {
+//       message: 'Bill prefix can be maximum 3 characters.',
+//       position: { at: 'top right', my: 'top right' },
+//       displayTime: 1000,
+//     },
+//     'error'
+//   );
+//   return; // Stop further execution
+// }
   const isInactiveBoolean = is_Inactive === 'true' || is_Inactive === true;
 
   // Validate hospital selection
@@ -304,7 +304,11 @@ if (Bill_prefix && Bill_prefix.length > 3) {
   // Proceed to add
  
   console.log(department, Hospital, is_Inactive, Bill_prefix, '====input datas');
-
+ if (!validationResult.isValid) {
+    // Optional: show a DevExtreme notify message
+    // notify('Please correct the validation errors before saving.', 'error', 3000);
+    return; // ❌ Prevent saving if form is invalid
+  }
   this.dataservice
     .Add_Department_Api(department, Hospital, isInactiveBoolean, Bill_prefix)
     .subscribe((res: any) => {
@@ -354,38 +358,38 @@ const id=this.id_Value
      const Hospital=this.hospital_value
       const is_Inactive=this.status_value
       const Bill_prefix=this.bill_prefix_value
- if (!this.department_Value || !this.hospital_value) 
-   {
-    let errorMessage = 'Please fill all required fields: ';
-    const missingFields = [];
+//  if (!this.department_Value || !this.hospital_value) 
+//    {
+//     let errorMessage = 'Please fill all required fields: ';
+//     const missingFields = [];
     
-    if (!this.department_Value) missingFields.push('Department Name');
-    if (!this.hospital_value) missingFields.push('Hospital');
+//     if (!this.department_Value) missingFields.push('Department Name');
+//     if (!this.hospital_value) missingFields.push('Hospital');
     
-    errorMessage += missingFields.join(', ');
+//     errorMessage += missingFields.join(', ');
 
-    notify(
-      {
-        message: errorMessage,
-        position: { at: 'top right', my: 'top right' },
-        displayTime: 3000,
-      },
-      'error'
-    );
-    return;
-  }
+//     notify(
+//       {
+//         message: errorMessage,
+//         position: { at: 'top right', my: 'top right' },
+//         displayTime: 3000,
+//       },
+//       'error'
+//     );
+//     return;
+//   }
   
-if (Bill_prefix && Bill_prefix.length > 3) {
-  notify(
-    {
-      message: 'Bill prefix can be maximum 3 characters.',
-      position: { at: 'top right', my: 'top right' },
-      displayTime: 1000,
-    },
-    'error'
-  );
-  return; // Stop further execution
-}
+// if (Bill_prefix && Bill_prefix.length > 3) {
+//   notify(
+//     {
+//       message: 'Bill prefix can be maximum 3 characters.',
+//       position: { at: 'top right', my: 'top right' },
+//       displayTime: 1000,
+//     },
+//     'error'
+//   );
+//   return; // Stop further execution
+// }
 const isDuplicate = this.departments.some((item: any) => {
   // Skip the current record being edited
   if (item.ID === id) return false;

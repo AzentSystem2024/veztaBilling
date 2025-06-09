@@ -488,7 +488,7 @@ Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   return this.http.post(getEndpoint,reqBody);
 }
 
-Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
+Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,){
  const reqBody = {
     
   "REPORT_ID": "BILLWISESUMMARY",
@@ -496,6 +496,7 @@ Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any){
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "USER_ID": staffId,
+   "HOSPITAL_ID":hospitalId,
   "SL_FROM": 0,
   "SL_TO": 0
   }

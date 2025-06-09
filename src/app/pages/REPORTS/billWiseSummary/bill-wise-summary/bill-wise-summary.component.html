@@ -14,7 +14,20 @@
         (onValueChanged)="onDateRangeChange($event)"
       ></dx-select-box>
     </div>
-
+   <div class="form-item">
+      <dx-tag-box
+        [items]="Hospital_List"
+        valueExpr="Id"
+        displayExpr="Description"
+        label="Select Hospital"
+        labelMode="floating"
+        [(value)]="Departmens_value"
+        [showSelectionControls]="true"
+        [multiline]="false"
+        [searchEnabled]="true"
+        [width]="250"
+      ></dx-tag-box>
+    </div>
     <div class="form-item">
       <dx-tag-box
         [items]="DepartmentData"
