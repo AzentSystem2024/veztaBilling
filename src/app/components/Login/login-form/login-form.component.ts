@@ -138,6 +138,7 @@ localStorage.setItem('userMenus', JSON.stringify(menus));
               .then(() => {
                 console.log('Navigation to dashboard successful');
                 window.location.reload();
+                
               })
               .catch((err) => {
                 console.error('Navigation failed:', err);
