@@ -66,6 +66,8 @@ export class UserListComponent {
   usertype_list: any[];
   user_Id_value: any;
   auto: string = 'auto';
+  @ViewChild('treeListMenu') treeListMenu: any;
+
   @ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
   @ViewChild(DxDataGridComponent, { static: true }) form!: DxFormComponent;
   @ViewChild('confirmPasswordBox', { static: false })
@@ -527,11 +529,50 @@ async fetch_selectedRow_Data(e: any) {
   //   return result;
   // }
 
-  onSelectionChanged(e: any) {
-    this.selectedKeys = e.component.getSelectedRowKeys(); // array of selected IDs
-    this.formsource.get('Menu')?.setValue(this.selectedKeys);
-    console.log('Selected Menus:', this.selectedKeys);
+ onSelectionChanged(e: any) {
+  const selectedKeys = e.component.getSelectedRowKeys(); // Selected IDs (parent or child)
+  const allKeys = this.getRecursiveSelectedKeys(selectedKeys); // Includes all children
+
+  const leafOnlyKeys = this.getOnlyLeafNodes(allKeys); // ✅ Remove parent nodes
+
+  this.selectedKeys = leafOnlyKeys;
+  this.formsource.get('Menu')?.setValue(leafOnlyKeys);
+  console.log('Selected Leaf (Child) MENU_IDs:', leafOnlyKeys);
+}
+
+
+
+getRecursiveSelectedKeys(selectedKeys: any[]): any[] {
+  const selectedSet = new Set(selectedKeys);
+  const allKeys = [...selectedKeys];
+
+  for (const key of selectedKeys) {
+    this.collectChildrenRecursively(key, allKeys, selectedSet);
   }
+
+  return Array.from(new Set(allKeys)); // remove duplicates
+}
+
+collectChildrenRecursively(parentId: any, result: any[], visited: Set<any>) {
+  const children = this.Usermenu.filter(item => item.MAIN_MENU_ID === parentId);
+
+  for (const child of children) {
+    if (!visited.has(child.MENU_ID)) {
+      visited.add(child.MENU_ID);
+      result.push(child.MENU_ID);
+      this.collectChildrenRecursively(child.MENU_ID, result, visited);
+    }
+  }
+}
+
+getOnlyLeafNodes(menuIds: any[]): any[] {
+  return menuIds.filter(id => {
+    const isParent = this.Usermenu.some(item => item.MAIN_MENU_ID === id);
+    return !isParent; // keep only items with no children
+  });
+}
+
+
 
   validatePasswordMatch(): boolean {
   const password = this.formsource.get('LoginPassword')?.value;
@@ -610,6 +651,12 @@ async fetch_selectedRow_Data(e: any) {
       MENUS: Menu,
     };
 
+    if (!Menu || Menu.length === 0) {
+   const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
+    if (!confirmed) {
+      return; // ❌ Cancel pressed
+    }
+  }
     
 
     // 🚫 New condition: Hospital User must select hospital
@@ -718,9 +765,22 @@ async fetch_selectedRow_Data(e: any) {
       CancelInvoice: '',
       DepartmentId: null,
       HospitalId: '',
+       Menu: []  // If this field exists in formsource
     });
-    
-  }
+     // ✅ Step 2: Clear internal menu selection
+  this.selectedMenuIds = [];
+
+  // ✅ Step 3: Ensure TreeList clears visually
+  setTimeout(() => {
+    this.treeListMenu?.instance?.clearSelection();  // remove UI selection
+    this.treeListMenu?.instance?.refresh();         // redraw if needed
+  }, 50); // slight delay ensures component is initialized
+
+  // ✅ Step 4: Reset validation (optional)
+  setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  }, 100);
+}
 
   onAddPopupClose() {
     this.formsource.reset();
@@ -798,6 +858,14 @@ const validationResult = this.formValidationGroup?.instance?.validate();
       // MENUS: Menus || []
       MENUS: Menu,
     };
+
+
+     if (!Menu || Menu.length === 0) {
+   const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
+    if (!confirmed) {
+      return; // ❌ Cancel pressed
+    }
+  }
 
     if (!User_name || !Login_name || !Login_password || !Usertype) {
       notify(

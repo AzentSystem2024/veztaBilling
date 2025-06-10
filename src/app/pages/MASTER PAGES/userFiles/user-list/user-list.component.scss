@@ -128,3 +128,9 @@
   content: ' *';
   color: red;
 }
+::ng-deep .dx-treelist .dx-row {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: 28px !important; /* reduce from default ~36px */
+  line-height: 1.2 !important;
+}
