@@ -94,7 +94,7 @@ localStorage.setItem('allMenus', JSON.stringify(response.Menus));
 
 // filter allowed menus
 const allowedMenuNames = [];
-
+// 
 if (response.ADD_INVOICE || response.VIEW_INVOICE) {
   allowedMenuNames.push('Invoice List');
 }
@@ -143,7 +143,7 @@ localStorage.setItem('userMenus', JSON.stringify(menus));
               .navigate([redirectPath])
               .then(() => {
                 console.log('Navigation to dashboard successful');
-                // window.location.reload();
+                window.location.reload();
 
               })
               .catch((err) => {
