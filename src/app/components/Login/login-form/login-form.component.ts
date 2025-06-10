@@ -142,7 +142,7 @@ localStorage.setItem('userMenus', JSON.stringify(menus));
               .navigate([redirectPath])
               .then(() => {
                 console.log('Navigation to dashboard successful');
-                // window.location.reload();
+                window.location.reload();
                 
               })
               .catch((err) => {
