@@ -66,6 +66,8 @@ export class UserListComponent {
   usertype_list: any[];
   user_Id_value: any;
   auto: string = 'auto';
+  @ViewChild('treeListMenu') treeListMenu: any;
+
   @ViewChild('formValidationGroup') formValidationGroup: DxValidationGroupComponent;
   @ViewChild(DxDataGridComponent, { static: true }) form!: DxFormComponent;
   @ViewChild('confirmPasswordBox', { static: false })
@@ -763,15 +765,22 @@ getOnlyLeafNodes(menuIds: any[]): any[] {
       CancelInvoice: '',
       DepartmentId: null,
       HospitalId: '',
-      selectedMenuIds: []  // If this field exists in formsource
+       Menu: []  // If this field exists in formsource
     });
-     this.selectedMenuIds = [];
-     // ✅ This ensures TreeList visually updates (edge case)
+     // ✅ Step 2: Clear internal menu selection
+  this.selectedMenuIds = [];
+
+  // ✅ Step 3: Ensure TreeList clears visually
   setTimeout(() => {
-    this.treeListMenu?.instance?.clearSelection();
-    this.treeListMenu?.instance?.refresh();
-  }, 0); // ✅ Reset the menu selection list
-  }
+    this.treeListMenu?.instance?.clearSelection();  // remove UI selection
+    this.treeListMenu?.instance?.refresh();         // redraw if needed
+  }, 50); // slight delay ensures component is initialized
+
+  // ✅ Step 4: Reset validation (optional)
+  setTimeout(() => {
+    this.formValidationGroup?.instance?.reset();
+  }, 100);
+}
 
   onAddPopupClose() {
     this.formsource.reset();
