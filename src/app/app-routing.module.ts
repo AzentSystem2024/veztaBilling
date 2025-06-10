@@ -134,7 +134,7 @@ const routes: Routes = [
         canActivate: [AuthGuardService],
       },
       {
-        path: 'staffwise-summary',
+        path: 'dashboard',
         component: StaffWiseSummaryComponent,
         canActivate: [AuthGuardService],
       },

@@ -72,6 +72,7 @@ export class LoginFormComponent {
       return;
     }
 
+
     this.loading = true;
 
     this.authService
@@ -122,14 +123,18 @@ localStorage.setItem('userMenus', JSON.stringify(menus));
               'savedUserData',
               JSON.stringify(savedUserData)
             );
-            // const redirectPath = savedUserData.ADD_INVOICE ? '/invoice-entry' : 'null';
+          const isMenuEmpty = savedUserData.Menus?.length === 0;
+          console.log(isMenuEmpty);
+          
             const redirectPath =
+            isMenuEmpty
+    ? '/dashboard':
               savedUserData.USER_TYPE_ID === 3 ||
               savedUserData.USER_TYPE_ID === 4
-                ? '/invoice-entry'
+                ? '/dashboard'
                 : savedUserData.USER_TYPE_ID === 1 ||
                   savedUserData.USER_TYPE_ID === 2
-                ? '/invoice'
+                ? '/dashboard'
                 : null;
 
             // Navigate to dashboard
@@ -137,7 +142,7 @@ localStorage.setItem('userMenus', JSON.stringify(menus));
               .navigate([redirectPath])
               .then(() => {
                 console.log('Navigation to dashboard successful');
-                window.location.reload();
+                // window.location.reload();
                 
               })
               .catch((err) => {

@@ -74,6 +74,8 @@ export class ItemComponent {
   isFormSubmitted = false;
   @ViewChild('formValidationGroup') formValidationGroup : DxValidationGroupComponent
   @ViewChild('priceBoxRef', { static: false }) priceBoxRef: any;
+  @ViewChild('priceValidator', { static: false }) priceValidator: any;
+
   constructor(
     private dataservice: DataService,
     private fb: FormBuilder,
@@ -213,11 +215,21 @@ export class ItemComponent {
     const is_fixed = this.formsource.value.is_fixed;
     let item_price = this.formsource.value.price;
 
- if (is_fixed && item_price <= 1) {
-    this.formsource.get('price')?.setErrors({ invalidPrice: true });
-    
-return
-  }
+  if (is_fixed && item_price <= 1) {
+  this.formsource.get('price')?.setErrors({ invalidPrice: true }); // mark form field as invalid
+  this.formsource.get('price')?.markAsTouched(); // make sure UI shows the error if bound
+
+  notify(
+    {
+      message: 'Price must be greater than 1',
+      position: { at: 'top right', my: 'top right' },
+      displayTime: 3000
+    },
+    'error'
+  );
+
+  return;
+}
   else{
      item_price = 0;
   }
@@ -316,62 +328,159 @@ return
 
   //=================Update Functionality=============================
 
-  update_item_Data() {
+//   update_item_Data() {
+//     // const result = this..instance.validate();
+
+// //   if (!result.isValid) {
+// //     console.log('Validation failed. Update aborted.');
+// //     return; // stop the update process
+// //   }
    
-    const is_fixed = this.is_fixed_value;
-    let item_price = this.price_value;
+//     const is_fixed = this.is_fixed_value;
+//     let item_price = this.price_value;
+//        const isValid = this.priceBoxRef.instance.validate().isValid;
+//   if (!isValid) return;
+//     const id = this.selected_data.ID;
+//     const item_code = this.code_value.toString();
+//     const name = this.name_value;
+//     const is_inactive = this.is_inactve_value;
+//     const dep_id = this.department_id_value.join(',');
+//     item_price=this.price_value??0
+//     const codeDuplicate = this.items_source?.some((item: any) => {
+//       if (item.ID === id) return false; // Skip current item when editing
+//       return (
+//         (item.ITEM_CODE?.trim().toLowerCase() || '') ===
+//         (item_code?.trim().toLowerCase() || '')
+//       );
+//     });
+
+//     const nameDuplicate = this.items_source?.some((item: any) => {
+//       if (item.ID === id) return false; // Skip current item when editing
+//       return (
+//         (item.ITEM_NAME?.trim().toLowerCase() || '') ===
+//         (name?.trim().toLowerCase() || '')
+//       );
+//     });
+//     if (codeDuplicate || nameDuplicate) {
+//       console.log('Duplication Checking Triggered');
+
+//       let errorMessage = '';
+//       if (codeDuplicate && nameDuplicate) {
+//         errorMessage = 'Item code and name both already exist!';
+//       } else if (codeDuplicate) {
+//         errorMessage = 'Item code already exists!';
+//       } else {
+//         errorMessage = 'Item name already exists!';
+//       }
+
+//       notify(
+//         {
+//           message: errorMessage,
+//           position: { at: 'top right', my: 'top right' },
+//           displayTime: 3000, // Increased display time for better readability
+//         },
+//         'error'
+//       );
+//       return;
+//     }
 
 
+//     this.dataservice
+//       .update_items_Api(
+//         id,
+//         item_code,
+//         name,
+//         is_fixed,
+//         item_price,
+//         is_inactive,
+//         dep_id
+//       )
+//       .subscribe((res: any) => {
+//         console.log(res, '=========update========');
 
-      //  const isValid = this.priceBoxRef.instance.validate().isValid;
-  // if (!isValid) return;
+//         notify(
+//           {
+//             message: 'Item Updated successfully',
+//             position: { at: 'top right', my: 'top right' },
+//             displayTime: 500,
+//           },
+//           'success'
+//         );
+//         this.items_list();
+//         this.isEditPop = false;
+//       });
+//   }
+update_item_Data() {
+    // First validate the price input
+      const validationGroup = this.priceBoxRef.instance.validationGroup;
+    if (validationGroup) {
+        const validationResult = validationGroup.validate();
+        if (!validationResult.isValid) {
+            console.log('Form validation failed');
+            return;
+        }
+    }
+
+    // Then check price > 1
+    const item_price = this.price_value ?? 0;
+       const is_fixed = this.is_fixed_value;
+    if (is_fixed && item_price <= 1) {
+        notify({
+            message: 'Price must be greater than 1',
+            position: { at: 'top right', my: 'top right' },
+            displayTime: 3000,
+        }, 'error');
+        return;
+    }
+ 
     const id = this.selected_data.ID;
     const item_code = this.code_value.toString();
     const name = this.name_value;
     const is_inactive = this.is_inactve_value;
     const dep_id = this.department_id_value.join(',');
-    item_price=this.price_value??0
+
+    // Check for duplicates
     const codeDuplicate = this.items_source?.some((item: any) => {
-      if (item.ID === id) return false; // Skip current item when editing
-      return (
-        (item.ITEM_CODE?.trim().toLowerCase() || '') ===
-        (item_code?.trim().toLowerCase() || '')
-      );
+        if (item.ID === id) return false;
+        return (
+            (item.ITEM_CODE?.trim().toLowerCase() || '') ===
+            (item_code?.trim().toLowerCase() || '')
+        );
     });
 
     const nameDuplicate = this.items_source?.some((item: any) => {
-      if (item.ID === id) return false; // Skip current item when editing
-      return (
-        (item.ITEM_NAME?.trim().toLowerCase() || '') ===
-        (name?.trim().toLowerCase() || '')
-      );
+        if (item.ID === id) return false;
+        return (
+            (item.ITEM_NAME?.trim().toLowerCase() || '') ===
+            (name?.trim().toLowerCase() || '')
+        );
     });
+
     if (codeDuplicate || nameDuplicate) {
-      console.log('Duplication Checking Triggered');
+        console.log('Duplication Checking Triggered');
 
-      let errorMessage = '';
-      if (codeDuplicate && nameDuplicate) {
-        errorMessage = 'Item code and name both already exist!';
-      } else if (codeDuplicate) {
-        errorMessage = 'Item code already exists!';
-      } else {
-        errorMessage = 'Item name already exists!';
-      }
+        let errorMessage = '';
+        if (codeDuplicate && nameDuplicate) {
+            errorMessage = 'Item code and name both already exist!';
+        } else if (codeDuplicate) {
+            errorMessage = 'Item code already exists!';
+        } else {
+            errorMessage = 'Item name already exists!';
+        }
 
-      notify(
-        {
-          message: errorMessage,
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 3000, // Increased display time for better readability
-        },
-        'error'
-      );
-      return;
+        notify(
+            {
+                message: errorMessage,
+                position: { at: 'top right', my: 'top right' },
+                displayTime: 3000,
+            },
+            'error'
+        );
+        return;
     }
- 
 
-    this.dataservice
-      .update_items_Api(
+    // All validations passed - proceed with API call
+    this.dataservice.update_items_Api(
         id,
         item_code,
         name,
@@ -379,22 +488,21 @@ return
         item_price,
         is_inactive,
         dep_id
-      )
-      .subscribe((res: any) => {
+    ).subscribe((res: any) => {
         console.log(res, '=========update========');
 
         notify(
-          {
-            message: 'Item Updated successfully',
-            position: { at: 'top right', my: 'top right' },
-            displayTime: 500,
-          },
-          'success'
+            {
+                message: 'Item Updated successfully',
+                position: { at: 'top right', my: 'top right' },
+                displayTime: 500,
+            },
+            'success'
         );
         this.items_list();
         this.isEditPop = false;
-      });
-  }
+    });
+}
 
 
 validatePriceselect(e: any): boolean {
