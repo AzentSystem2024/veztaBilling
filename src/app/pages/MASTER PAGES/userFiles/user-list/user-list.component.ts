@@ -527,11 +527,50 @@ async fetch_selectedRow_Data(e: any) {
   //   return result;
   // }
 
-  onSelectionChanged(e: any) {
-    this.selectedKeys = e.component.getSelectedRowKeys(); // array of selected IDs
-    this.formsource.get('Menu')?.setValue(this.selectedKeys);
-    console.log('Selected Menus:', this.selectedKeys);
+ onSelectionChanged(e: any) {
+  const selectedKeys = e.component.getSelectedRowKeys(); // Selected IDs (parent or child)
+  const allKeys = this.getRecursiveSelectedKeys(selectedKeys); // Includes all children
+
+  const leafOnlyKeys = this.getOnlyLeafNodes(allKeys); // ✅ Remove parent nodes
+
+  this.selectedKeys = leafOnlyKeys;
+  this.formsource.get('Menu')?.setValue(leafOnlyKeys);
+  console.log('Selected Leaf (Child) MENU_IDs:', leafOnlyKeys);
+}
+
+
+
+getRecursiveSelectedKeys(selectedKeys: any[]): any[] {
+  const selectedSet = new Set(selectedKeys);
+  const allKeys = [...selectedKeys];
+
+  for (const key of selectedKeys) {
+    this.collectChildrenRecursively(key, allKeys, selectedSet);
   }
+
+  return Array.from(new Set(allKeys)); // remove duplicates
+}
+
+collectChildrenRecursively(parentId: any, result: any[], visited: Set<any>) {
+  const children = this.Usermenu.filter(item => item.MAIN_MENU_ID === parentId);
+
+  for (const child of children) {
+    if (!visited.has(child.MENU_ID)) {
+      visited.add(child.MENU_ID);
+      result.push(child.MENU_ID);
+      this.collectChildrenRecursively(child.MENU_ID, result, visited);
+    }
+  }
+}
+
+getOnlyLeafNodes(menuIds: any[]): any[] {
+  return menuIds.filter(id => {
+    const isParent = this.Usermenu.some(item => item.MAIN_MENU_ID === id);
+    return !isParent; // keep only items with no children
+  });
+}
+
+
 
   validatePasswordMatch(): boolean {
   const password = this.formsource.get('LoginPassword')?.value;
@@ -718,8 +757,14 @@ async fetch_selectedRow_Data(e: any) {
       CancelInvoice: '',
       DepartmentId: null,
       HospitalId: '',
+      selectedMenuIds: []  // If this field exists in formsource
     });
-    
+     this.selectedMenuIds = [];
+     // ✅ This ensures TreeList visually updates (edge case)
+  setTimeout(() => {
+    this.treeListMenu?.instance?.clearSelection();
+    this.treeListMenu?.instance?.refresh();
+  }, 0); // ✅ Reset the menu selection list
   }
 
   onAddPopupClose() {
