@@ -143,7 +143,11 @@ loggedInUserName = '';
       localStorage.removeItem('userData');
       localStorage.removeItem('LOGIN_NAME');
       // Navigate to login
-      this.router.navigate(['/auth/login']);
+      this.router.navigate(['/auth/login']).then(() => {
+    // Reload the page after navigation
+    window.location.reload();
+  });
+
     }
   });
 }

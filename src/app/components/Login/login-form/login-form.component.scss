@@ -274,6 +274,7 @@ body {
 }
 
 ::ng-deep .dx-texteditor-input {
+  color: var(--base-text-color);
   line-height: 20px !important;      /* Adjust line height */
   height: 20px !important;           /* Reduce input box height */
   padding: 0 !important;
