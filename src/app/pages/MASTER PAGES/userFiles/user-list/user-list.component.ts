@@ -860,12 +860,12 @@ const validationResult = this.formValidationGroup?.instance?.validate();
     };
 
 
-     if (!Menu || Menu.length === 0) {
-   const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
-    if (!confirmed) {
-      return; // ❌ Cancel pressed
-    }
-  }
+  //    if (!Menu || Menu.length === 0) {
+  //  const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
+  //   if (!confirmed) {
+  //     return; // ❌ Cancel pressed
+  //   }
+  // }
 
     if (!User_name || !Login_name || !Login_password || !Usertype) {
       notify(
