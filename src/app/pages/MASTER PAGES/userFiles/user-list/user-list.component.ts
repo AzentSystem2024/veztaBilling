@@ -746,7 +746,6 @@ getOnlyLeafNodes(menuIds: any[]): any[] {
       
 
 
-
     }
   }
 
@@ -860,24 +859,12 @@ const validationResult = this.formValidationGroup?.instance?.validate();
     };
 
 
-     if (!Menu || Menu.length === 0) {
-   const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
-    if (!confirmed) {
-      return; // ❌ Cancel pressed
-    }
-  }
-
-    if (!User_name || !Login_name || !Login_password || !Usertype) {
-      notify(
-        {
-          message: 'Please fill the field.',
-          position: { at: 'top right', my: 'top right' },
-          displayTime: 1000,
-        },
-        'error'
-      );
-      return; // Stop further execution
-    }
+  //    if (!Menu || Menu.length === 0) {
+  //  const confirmed = confirm('You have not selected any menu.\nDo you want to continue without selecting?');
+  //   if (!confirmed) {
+  //     return; // ❌ Cancel pressed
+  //   }
+  // }
 
     // 🚫 New condition: Hospital User must select hospital
     if (Usertype === 3 && !Hospital_Id) {
