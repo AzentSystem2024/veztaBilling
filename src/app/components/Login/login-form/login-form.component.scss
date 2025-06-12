@@ -280,7 +280,10 @@ body {
   padding: 0 !important;
 }
 
-
+::ng-deep .password-toggle-button .dx-button-content .dx-icon,
+::ng-deep .password-toggle-button .dx-icon {
+  color: var(--base-text-color);
+}
 
 .password-toggle-button .dx-icon {
   font-size: 18px;

@@ -30,7 +30,9 @@
               editorType="dxTextBox"
               [editorOptions]="{
                 placeholder: 'Username',
-
+  inputAttr: {
+    style: 'color: black;'
+  },
                 buttons: [
                   {
                     name: 'userIcon',
@@ -60,6 +62,9 @@
                 placeholder: 'Password',
                 stylingMode: 'outlined',
                 mode: isPasswordVisible ? 'text' : 'password',
+                      inputAttr: {
+    style: 'color: black;'
+  },
                 buttons: [
                   {
                     name: 'lockIcon',
