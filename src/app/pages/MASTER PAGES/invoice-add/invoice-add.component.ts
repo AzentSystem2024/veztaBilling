@@ -644,11 +644,9 @@ this.getDropdownData();
   }
 
   const department = this.Department;
-  console.log(this.Department.DEPARTMENT_ID, 'DEPPPPPPPPPPPPPPPPPPPP');
 
   this.dataService.getInvoiceNo(department).subscribe((response: any) => {
     this.invoiceFormData.INVOICE_NO = response.data;
-    console.log(this.invoiceFormData.INVOICE_NO, "INVOICENUMBER");
   });
 }
 
@@ -1052,18 +1050,18 @@ this.getDropdownData();
 
   save() {
     
-    if (
-      !this.invoiceFormData.NET_AMOUNT ||
-      +this.invoiceFormData.NET_AMOUNT === 0
-    ) {
-      notify({
-        message: 'Quantity or Net amount is 0',
-        type: 'error',
-        displayTime: 3000,
-        position: { at: 'top center', my: 'top center' },
-      });
-      return;
-    }
+    // if (
+    //   !this.invoiceFormData.NET_AMOUNT ||
+    //   +this.invoiceFormData.NET_AMOUNT === 0
+    // ) {
+    //   notify({
+    //     message: 'Quantity or Net amount is 0',
+    //     type: 'error',
+    //     displayTime: 3000,
+    //     position: { at: 'top center', my: 'top center' },
+    //   });
+    //   return;
+    // }
     this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId;
     const clonedData = { ...this.invoiceFormData };
     const invoiceEntries = clonedData.INVOICE_ENTRY || [];

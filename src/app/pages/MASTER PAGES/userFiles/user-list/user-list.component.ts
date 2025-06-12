@@ -866,6 +866,19 @@ const validationResult = this.formValidationGroup?.instance?.validate();
   //   }
   // }
 
+    if (!User_name || !Login_name || !Login_password || !Usertype) {
+      notify(
+        {
+          message: 'Please fill the field.',
+          position: { at: 'top right', my: 'top right' },
+          displayTime: 1000,
+        },
+        'error'
+      );
+      return; // Stop further execution
+    }
+
+
     // 🚫 New condition: Hospital User must select hospital
     if (Usertype === 3 && !Hospital_Id) {
       notify(

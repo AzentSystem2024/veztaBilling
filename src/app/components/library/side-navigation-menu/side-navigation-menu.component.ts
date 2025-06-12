@@ -130,39 +130,6 @@ refreshMenu() {
 }
 
 
-
-// refreshMenu() {
-//   const menuList = JSON.parse(localStorage.getItem('userMenus') || '[]');
-//   const groupedMenus: { [key: string]: any[] } = {};
-
-//   this.items = [];
-
-//   // Step 1: Group child menus by MAIN_MENU
-//   for (const menu of menuList) {
-//     const mainMenu = menu.MAIN_MENU;
-//     if (!groupedMenus[mainMenu]) {
-//       groupedMenus[mainMenu] = [];
-//     }
-
-//     groupedMenus[mainMenu].push({
-//       text: menu.MENU_NAME,
-//       path: this.getRouteForMenu(menu.MENU_NAME),
-//     });
-//   }
-
-//   // Step 2: Create sidebar items from groupedMenus
-//   for (const mainMenu in groupedMenus) {
-//     this.items.push({
-//       text: mainMenu,
-//       icon: this.getIconForMainMenu(mainMenu),
-//       path: '',
-//       items: groupedMenus[mainMenu],
-//     });
-//   }
-
-//   localStorage.setItem('sidemenuItems', JSON.stringify(this.items));
-// }
-
 getRouteForMenu(menuName: string): string {
   switch (menuName) {
     case 'Basic Settings': return '/dashboard';
