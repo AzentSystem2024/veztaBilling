@@ -146,8 +146,8 @@
     [animationEnabled]="true"
     [width]="600"
   >
-    <dxi-item title="General"  style="display: flex; background-color: var(--base-bg);">
-      <div class="tab-content" style="display: flex; background-color: var(--base-bg);">
+    <dxi-item title="General">
+      <div class="tab-content" style="display: flex">
         <dx-validation-group #formValidationGroup>
           <dx-form [formGroup]="formsource" width="580">
             <dxi-item class="fields">
@@ -361,8 +361,8 @@
     </dxi-item>
 
     <!-- SECOND TAB -->
-    <dxi-item title="Menu Access"  style="display: flex; background-color: var(--base-bg);">
-      <div class="tab-content"  style="display: flex; background-color: var(--base-bg);">
+    <dxi-item title="Menu Access">
+      <div class="tab-content">
         <dx-tree-list
          #treeListMenu
           [dataSource]="Usermenu"
@@ -389,7 +389,7 @@
   <!-- BUTTONS -->
   <dxi-item class="d-flex justify-content-end mt-1">
     <button
-      class="btn me-1 border border-1 equal-button"
+      class="btn me-1 text-dark border border-1 equal-button"
       (click)="closePop()"
     >
       Cancel
@@ -413,7 +413,7 @@
   [closeOnOutsideClick]="false"
   [showCloseButton]="true"
   [shading]="false"
-  (onHidden)="closePop()"
+  (onHidden)="onAddPopupClose()"
   [shading]="true"
   [hideOnOutsideClick]="false" 
 >
@@ -431,10 +431,9 @@
     [(selectedIndex)]="selectedTabIndex"
     [animationEnabled]="true"
     [width]="600"
-   
   >
-    <dxi-item title="General" style="display: flex; background-color: var(--base-bg);">
-      <div class="tab-content" style="display: flex; background-color: var(--base-bg);">
+    <dxi-item title="General">
+      <div class="tab-content" style="display: flex">
         <dx-validation-group #formValidationGroup>
           
           <dx-form [formGroup]="formsource" width="580px">
@@ -639,8 +638,8 @@
     ></dxi-item>
 
     <!-- SECOND TAB -->
-    <dxi-item title="Menu Access" style=" background-color: var(--base-bg);">
-      <div class="tab-content" style=" background-color: var(--base-bg);">
+    <dxi-item title="Menu Access">
+      <div class="tab-content">
         <dx-tree-list
           [dataSource]="Usermenu"
           keyExpr="MENU_ID"  
@@ -665,9 +664,9 @@
     </dxi-item>
   </dx-tab-panel>
   <!-- BUTTONS -->
-  <dxi-item class="d-flex justify-content-end mt-2">
+   <dxi-item class="d-flex justify-content-end mt-1">
     <button
-      class="btn me-1 border border-1 equal-button"
+      class="btn me-1 text-dark border border-1 equal-button"
       (click)="closePop()"
     >
       Cancel

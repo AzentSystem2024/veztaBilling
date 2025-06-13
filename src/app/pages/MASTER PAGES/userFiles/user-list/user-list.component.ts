@@ -746,7 +746,6 @@ getOnlyLeafNodes(menuIds: any[]): any[] {
       
 
 
-
     }
   }
 
@@ -878,6 +877,7 @@ const validationResult = this.formValidationGroup?.instance?.validate();
       );
       return; // Stop further execution
     }
+
 
     // 🚫 New condition: Hospital User must select hospital
     if (Usertype === 3 && !Hospital_Id) {
