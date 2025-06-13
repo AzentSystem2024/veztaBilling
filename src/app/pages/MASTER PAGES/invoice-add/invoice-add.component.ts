@@ -129,6 +129,9 @@ export class InvoiceAddComponent {
     { id: 2, name: 'Female' },
     { id: 3, name: 'Other' },
   ];
+  cashModeId = 1;
+
+
   mobileNumber: string = '';
   mobileValid: boolean = true;
   mobileTouched = false;
@@ -1111,6 +1114,7 @@ this.getDropdownData();
     this.dataService.saveInvoiceData(dataToSave).subscribe((response: any) => {
       if (response.flag == '1') {
         this.printData = response.data;
+        console.log(this.printData,"PRINTDATAAAAAAAAAAAAAA")
         notify(
           {
             message: 'Invoice Entered Successfully',
@@ -1209,6 +1213,7 @@ this.getDropdownData();
   };
 
   onPaymentModeChange(event: any): void {
+    console.log(event,"PAYMENTMODECHANGEEEEEE")
     setTimeout(() => {
       if (this.selectedPaymentModeId === this.creditModeId) {
         this.insuranceSelect?.instance?.focus();
@@ -1313,15 +1318,29 @@ this.getDropdownData();
     // return numToWords(Math.floor(amount)) + ' Rupees Only';
   }
 
+get billTitle(): string {
+  return this.selectedPaymentModeId === this.creditModeId ? 'CREDIT BILL' : 'CASH BILL';
+}
+
+
+
+
+
   previewAndPrintInvoice(data: any) {
     console.log(data, 'DATA');
+  const modeId = data.PAYMENT_MODE_NAME;
+  const title = modeId === "Credit" ? 'CREDIT BILL' : 'CASH BILL';
     const amount = Number(data.NET_AMOUNT);
     const amountInWords = this.convertNumberToWords(amount);
+
     const printWindow = window.open('', '_blank', 'width=800,height=700');
     const htmlContent = `
 <html>
   <head>
-    <title>${this.printData.SCHEMA_NAME ? 'CREDIT BILL' : 'CASH BILL'}</title>
+ <title>${title}</title>
+
+
+
 
 
     <style>
@@ -1386,11 +1405,7 @@ this.getDropdownData();
       <!-- Header -->
       <table class="header-table">
         <tr>
-          <td><strong>${
-            !data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()
-              ? 'CASH BILL'
-              : 'CREDIT BILL'
-          }</strong></td>
+         <td><strong>${title}</strong></td>
 <td style="text-align: center;"><strong>BILLED BY:</strong> ${this.USER}</td>
           <td style="text-align: right;"><strong>COMPANY NAME:</strong>${
             this.hospitalName
