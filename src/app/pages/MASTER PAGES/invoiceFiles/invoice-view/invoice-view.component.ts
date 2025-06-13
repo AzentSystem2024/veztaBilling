@@ -308,7 +308,8 @@ convertNumberToWords(amount: number): string {
 previewAndPrintInvoice(): void {
   const data = this.invoiceData;
   console.log(data, "DATA");
-
+  const modeId = data.PAYMENT_MODE_NAME;
+    const title = modeId === 'Credit' ? 'CREDIT BILL' : 'CASH BILL';
   const amount = Number(data.NET_AMOUNT);
   const amountInWords = this.convertNumberToWords(amount);
 
@@ -374,7 +375,7 @@ previewAndPrintInvoice(): void {
     <div class="bill-container">
       <table class="header-table">
         <tr>
-          <td><strong>${(!data.SCHEMA_NAME || !data.SCHEMA_NAME.trim()) ? 'CASH BILL' : 'CREDIT BILL'}</strong></td>
+          <td><strong>${title}</strong></td>
           <td style="text-align: center;"><strong>BILLED BY:</strong> ${(this.USER)}</td>
           <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(this.hospitalName)}</td>
         </tr>
