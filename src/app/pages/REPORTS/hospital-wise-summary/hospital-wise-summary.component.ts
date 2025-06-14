@@ -180,7 +180,9 @@ get_today_data(){
       const departmentId = (this.Departmens_value ?? []).join(',');
       const staffId = (this.staff_value ?? []).join(',');
       const hospitalId=(this.Hospital_value ?? []).join(',')
-  
+        const user_details = sessionStorage.getItem('savedUserData');
+const user_id = user_details ? JSON.parse(user_details).USER_ID?.toString() : null;
+
       // Ensure dates are valid Date objects before formatting
       const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
       const toDate = this.ToDate_value ? this.formatDate(new Date(this.ToDate_value)) : '';
@@ -191,7 +193,7 @@ get_today_data(){
       }
   
       this.dataservice
-        .hospital_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
+        .hospital_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId,user_id)
         .subscribe((res: any) => {
           this.isEmptyDatagrid = false;
           this.HospitalWiseSummaryData = res.Data;

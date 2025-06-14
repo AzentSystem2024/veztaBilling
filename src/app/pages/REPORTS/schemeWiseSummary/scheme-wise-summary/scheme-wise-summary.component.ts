@@ -187,6 +187,8 @@ auto:string='auto'
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
     const hospitalId=(this.Hospital_value  ?? []).join(',');
+      const user_details = sessionStorage.getItem('savedUserData');
+const user_id = user_details ? JSON.parse(user_details).USER_ID?.toString() : null;
 
     // Ensure dates are valid Date objects before formatting
     const fromDate = this.FromDate_value ? this.formatDate(new Date(this.FromDate_value)) : '';
@@ -198,7 +200,7 @@ auto:string='auto'
     }
 
     this.dataservice
-      .Schema_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId)
+      .Schema_wise_Api(fromDate, toDate, departmentId, staffId,hospitalId,user_id)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.schemawisedData = res.Data;
