@@ -413,7 +413,7 @@
   [closeOnOutsideClick]="false"
   [showCloseButton]="true"
   [shading]="false"
-  (onHidden)="closePop()"
+  (onHidden)="onAddPopupClose()"
   [shading]="true"
   [hideOnOutsideClick]="false" 
 >
@@ -664,7 +664,7 @@
     </dxi-item>
   </dx-tab-panel>
   <!-- BUTTONS -->
-  <dxi-item class="d-flex justify-content-end mt-2">
+   <dxi-item class="d-flex justify-content-end mt-1">
     <button
       class="btn me-1 text-dark border border-1 equal-button"
       (click)="closePop()"

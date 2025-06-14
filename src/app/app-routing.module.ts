@@ -91,32 +91,32 @@ const routes: Routes = [
         path : 'hospital',
         component : HospitalListComponent,
         canActivate: [AuthGuardService],
-        data: { allowedRoles: [1, 2] }, 
+        // data: { allowedRoles: [1, 2] }, 
       },
 
         {
         path: 'department',
         component: DepartmentComponent,
         canActivate: [AuthGuardService],
-        data: { allowedRoles: [1, 2] },
+        // data: { allowedRoles: [1, 2] },
       },
          {
         path: 'item',
         component: ItemComponent,
         canActivate: [AuthGuardService],
-        data: { allowedRoles: [1, 2] },
+        // data: { allowedRoles: [1, 2] },
     },
        {
         path: 'insurance',
         component:InsuranceComponent,
         canActivate:[AuthGuardService],
-        data: { allowedRoles: [1, 2] },
+        // data: { allowedRoles: [1, 2] },
       },
       {
         path: 'schema',
         component : SchemaComponent,
         canActivate: [AuthGuardService],
-        data: { allowedRoles: [1, 2] },
+        // data: { allowedRoles: [1, 2] },
       },
       {
         path: 'invoice-entry',
