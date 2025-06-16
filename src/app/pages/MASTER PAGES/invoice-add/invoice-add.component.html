@@ -63,7 +63,7 @@
 
                 <!-- Ward and Unit Row (Each half width of Date) -->
                 <div style="display: flex; gap: 5px">
-                  <!-- Ward -->
+                 
                   <dx-autocomplete
                     #wardBoxRef
                     [dataSource]="wardOptions"
@@ -77,7 +77,7 @@
                     (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
                   ></dx-autocomplete>
 
-                  <!-- Unit -->
+               
                   <dx-autocomplete
                     #unitBoxRef
                     [dataSource]="unitOptions"
@@ -431,7 +431,7 @@
               <dx-text-box
                 *ngIf="selectedPaymentModeId === creditModeId"
                 #insuranceNumberSelect
-                label="Insurance ID"
+                label="Insurance No."
                 labelMode="floating"
           [(value)]="invoiceFormData.INSURANCE_NO"
        (onKeyDown)="onKeyDownHandler($event, 'saveButton')"
