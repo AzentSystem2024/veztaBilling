@@ -49,26 +49,35 @@
                 [readOnly]="true"
               ></dx-text-box>
 
-              <!-- Ward and Unit Row (Each half width of Date) -->
-              <div style="display: flex; gap: 5px">
-                <!-- Ward -->
+
+                              <!-- ✅ Department Field -->
                 <dx-text-box
+                  label="Department"
+                  [(value)]="invoiceData.DEPARTMENT"
+                  labelMode="floating"
+                  [width]="200"
+                  [readOnly]="true"
+                ></dx-text-box>
+              <!-- Ward and Unit Row (Each half width of Date) -->
+              <!-- <div style="display: flex; gap: 5px"> -->
+                <!-- Ward -->
+                <!-- <dx-text-box
                   label="Ward"
                   labelMode="floating"
                   [(value)]="invoiceData.WARD"
                   [width]="100"
                   [readOnly]="true"
-                ></dx-text-box>
+                ></dx-text-box> -->
 
                 <!-- Unit -->
-                <dx-text-box
+                <!-- <dx-text-box
                   label="Unit"
                   labelMode="floating"
                   [(value)]="invoiceData.UNIT"
                   [width]="100"
                   [readOnly]="true"
                 ></dx-text-box>
-              </div>
+              </div> -->
             </div>
           </dxi-item>
 
@@ -88,14 +97,7 @@
                   [readOnly]="true"
                 ></dx-text-box>
 
-                <!-- ✅ Department Field -->
-                <dx-text-box
-                  label="Department"
-                  [(value)]="invoiceData.DEPARTMENT"
-                  labelMode="floating"
-                  [width]="200"
-                  [readOnly]="true"
-                ></dx-text-box>
+
               </div>
 
               <!-- Row: Patient Name and Mobile No. -->
@@ -113,14 +115,16 @@
                 </div>
 
                 <!-- Mobile No. -->
-                <dx-text-box
+                <!-- <dx-text-box
                   label="Mobile No."
                   [(value)]="invoiceData.PATIENT_MOBILE"
                   labelMode="floating"
                   [width]="200"
                   [readOnly]="true"
                 >
-                </dx-text-box>
+                </dx-text-box> -->
+
+                
               </div>
             </div>
           </dxi-item>
