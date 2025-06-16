@@ -459,14 +459,15 @@ search_paramers_Api() {
   }
 }
 
-Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospital_id:any) {
+Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospital_id:any,user_id:any) {
   const reqBody = {
     
   "REPORT_ID": "DATEWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
-  "USER_ID": staffId,
+  "STAFF_ID":staffId,
+   "USER_ID": user_id,
   "HOSPITAL_ID":hospital_id,
   "SL_FROM": 0,
   "SL_TO": 0
@@ -474,15 +475,16 @@ Date_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospital_id:
   const getEndpoint = BASE_URL+`Report/datewise`;
   return this.http.post(getEndpoint,reqBody);
 }
-Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,){
+Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,user_id:any){
     const reqBody = {
     
   "REPORT_ID": "SCHEMAWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
-  "USER_ID": staffId,
    "HOSPITAL_ID":hospitalId,
+    "STAFF_ID":staffId,
+   "USER_ID": user_id,
   "SL_FROM": 0,
   "SL_TO": 0
   }
@@ -490,15 +492,16 @@ Schema_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId
   return this.http.post(getEndpoint,reqBody);
 }
 
-Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,){
+Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,user_id:any){
  const reqBody = {
     
   "REPORT_ID": "BILLWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
-  "USER_ID": staffId,
-   "HOSPITAL_ID":hospitalId,
+  "HOSPITAL_ID":hospitalId,
+  "STAFF_ID":staffId,
+   "USER_ID": user_id,
   "SL_FROM": 0,
   "SL_TO": 0
   }
@@ -506,15 +509,15 @@ Bill_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:a
   return this.http.post(getEndpoint,reqBody);
 }
 
-item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any){
+item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,user_id:any){
   const reqBody = {
-    
   "REPORT_ID": "ITEMWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
   "HOSPITAL_ID":hospitalId,
-  "USER_ID":staffId ,
+  "STAFF_ID":staffId,
+   "USER_ID":user_id,
   "SL_FROM": 0,
   "SL_TO": 0
 }
@@ -522,14 +525,15 @@ item_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:a
  const getEndpoint = BASE_URL+`Report/itemwise`;
   return this.http.post(getEndpoint,reqBody);
 }
-hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any){
+hospital_wise_Api(fromDate:any,ToDate:any,departmentId:any, staffId:any,hospitalId:any,user_id:any){
  const reqBody = {
     
   "REPORT_ID": "HOSPITALWISESUMMARY",
   "FROM_DATE": fromDate,
   "TO_DATE": ToDate,
   "DEPARTMENT_ID": departmentId,
-  "USER_ID": staffId,
+   "STAFF_ID":staffId,
+   "USER_ID": user_id,
    "HOSPITAL_ID":hospitalId,
   "SL_FROM": 0,
   "SL_TO": 0

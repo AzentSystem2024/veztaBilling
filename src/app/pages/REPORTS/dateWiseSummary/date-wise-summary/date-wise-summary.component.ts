@@ -226,8 +226,11 @@ get_today_data(){
   get_DataSource() {
     const departmentId = (this.Departmens_value ?? []).join(',');
     const staffId = (this.staff_value ?? []).join(',');
-const hospital_id=(this.Hospital_value?? []).join(',');
+    const hospital_id=(this.Hospital_value?? []).join(',');
     // Ensure dates are valid Date objects before formatting
+      const user_details = sessionStorage.getItem('savedUserData');
+const user_id = user_details ? JSON.parse(user_details).USER_ID?.toString() : null;
+
     const fromDate = this.FromDate_value
       ? this.formatDate(new Date(this.FromDate_value))
       : '';
@@ -241,7 +244,7 @@ const hospital_id=(this.Hospital_value?? []).join(',');
     }
 
     this.dataservice
-      .Date_wise_Api(fromDate, toDate, departmentId, staffId,hospital_id)
+      .Date_wise_Api(fromDate, toDate, departmentId, staffId,hospital_id,user_id)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.dateWiseSummaryData = res.Data;

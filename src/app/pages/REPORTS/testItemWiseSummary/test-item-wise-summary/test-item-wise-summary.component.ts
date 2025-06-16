@@ -252,6 +252,9 @@ export class TestItemWiseSummaryComponent {
     const staffId = (this.staff_value ?? []).join(',');
     const hospitalId = (this.Hospital_value ?? []).join(',');
     // Ensure dates are valid Date objects before formatting
+          const user_details = sessionStorage.getItem('savedUserData');
+const user_id = user_details ? JSON.parse(user_details).USER_ID?.toString() : null;
+
     const fromDate = this.FromDate_value
       ? this.formatDate(new Date(this.FromDate_value))
       : '';
@@ -265,7 +268,7 @@ export class TestItemWiseSummaryComponent {
     }
 
     this.dataservice
-      .item_wise_Api(fromDate, toDate, departmentId, staffId, hospitalId)
+      .item_wise_Api(fromDate, toDate, departmentId, staffId, hospitalId,user_id)
       .subscribe((res: any) => {
         this.isEmptyDatagrid = false;
         this.itemWiseSummaryData = res.Data;
