@@ -47,24 +47,18 @@
           <dxo-filter-builder [allowHierarchicalFields]="true">
           </dxo-filter-builder>
           <dxo-toolbar>
-            <dxi-item location="before" locateInMenu="auto">
+            <!-- <dxi-item location="before" locateInMenu="auto"> -->
               <div
                 class="stacked-toolbar-group"
                 style="display: flex; flex-direction: column; gap: 2px"
               >
                 <!-- Date Field -->
-                <dx-text-box
-                  label="Date & Time"
-                  labelMode="floating"
-                  [value]="formattedInvoiceDate"
-                  [width]="205"
-                  [readOnly]="true"
-                ></dx-text-box>
+               
 
                 <!-- Ward and Unit Row (Each half width of Date) -->
-                <div style="display: flex; gap: 5px">
-                 
-                  <dx-autocomplete
+                <!-- <div style="display: flex; gap: 5px"> -->
+                  <!-- Ward -->
+                  <!-- <dx-autocomplete
                     #wardBoxRef
                     [dataSource]="wardOptions"
                     [minSearchLength]="0"
@@ -75,10 +69,10 @@
                     [(value)]="invoiceFormData.WARD"
                     [width]="100"
                     (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
-                  ></dx-autocomplete>
+                  ></dx-autocomplete> -->
 
-               
-                  <dx-autocomplete
+                  <!-- Unit -->
+                  <!-- <dx-autocomplete
                     #unitBoxRef
                     [dataSource]="unitOptions"
                     [minSearchLength]="0"
@@ -89,10 +83,10 @@
                     [(value)]="invoiceFormData.UNIT"
                     [width]="100"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                  ></dx-autocomplete>
-                </div>
+                  ></dx-autocomplete> -->
+                <!-- </div> -->
               </div>
-            </dxi-item>
+            <!-- </dxi-item> -->
 
             <dxi-item location="before" locateInMenu="auto">
               <div
@@ -101,6 +95,16 @@
               >
                 <!-- Row: Bill No. and Department -->
                 <div style="display: flex; gap: 5px">
+
+
+                   <dx-text-box
+                  label="Date & Time"
+                  labelMode="floating"
+                  [value]="formattedInvoiceDate"
+                  [width]="205"
+                  [readOnly]="true"
+                ></dx-text-box>
+
                   <!-- Bill No. -->
                   <dx-text-box
                     #billNoBoxRef
@@ -122,29 +126,33 @@
                     [readOnly]="true"
                     (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
                   ></dx-text-box> -->
-                  <dx-select-box
-  #departmentBoxRef
-  [items]="departmentsForAdmin"
-  displayExpr="DESCRIPTION"
-  valueExpr="ID"
-  [(value)]="selectedDepartmentId"
-  [readOnly]="userData?.USER_TYPE_ID !== 1 && userData?.USER_TYPE_ID !== 2 && userData?.USER_TYPE_ID !== 3"
-  [width]="200"
-  placeholder="Select Department"
-  [searchEnabled]="true"
-  label="Department"
-  labelMode="floating"
-  (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-  (onValueChanged)="onDepartmentChanged($event)"
->
-</dx-select-box>
 
                 </div>
 
                 <!-- Row: Patient Name and Mobile No. -->
                 <div style="display: flex; gap: 5px; align-items: flex-start">
                   <!-- Patient Name -->
-                  <div style="display: flex; gap: 5px; width: 300px">
+                  <div style="display: flex; gap: 5px;">
+
+
+                    <dx-select-box
+  #departmentBoxRef
+  [items]="departmentsForAdmin"
+  displayExpr="DESCRIPTION"
+  valueExpr="ID"
+  [(value)]="selectedDepartmentId"
+  [readOnly]="userData?.USER_TYPE_ID !== 1 && userData?.USER_TYPE_ID !== 2 && userData?.USER_TYPE_ID !== 3"
+ [width]="205"
+  placeholder="Select Department"
+  [searchEnabled]="true"
+  label="Department"
+  labelMode="floating"
+  (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
+  (onValueChanged)="onDepartmentChanged($event)"
+> 
+</dx-select-box>
+
+
                     <dx-text-box
                       #patientBoxRef
                       label="Patient Name"
@@ -164,7 +172,7 @@
                   </div>
 
                   <!-- Mobile No. -->
-                  <dx-text-box
+                  <!-- <dx-text-box
                     #mobileBoxRef
                     label="Mobile No."
                     labelMode="floating"
@@ -181,14 +189,14 @@
                     [elementAttr]="{ maxlength: 10 }"
                     (onKeyDown)="onKeyDownMobile($event)"
                     (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
-                  >
+                  > -->
                     <!-- <dx-validator>
                       <dxi-validation-rule
                         type="required"
                         message="Mobile No. is required"
                       ></dxi-validation-rule>
                     </dx-validator> -->
-                  </dx-text-box>
+                  <!-- </dx-text-box> -->
                 </div>
               </div>
             </dxi-item>
@@ -431,7 +439,7 @@
               <dx-text-box
                 *ngIf="selectedPaymentModeId === creditModeId"
                 #insuranceNumberSelect
-                label="Insurance No."
+                label="Insurance ID"
                 labelMode="floating"
           [(value)]="invoiceFormData.INSURANCE_NO"
        (onKeyDown)="onKeyDownHandler($event, 'saveButton')"
@@ -538,4 +546,3 @@
    
   </div>
 </dx-popup>
-
