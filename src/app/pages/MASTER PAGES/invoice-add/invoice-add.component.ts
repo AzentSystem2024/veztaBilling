@@ -254,7 +254,7 @@ export class InvoiceAddComponent {
   private timerId: any;
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.wardBoxRef?.instance?.focus();
+      this.patientBoxRef?.instance?.focus();
     }, 0);
     if (this.schemaSelect && this.schemaSelect.instance) {
       this.schemaSelect.instance.on('keyDown', (e: any) => {
@@ -1484,20 +1484,40 @@ export class InvoiceAddComponent {
          : ''
      }
 
-      <!-- Footer -->
-      <table class="footer-table">
+
+ 
+<table style="width: 100%;">
+  <tr>
+    <!-- Left side: Insurance Info -->
+    ${data.PAYMENT_MODE_NAME === 'Credit' ? `
+    <td style="vertical-align: top; text-align: left;">
+      <table>
         <tr>
-          <td class="right-align"><strong>RECEIPT AMOUNT:</strong> ₹${
-            data.GROSS_AMOUNT
-          }</td>
+          <td><strong>INSURANCE ID:</strong> ${data.INSURANCE_NO}</td>
         </tr>
         <tr>
-          <td class="right-align"><strong>CREDIT AMOUNT:</strong> ₹${
-            data.NET_AMOUNT
-          }</td>
+          <td><strong>INSURANCE NAME:</strong> ${data.INSURANCE_NAME}</td>
         </tr>
       </table>
+    </td>
+` : ''}
 
+    <!-- Right side: Receipt Info -->
+    <td  style="vertical-align: top; text-align: right;">
+      <table style="float: right;">
+        <tr>
+          <td><strong>RECEIPT AMOUNT:</strong> ₹${data.GROSS_AMOUNT}</td>
+        </tr>
+        <tr>
+          <td><strong>CREDIT AMOUNT:</strong> ₹${data.NET_AMOUNT}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+   
+
+     
         <div class="amount-in-words">
           AMOUNT IN WORDS: ${amountInWords}
         </div>

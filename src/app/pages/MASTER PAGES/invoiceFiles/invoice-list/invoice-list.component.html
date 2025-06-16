@@ -106,6 +106,17 @@
   <dxi-column dataField="UHID" caption="UHID"></dxi-column>
   <dxi-column dataField="PATIENT_NAME" caption="Patient Name"></dxi-column>
   <dxi-column dataField="NET_AMOUNT" caption="Net Amount" alignment="right"></dxi-column>
+   <dxo-summary>
+            <dxi-total-item
+              name="NET_AMOUNT"
+              column="NET_AMOUNT"
+              summaryType="sum"
+              displayFormat="Net Amount: {0}"
+              alignment="right"
+              showInColumn="NET_AMOUNT"
+            >
+            </dxi-total-item>
+          </dxo-summary>
   
 <dxi-column 
   dataField="INVOICE_DATE" 
