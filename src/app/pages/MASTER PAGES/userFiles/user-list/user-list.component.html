@@ -146,8 +146,8 @@
     [animationEnabled]="true"
     [width]="600"
   >
-    <dxi-item title="General">
-      <div class="tab-content" style="display: flex">
+    <dxi-item title="General" style="display: flex;background-color: var(--base-bg);">
+      <div class="tab-content" style="display: flex;background-color: var(--base-bg);">
         <dx-validation-group #formValidationGroup>
           <dx-form [formGroup]="formsource" width="580">
             <dxi-item class="fields">
@@ -361,8 +361,8 @@
     </dxi-item>
 
     <!-- SECOND TAB -->
-    <dxi-item title="Menu Access">
-      <div class="tab-content">
+    <dxi-item title="Menu Access" style="display: flex;background-color: var(--base-bg);">
+      <div class="tab-content" style="display: flex;background-color: var(--base-bg);">
         <dx-tree-list
          #treeListMenu
           [dataSource]="Usermenu"
@@ -389,7 +389,7 @@
   <!-- BUTTONS -->
   <dxi-item class="d-flex justify-content-end mt-1">
     <button
-      class="btn me-1 text-dark border border-1 equal-button"
+      class="btn me-1  border border-1 equal-button"
       (click)="closePop()"
     >
       Cancel
@@ -432,8 +432,8 @@
     [animationEnabled]="true"
     [width]="600"
   >
-    <dxi-item title="General">
-      <div class="tab-content" style="display: flex">
+    <dxi-item title="General" style="display: flex;background-color: var(--base-bg);">
+      <div class="tab-content" style="display: flex;background-color: var(--base-bg);">
         <dx-validation-group #formValidationGroup>
           
           <dx-form [formGroup]="formsource" width="580px">
@@ -666,7 +666,7 @@
   <!-- BUTTONS -->
    <dxi-item class="d-flex justify-content-end mt-1">
     <button
-      class="btn me-1 text-dark border border-1 equal-button"
+      class="btn me-1  border border-1 equal-button"
       (click)="closePop()"
     >
       Cancel
