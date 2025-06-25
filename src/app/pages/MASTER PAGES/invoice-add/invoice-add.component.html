@@ -47,44 +47,11 @@
           <dxo-filter-builder [allowHierarchicalFields]="true">
           </dxo-filter-builder>
           <dxo-toolbar>
-            <!-- <dxi-item location="before" locateInMenu="auto"> -->
               <div
                 class="stacked-toolbar-group"
                 style="display: flex; flex-direction: column; gap: 2px"
               >
-                <!-- Date Field -->
                
-
-                <!-- Ward and Unit Row (Each half width of Date) -->
-                <!-- <div style="display: flex; gap: 5px"> -->
-                  <!-- Ward -->
-                  <!-- <dx-autocomplete
-                    #wardBoxRef
-                    [dataSource]="wardOptions"
-                    [minSearchLength]="0"
-                    [searchExpr]="'NAME'"
-                    [valueExpr]="'NAME'"
-                    label="Ward"
-                    labelMode="floating"
-                    [(value)]="invoiceFormData.WARD"
-                    [width]="100"
-                    (onKeyDown)="onKeyDownHandler($event, 'unitBoxRef')"
-                  ></dx-autocomplete> -->
-
-                  <!-- Unit -->
-                  <!-- <dx-autocomplete
-                    #unitBoxRef
-                    [dataSource]="unitOptions"
-                    [minSearchLength]="0"
-                    [searchExpr]="'NAME'"
-                    [valueExpr]="'NAME'"
-                    label="Unit"
-                    labelMode="floating"
-                    [(value)]="invoiceFormData.UNIT"
-                    [width]="100"
-                    (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                  ></dx-autocomplete> -->
-                <!-- </div> -->
               </div>
             <!-- </dxi-item> -->
 
@@ -116,16 +83,6 @@
                     (onKeyDown)="onKeyDownHandler($event, 'wardBoxRef')"
                   ></dx-text-box>
 
-                  <!-- ✅ Department Field -->
-                  <!-- <dx-text-box
-                    #departmentBoxRef
-                    label="Department"
-                    labelMode="floating"
-                    [(value)]="departmentName"
-                    [width]="200"
-                    [readOnly]="true"
-                    (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
-                  ></dx-text-box> -->
 
                 </div>
 
@@ -141,11 +98,11 @@
   displayExpr="DESCRIPTION"
   valueExpr="ID"
   [(value)]="selectedDepartmentId"
-  [readOnly]="userData?.USER_TYPE_ID !== 1 && userData?.USER_TYPE_ID !== 2 && userData?.USER_TYPE_ID !== 3"
+  [readOnly]="userData?.USER_TYPE_ID !== 1 && userData?.USER_TYPE_ID !== 2"
  [width]="205"
-  placeholder="Select Department"
+  placeholder="Select Hospital"
   [searchEnabled]="true"
-  label="Department"
+  label="Hospital"
   labelMode="floating"
   (onKeyDown)="onKeyDownHandler($event, 'patientBoxRef')"
   (onValueChanged)="onDepartmentChanged($event)"
@@ -171,32 +128,6 @@
                     </dx-text-box>
                   </div>
 
-                  <!-- Mobile No. -->
-                  <!-- <dx-text-box
-                    #mobileBoxRef
-                    label="Mobile No."
-                    labelMode="floating"
-                    [width]="200"
-                    [(value)]="invoiceFormData.PATIENT_MOBILE"
-                    (onInput)="onMobileInput($event)"
-                    (onBlur)="onMobileBlur()"
-                    [isValid]="mobileValid"
-                    [validationStatus]="(mobileValid || !mobileTouched) ? 'valid' : 'invalid'"
-                    [validationMessageMode]="'always'"
-                    [validationError]="
-                      !mobileValid ? { message: 'Enter a 10 digit number' } : null
-                    "
-                    [elementAttr]="{ maxlength: 10 }"
-                    (onKeyDown)="onKeyDownMobile($event)"
-                    (onKeyDown)="onKeyDownHandler($event, 'uhidBoxRef')"
-                  > -->
-                    <!-- <dx-validator>
-                      <dxi-validation-rule
-                        type="required"
-                        message="Mobile No. is required"
-                      ></dxi-validation-rule>
-                    </dx-validator> -->
-                  <!-- </dx-text-box> -->
                 </div>
               </div>
             </dxi-item>
@@ -224,11 +155,6 @@
                       type="required"
                       message="UHID is required"
                     ></dxi-validation-rule>
-                        <!-- <dxi-validation-rule
-      type="custom"
-      [validationCallback]="validateUhid"
-      message="UHID must be 11 digits and start with a valid year (e.g. 2025)"
-    ></dxi-validation-rule> -->
 
                   </dx-validator>
                 </dx-text-box>

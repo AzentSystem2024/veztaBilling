@@ -85,6 +85,11 @@ export class DataService {
   // }
 
   //dropdown
+// In data.service.ts
+getHospitalDrpdown(reqBodyData: any): Observable<any> {
+  return this.http.post(`${BASE_URL}dropdown/`, reqBodyData);
+}
+
 
   public getDropdownData(type: any): Observable<any> {
     const reqBodyData = { name: type };

@@ -1,6 +1,6 @@
 <div class="view-wrapper list-page">
-    <div class="grid-container">
-        <dx-data-grid
+  <div class="grid-container">
+    <dx-data-grid
       #dataGrid
       noDataText="No data available"
       [width]="'100%'"
@@ -19,7 +19,6 @@
       [rowAlternationEnabled]="true"
       [headerFilter]="{ visible: true }"
       [allowColumnReordering]="true"
-     
       [showColumnHeaders]="true"
       [columnAutoWidth]="true"
       [allowColumnResizing]="true"
@@ -29,9 +28,9 @@
       rowAlternationInterval="2"
       [selection]="{ mode: 'single' }"
       focusStateEnabled="false"
+      keyExpr="ID"
     >
-
-<dxo-paging [pageSize]="10"></dxo-paging>
+      <dxo-paging [pageSize]="10"></dxo-paging>
       <dxo-pager
         [visible]="true"
         [allowedPageSizes]="allowedPageSizes"
@@ -53,88 +52,88 @@
       >
       </dxo-export>
       <dxo-filter-row
-      [visible]="isFilterRowVisible"
-      [applyFilter]="auto"
-    ></dxo-filter-row>   
-    
+        [visible]="isFilterRowVisible"
+        [applyFilter]="auto"
+      ></dxo-filter-row>
+
       <dxo-toolbar>
         <dxi-item location="before">
           <div class="grid-header">Invoice</div>
         </dxi-item>
-         <dxi-item location="after" template="dateFilterTemplate"></dxi-item>
+        <dxi-item location="after" template="dateFilterTemplate"></dxi-item>
         <dxi-item location="after" locateInMenu="auto"> </dxi-item>
-<dxi-item
-        location="after"
-        locateInMenu="auto"
-        showText="inMenu"
-        widget="dxButton"
-        [options]="{
-          icon: isFilterRowVisible ? 'filter' : 'filter',
-          hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
+        <dxi-item
+          location="after"
+          locateInMenu="auto"
+          showText="inMenu"
+          widget="dxButton"
+          [options]="{
+            icon: isFilterRowVisible ? 'filter' : 'filter',
+            hint: isFilterRowVisible ? 'Hide Filter Row' : 'Show Filter Row',
             onClick: toggleFilterRow,
-          stylingMode: 'text',
-          elementAttr: { class: 'commonButtons' }
-        }"
-      ></dxi-item>
+            stylingMode: 'text',
+            elementAttr: { class: 'commonButtons' }
+          }"
+        ></dxi-item>
       </dxo-toolbar>
 
       <div *dxTemplate="let data of 'dateFilterTemplate'">
-<dx-select-box
-  [dataSource]="dateRanges"
-  [displayExpr]="displayExpr"
-  valueExpr="value"
-  [(value)]="selectedDateRange"
-  (onValueChanged)="onDateRangeChanged($event)"
-  (onOpened)="attachItemClickHandler($event)"
-  width="250">
+        <dx-select-box
+          [dataSource]="dateRanges"
+          [displayExpr]="displayExpr"
+          valueExpr="value"
+          [(value)]="selectedDateRange"
+          (onValueChanged)="onDateRangeChanged($event)"
+          (onOpened)="attachItemClickHandler($event)"
+          width="250"
+        >
+          <!-- This controls the dropdown list rendering -->
+          <div *dxTemplate="let item of 'item'">
+            {{ item.value === "custom" ? "Custom" : item.label }}
+          </div>
+        </dx-select-box>
+      </div>
 
-  <!-- This controls the dropdown list rendering -->
-  <div *dxTemplate="let item of 'item'">
-    {{ item.value === 'custom' ? 'Custom' : item.label }}
+      <dxi-column dataField="INVOICE_NO" caption="Invoice No."></dxi-column>
+      <dxi-column dataField="HOSPITAL_NAME" caption="Hospital"></dxi-column>
+      <dxi-column dataField="UHID" caption="UHID"></dxi-column>
+      <dxi-column dataField="PATIENT_NAME" caption="Patient Name"></dxi-column>
+      <dxi-column
+        dataField="NET_AMOUNT"
+        caption="Net Amount"
+        alignment="right"
+      ></dxi-column>
+  <dxo-summary [calculateCustomSummary]="calculateSummary">
+    <dxi-total-item
+      name="AdjustedNetAmount"
+      summaryType="custom"
+      displayFormat="Net Amount: {0}"
+      showInColumn="NET_AMOUNT"
+      valueFormat="fixedPoint"
+    ></dxi-total-item>
+  </dxo-summary>
+
+      <dxi-column
+        dataField="INVOICE_DATE"
+        caption="Date"
+        dataType="date"
+        format="dd-MM-yyyy hh:mm a"
+      ></dxi-column>
+      <dxi-column
+        dataField="STATUS"
+        caption="Status"
+        alignment="right"
+      ></dxi-column>
+      <dxi-column type="buttons" [width]="100">
+        <dxi-button
+          hint="View"
+          icon="eyeopen"
+          text="View"
+          [onClick]="onViewClick.bind(this)"
+        ></dxi-button>
+      </dxi-column>
+    </dx-data-grid>
   </div>
-
-</dx-select-box>
-
-
-
-
-
-  </div>
-
-<dxi-column dataField="INVOICE_NO" caption="Invoice No."></dxi-column>
-        <dxi-column dataField="DEPARTMENT_NAME" caption="Department"></dxi-column>
-  <dxi-column dataField="UHID" caption="UHID"></dxi-column>
-  <dxi-column dataField="PATIENT_NAME" caption="Patient Name"></dxi-column>
-  <dxi-column dataField="NET_AMOUNT" caption="Net Amount" alignment="right"></dxi-column>
-   <dxo-summary>
-            <dxi-total-item
-              name="NET_AMOUNT"
-              column="NET_AMOUNT"
-              summaryType="sum"
-              displayFormat="Net Amount: {0}"
-              alignment="right"
-              showInColumn="NET_AMOUNT"
-            >
-            </dxi-total-item>
-          </dxo-summary>
-  
-<dxi-column 
-  dataField="INVOICE_DATE" 
-  caption="Date" 
-  dataType="date"
-   format="dd-MM-yyyy hh:mm a"></dxi-column>
-  <dxi-column dataField="STATUS" caption="Status" alignment="right"></dxi-column>
-  <dxi-column type="buttons" [width]="100">
-  <dxi-button
-    hint="View"
-    icon="eyeopen"  
-    text="View"
-[onClick]="onViewClick.bind(this)"
-  ></dxi-button>
-</dxi-column>
-
-</dx-data-grid>
-    </div>
 </div>
 
 <dx-popup
@@ -152,7 +151,6 @@
   ></app-invoice-view>
 </dx-popup>
 
-
 <dx-popup
   [(visible)]="showCustomDatePopup"
   [showTitle]="true"
@@ -161,29 +159,31 @@
   [height]="170"
   [dragEnabled]="false"
 >
-<div>
-  <div class="date-range-container">
-    <dx-date-box
-      [(value)]="customStartDate"
-      type="date"
-      width="300"
-      placeholder="From Date">
-    </dx-date-box>
-
-    <dx-date-box
-      [(value)]="customEndDate"
-      type="date"
-      placeholder="To Date"
-      width="300"
+  <div>
+    <div class="date-range-container">
+      <dx-date-box
+        [(value)]="customStartDate"
+        type="date"
+        width="300"
+        placeholder="From Date"
       >
-    </dx-date-box>
-  </div>
+      </dx-date-box>
 
-  <div class="button-container">
-    <dx-button text="Apply" type="default" (onClick)="applyCustomDateFilter()"></dx-button>
-  </div>
-</div>
+      <dx-date-box
+        [(value)]="customEndDate"
+        type="date"
+        placeholder="To Date"
+        width="300"
+      >
+      </dx-date-box>
+    </div>
 
+    <div class="button-container">
+      <dx-button
+        text="Apply"
+        type="default"
+        (onClick)="applyCustomDateFilter()"
+      ></dx-button>
+    </div>
+  </div>
 </dx-popup>
-
-

@@ -25,6 +25,7 @@ import { DataService } from 'src/app/services';
 import { InvoiceViewModule } from '../invoice-view/invoice-view.component';
 import { InvoiceListUpdateService } from 'src/app/services/invoice-list-update.service';
 import { FilterRow } from 'devextreme/common/grids';
+import { DxDataGridTypes } from 'devextreme-angular/ui/data-grid';
 
 @Component({
   selector: 'app-invoice-list',
@@ -93,10 +94,10 @@ filterButtonOptions: any = {
   ngOnInit() {
     
     this.storedUserData = sessionStorage.getItem('savedUserData');
-    console.log(this.storedUserData, 'STOREDUSERDATA');
+    // console.log(this.storedUserData, 'STOREDUSERDATA');
     if (this.storedUserData) {
       this.userData = JSON.parse(this.storedUserData);
-      console.log('User Data in INVOICELIST:', this.userData);
+      // console.log('User Data in INVOICELIST:', this.userData);
       this.USER = this.userData.USER_TYPE_NAME;
       this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
       this.loggedInUser.USER_ID = this.userData.USER_ID
@@ -104,7 +105,7 @@ filterButtonOptions: any = {
 
     this.getInvoiceList();
   this.invoiceUpdateService.update$.subscribe(() => {
-    console.log('New invoice added — refreshing list...');
+    // console.log('New invoice added — refreshing list...');
     this.getInvoiceList();
   });
   }
@@ -114,16 +115,57 @@ filterButtonOptions: any = {
     this.dataService.getInvoiceList(this.loggedInUser).subscribe((response: any) => {
       this.invoiceList = response.data;
 
-      console.log(response, 'INVOICELIST');
+      // console.log(response, 'INVOICELIST');
       this.applyDateFilter();
     });
   }
+
+calculateSummary(e: any) {
+  if (e.name === 'AdjustedNetAmount') {
+    if (e.summaryProcess === 'start') {
+      e.totalValue = 0;
+    }
+
+    if (e.summaryProcess === 'calculate') {
+      const row = e.value;
+
+      // Parse NET_AMOUNT as float
+      const amount = parseFloat(row?.NET_AMOUNT ?? '0');
+
+      // Normalize status to lowercase for comparison
+      const status = (row?.STATUS ?? '').toLowerCase();
+
+      // Debug print
+      console.log('Row:', row, 'Amount:', amount, 'Status:', status);
+
+      if (!isNaN(amount) && status !== 'cancelled') {
+        e.totalValue += amount;
+      }
+    }
+
+    if (e.summaryProcess === 'finalize') {
+      console.log('Final totalValue:', e.totalValue);
+      e.totalValue = Number(e.totalValue.toFixed(2));
+    }
+  }
+}
+
+
+
+
+
+
+
+
  toggleFilterRow = () => {
     this.isFilterRowVisible = !this.isFilterRowVisible;
   };
   applyDateFilter() {
   if (!this.selectedDateRange || !this.invoiceList) {
     this.filteredInvoiceList = this.invoiceList;
+        if (this.dataGrid?.instance) {
+      this.dataGrid.instance.refresh();
+    }
     return;
   }
 
@@ -146,6 +188,7 @@ filterButtonOptions: any = {
     default:
       this.filteredInvoiceList = this.invoiceList;
       return;
+      
   }
 
   this.filteredInvoiceList = this.invoiceList.filter((item: any) => {
@@ -272,10 +315,6 @@ get customEndDateFormatted(): string {
 }
 
 
-
-
-
-
   formatDate(value: string | Date): string {
     const date = new Date(value);
     const day = String(date.getDate()).padStart(2, '0');
@@ -287,6 +326,13 @@ get customEndDateFormatted(): string {
 
     return `${day}-${month}-${year} ${hours}.${minutes}`;
   }
+
+
+
+
+
+
+
 
 
   addInvoice() {

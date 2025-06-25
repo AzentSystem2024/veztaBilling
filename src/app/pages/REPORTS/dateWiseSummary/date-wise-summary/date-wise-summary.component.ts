@@ -135,7 +135,7 @@ get_today_data(){
     const user_details = sessionStorage.getItem('savedUserData');
     console.log('User ID:', user_details);
     const user_id = user_details ? JSON.parse(user_details).USER_ID : null;
-    console.log('Parsed User ID:', user_id);
+    console.log('Parsed User ID============================:', user_id);
 
     if (user_id) {
       this.dataservice.Get_user_Details_Api(user_id).subscribe((res: any) => {

@@ -171,7 +171,7 @@ export class InvoiceViewComponent {
         if (this.storedUserData) {
       this.userData = JSON.parse(this.storedUserData);
       console.log('User Data in InvoiceComponent:', this.userData);
-      this.USER = this.userData.USER_TYPE_NAME;
+      this.USER = this.userData.USER_NAME;
       this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
         }
 
@@ -376,8 +376,8 @@ previewAndPrintInvoice(): void {
       <table class="header-table">
         <tr>
           <td><strong>${title}</strong></td>
-          <td style="text-align: center;"><strong>BILLED BY:</strong> ${(this.USER)}</td>
-          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(this.hospitalName)}</td>
+          <td style="text-align: center;"><strong>BILLED BY:</strong> ${(data.PRINTED_USER_NAME)}</td>
+          <td style="text-align: right;"><strong>COMPANY NAME:</strong>${(data.HOSPITAL_NAME)}</td>
         </tr>
       </table>
 
@@ -417,24 +417,7 @@ previewAndPrintInvoice(): void {
         </tbody>
       </table>
 
-      ${data.SCHEMA_NAME ? `
-        <table class="scheme-table">
-          <thead>
-            <tr>
-              <th>SCHEME:</th>
-              <th>Scheme Account No:</th>
-              <th>Amount in Scheme</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>${data.SCHEMA_NAME}</td>
-              <td>${data.SCHEMA_ACCOUNT_NO || ''}</td>
-              <td style="text-align: right;">${data.SCHEMA_AMOUNT || ''}</td>
-            </tr>
-          </tbody>
-        </table>` : ''
-      }
+
 
       <table style="width: 100%;">
   <tr>

@@ -63,6 +63,8 @@ export class InvoiceAddComponent {
   selectedDepartmentName: any;
   selectedDepartmentId: any;
   hospitalName: any;
+  hospitalId: any;
+  assignedHospital: any;
   formatInvoiceDate(dateString: string): string {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
@@ -139,7 +141,7 @@ export class InvoiceAddComponent {
   invoiceFormData: any = {
     INVOICE_NO: '',
     INVOICE_DATE: new Date(),
-    DEPARTMENT_ID: '',
+    HOSPITAL_ID: '',
     USER_ID: '1',
     UHID: new Date().getFullYear().toString(),
     PATIENT_NAME: '',
@@ -170,7 +172,7 @@ export class InvoiceAddComponent {
   };
   amountInWords: string = '';
   billNo: any;
-  itemData: { ITEM_ID: number; DEPARTMENT_ID: number };
+  itemData: { ITEM_ID: number; HOSPITAL_ID: number };
   selectedItem: any;
   schemaPercent: string = '';
   readyToConfirm = false;
@@ -195,9 +197,19 @@ export class InvoiceAddComponent {
     if (storedData) {
       this.userData = JSON.parse(storedData);
       // console.log('User Data in InvoiceComponent:', this.userData);
-      this.USER = this.userData.USER_TYPE_NAME;
-      // Example: Accessing department name
-      // console.log('Department Name============:', this.userData.DEPARTMENT_ID);
+      this.USER = this.userData.USER_NAME;
+     if (this.userData.USER_TYPE_ID === 3 || this.userData.USER_TYPE_ID === 4) {
+  this.assignedHospital = this.userData?.Hospitals?.[0];
+  if (this.assignedHospital) {
+    this.departmentsForAdmin = [{
+      ID: this.assignedHospital.HOSPITAL_ID,
+      DESCRIPTION: this.assignedHospital.HOSPITAL_NAME
+    }];
+    this.selectedDepartmentId = this.assignedHospital.HOSPITAL_ID;
+  }
+}
+
+      console.log('Hospital Name============:', this.userData);
       this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME;
       // console.log(this.hospitalName, 'HOSPITALNAME');
 
@@ -205,28 +217,37 @@ export class InvoiceAddComponent {
         this.userData.USER_TYPE_ID === 1 ||
         this.userData.USER_TYPE_ID === 2
       ) {
-        this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId; // from dropdown
+        this.invoiceFormData.HOSPITAL_ID = this.selectedDepartmentId; // from dropdown
       } else {
         // this.invoiceFormData.DEPARTMENT_ID = this.userData.DEPARTMENT_ID; // fallback
-        this.invoiceFormData.DEPARTMENT_ID =
+        this.invoiceFormData.HOSPITAL_ID =
           this.userData?.DEPARTMENT_ID ??
-          this.userData?.Hospitals?.[0]?.Departments?.[0]?.DEPARTMENT_ID ??
+          this.userData?.Hospitals?.[0]?.HOSPITAL_ID ??
           null;
       }
-      if (
-        this.userData.USER_TYPE_ID === 1 ||
-        this.userData.USER_TYPE_ID === 2 ||
-        this.userData.USER_TYPE_ID === 3
-      ) {
-        this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
-      } else {
-        // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
-        this.Department.DEPARTMENT_ID =
-          this.userData?.DEPARTMENT_ID ??
-          this.userData?.Hospitals?.[0]?.Departments?.[0]?.DEPARTMENT_ID ??
-          null;
-      }
-
+    if (this.userData.USER_TYPE_ID === 1 || this.userData.USER_TYPE_ID === 2) {
+      this.hospitalId = 0;
+    } else {
+      // ✅ For other users: get HOSPITAL_ID and log HOSPITAL_NAME
+      this.hospitalId = this.userData?.Hospitals?.[0]?.HOSPITAL_ID ?? null;
+      this.hospitalName = this.userData?.Hospitals?.[0]?.HOSPITAL_NAME ?? 'Unknown';
+      console.log('Hospital Name (Other Users):', this.hospitalName);
+    }
+      // if (
+      //   this.userData.USER_TYPE_ID === 1 ||
+      //   this.userData.USER_TYPE_ID === 2 ||
+      //   this.userData.USER_TYPE_ID === 3
+      // ) {
+      //   console.log(this.Department,"???????????????????????????????????????")
+      //   this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
+      // } else {
+      //   // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+      //   this.Department.DEPARTMENT_ID =
+      //     this.userData?.DEPARTMENT_ID ??
+      //     this.userData?.Hospitals?.[0]?.Departments?.[0]?.DEPARTMENT_ID ??
+      //     null;
+      // }
+      
       this.invoiceFormData.USER_ID = this.userData.USER_ID;
       this.departmentName = this.userData.DEPARTMENT_NAME;
       // console.log(this.departmentName, 'DEPARTMENTNAME');
@@ -414,20 +435,37 @@ export class InvoiceAddComponent {
   }
 
   getItemsOfDepartment() {
+  // const requestPayload: any = {
+  //   // USER_TYPE_ID: this.userData.USER_TYPE_ID,
+  //   HOSPITAL_ID: this.hospitalId,
+  // };
+      if (
+      this.userData.USER_TYPE_ID === 1 ||
+      this.userData.USER_TYPE_ID === 2
+      // this.userData.USER_TYPE_ID === 3
+    ) {
+      this.Department.HOSPITAL_ID = this.selectedDepartmentId;
+    } else {
+      // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
+      this.Department.HOSPITAL_ID =
+        this.userData.Hospitals[0].HOSPITAL_ID;
+    }
+const department = this.Department;
+  // if (this.userData?.USER_TYPE_ID === 1 || this.userData?.USER_TYPE_ID === 2) {
+  //   requestPayload.USER_TYPE_ID = this.userData.USER_TYPE_ID;
+  // }
     this.dataService
-      .getDropdownItemsofDepartment(this.Department)
+      .getDropdownItemsofDepartment(department)
       .subscribe((response: any) => {
         this.items = response;
-        // console.log(this.items, 'ITEMSSSSSSSSSSSSS');
-        // console.log(this.selectedDepartmentId, 'ITEMSOFDEPARTMENT');
       });
   }
 
   getSelectedItemsData(rowIndex: number) {
-
+console.log()
     this.itemData = {
       ITEM_ID: this.selectedItem.ID,
-      DEPARTMENT_ID: this.selectedDepartmentId,
+      HOSPITAL_ID: this.selectedDepartmentId,
     };
     this.dataService.getItemsData(this.itemData).subscribe((response: any) => {
       if (response?.data?.length) {
@@ -524,84 +562,121 @@ export class InvoiceAddComponent {
     }
   }
 
+
   getDropdownData() {
-    this.dataService
-      .getDropdownData('DEPARTMENT')
-      .subscribe((response: any) => {
-        this.departmentsForAdmin = response;
-        // console.log(response, 'DEPARTMENTSSSSSSSSSSSS');
-        if (
-          (this.userData?.USER_TYPE_ID === 1 ||
-            this.userData?.USER_TYPE_ID === 2) &&
-          !this.selectedDepartmentName &&
-          this.departmentsForAdmin.length > 0
-        ) {
-          this.selectedDepartmentName = this.departmentsForAdmin[0].DESCRIPTION;
-          this.selectedDepartmentId = this.departmentsForAdmin[0].ID;
-          // console.log(
-          //   this.selectedDepartmentId,
-          //   this.selectedDepartmentName,
-          //   'IDANDNAME'
-          // );
-          this.Department = {
-            DEPARTMENT_ID: this.selectedDepartmentId, // convert to string if needed
-          };
+  const userTypeId = this.userData.USER_TYPE_ID;
+  const userId = this.userData.USER_ID;
 
-          // console.log(
-          //   this.selectedDepartmentId,
-          //   this.selectedDepartmentName,
-          //   'IDANDNAME'
-          // );
-          // console.log(this.Department, 'Department object bound');
-          this.getItemsOfDepartment();
-        } else if (
-          this.userData?.USER_TYPE_ID === 4 &&
-          this.userData?.Hospitals?.length > 0 &&
-          this.userData?.Hospitals[0]?.Departments?.length > 0
-        ) {
-          const dept = this.userData.Hospitals[0].Departments[0];
-          this.selectedDepartmentName = dept.DEPARTMENT_NAME;
-          this.selectedDepartmentId = dept.DEPARTMENT_ID;
+  const reqBodyData: any = {
+    NAME: 'HOSPITAL_ID'
+  };
 
-          this.Department = {
-            DEPARTMENT_ID: this.selectedDepartmentId,
-          };
-
-          // console.log(this.Department, 'Department object bound (Dept User)');
-          this.getItemsOfDepartment();
-        }
-
-        if (
-          this.userData?.USER_TYPE_ID === 3 &&
-          this.userData?.Hospitals?.length > 0 &&
-          this.userData?.Hospitals[0]?.Departments?.length > 0
-        ) {
-          // 1. Populate all departments in dropdown
-          this.departmentsForAdmin = this.userData.Hospitals[0].Departments.map(
-            (dept) => ({
-              ID: dept.DEPARTMENT_ID,
-              DESCRIPTION: dept.DEPARTMENT_NAME,
-            })
-          );
-
-          // 2. Set first department as default selection
-          const firstDept = this.departmentsForAdmin[0];
-          this.selectedDepartmentName = firstDept.DESCRIPTION;
-          this.selectedDepartmentId = firstDept.ID;
-
-          // 3. Bind Department object
-          this.Department = {
-            DEPARTMENT_ID: this.selectedDepartmentId,
-          };
-
-          // console.log(
-          //   this.Department,
-          //   'Department object bound (Hospital User)'
-          // );
-          this.getItemsOfDepartment(); // Or your appropriate data-fetch method
-        }
-      });
+  if (userTypeId === 1 || userTypeId === 2) {
+    reqBodyData.USER_TYPE_ID = userTypeId;
+  } else if (userTypeId === 3 || userTypeId === 4) {
+    reqBodyData.USER_ID = userId;
   }
+
+  this.dataService.getHospitalDrpdown(reqBodyData).subscribe((response: any) => {
+    if ((userTypeId === 1 || userTypeId === 2) && response.length > 0) {
+      this.departmentsForAdmin = response;
+      this.selectedDepartmentId = response[0].ID;
+      this.getItemsOfDepartment(); // Call based on default selection
+    } else if ((userTypeId === 3 || userTypeId === 4) && this.userData?.Hospitals?.length > 0) {
+      const hospital = this.userData.Hospitals[0];
+      this.departmentsForAdmin = [{
+        ID: hospital.HOSPITAL_ID,
+        DESCRIPTION: hospital.HOSPITAL_NAME
+      }];
+      this.selectedDepartmentId = hospital.HOSPITAL_ID;
+      this.getItemsOfDepartment(); // Call for assigned hospital
+    }
+
+    console.log('Selected Hospital ID:', this.selectedDepartmentId);
+  });
+}
+
+
+  // getDropdownData() {
+  //     const userTypeId = this.userData.USER_TYPE_ID;
+  // const userId = this.userData.USER_ID;
+  // const reqBodyData: any = {
+  //   NAME: 'HOSPITAL_ID'
+  // };
+
+  // if (userTypeId === 1 || userTypeId === 2) {
+  //   reqBodyData.USER_TYPE_ID = userTypeId;
+  // } else if (userTypeId === 3 || userTypeId === 4) {
+  //   reqBodyData.USER_ID = userId;
+  // }
+ 
+  //   this.dataService
+  //     .getHospitalDrpdown(reqBodyData)
+  //     .subscribe((response: any) => {
+  //       this.departmentsForAdmin = response;
+  //       console.log(response, 'HOSPITALSSSSSSSSSSSSSSSSSSSSSSSSSSSSS');
+  //       if (
+  //         (this.userData?.USER_TYPE_ID === 1 ||
+  //           this.userData?.USER_TYPE_ID === 2) &&
+  //         !this.selectedDepartmentName &&
+  //         this.departmentsForAdmin.length > 0
+  //       ) {
+  //         this.selectedDepartmentName = this.departmentsForAdmin[0].DESCRIPTION;
+  //         this.selectedDepartmentId = this.departmentsForAdmin[0].ID;
+
+  //         this.Department = {
+  //           DEPARTMENT_ID: this.selectedDepartmentId, // convert to string if needed
+  //         };
+
+  //         this.getItemsOfDepartment();
+  //       } else if (
+  //         this.userData?.USER_TYPE_ID === 4 &&
+  //         this.userData?.Hospitals?.length > 0 &&
+  //         this.userData?.Hospitals[0]?.Departments?.length > 0
+  //       ) {
+  //         const dept = this.userData.Hospitals[0].Departments[0];
+  //         this.selectedDepartmentName = dept.DEPARTMENT_NAME;
+  //         this.selectedDepartmentId = dept.DEPARTMENT_ID;
+
+  //         this.Department = {
+  //           DEPARTMENT_ID: this.selectedDepartmentId,
+  //         };
+
+  //         // console.log(this.Department, 'Department object bound (Dept User)');
+  //         this.getItemsOfDepartment();
+  //       }
+
+  //       if (
+  //         this.userData?.USER_TYPE_ID === 3 &&
+  //         this.userData?.Hospitals?.length > 0 &&
+  //         this.userData?.Hospitals[0]?.Departments?.length > 0
+  //       ) {
+  //         // 1. Populate all departments in dropdown
+  //         this.departmentsForAdmin = this.userData.Hospitals[0].Departments.map(
+  //           (dept) => ({
+  //             ID: dept.DEPARTMENT_ID,
+  //             DESCRIPTION: dept.DEPARTMENT_NAME,
+  //           })
+  //         );
+
+  //         // 2. Set first department as default selection
+  //         const firstDept = this.departmentsForAdmin[0];
+  //         this.selectedDepartmentName = firstDept.DESCRIPTION;
+  //         this.selectedDepartmentId = firstDept.ID;
+
+  //         // 3. Bind Department object
+  //         this.Department = {
+  //           HOSPITAL_ID: this.selectedDepartmentId,
+  //         };
+
+  //         // console.log(
+  //         //   this.Department,
+  //         //   'Department object bound (Hospital User)'
+  //         // );
+  //         this.getItemsOfDepartment(); // Or your appropriate data-fetch method
+  //       }
+  //     });
+  // }
 
   onDepartmentChanged(event: any) {
     // console.log(event, 'EVENT');
@@ -609,17 +684,11 @@ export class InvoiceAddComponent {
     this.selectedDepartmentId = event.value;
     this.selectedDepartmentName =
       event.component.option('selectedItem')?.DESCRIPTION || '';
-
+console.log(this.selectedDepartmentId,"HOSPITALIDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
     // ✅ Update the Department object
     this.Department = {
-      DEPARTMENT_ID: this.selectedDepartmentId, // convert to string
+      HOSPITAL_ID: this.selectedDepartmentId, // convert to string
     };
-
-    // console.log(
-    //   this.selectedDepartmentId,
-    //   this.selectedDepartmentName,
-    //   'Updated Department Selection'
-    // );
 
     // ✅ Fetch items for the newly selected department
     this.getItemsOfDepartment();
@@ -646,14 +715,14 @@ export class InvoiceAddComponent {
   getInvoiceNo() {
     if (
       this.userData.USER_TYPE_ID === 1 ||
-      this.userData.USER_TYPE_ID === 2 ||
-      this.userData.USER_TYPE_ID === 3
+      this.userData.USER_TYPE_ID === 2
+      // this.userData.USER_TYPE_ID === 3
     ) {
-      this.Department.DEPARTMENT_ID = this.selectedDepartmentId;
+      this.Department.HOSPITAL_ID = this.selectedDepartmentId;
     } else {
       // this.Department.DEPARTMENT_ID = this.userData.DEPARTMENT_ID;
-      this.Department.DEPARTMENT_ID =
-        this.userData.Hospitals[0].Departments[0].DEPARTMENT_ID;
+      this.Department.HOSPITAL_ID =
+        this.userData.Hospitals[0].HOSPITAL_ID;
     }
 
     const department = this.Department;
@@ -1062,19 +1131,7 @@ export class InvoiceAddComponent {
   }
 
   save() {
-    // if (
-    //   !this.invoiceFormData.NET_AMOUNT ||
-    //   +this.invoiceFormData.NET_AMOUNT === 0
-    // ) {
-    //   notify({
-    //     message: 'Quantity or Net amount is 0',
-    //     type: 'error',
-    //     displayTime: 3000,
-    //     position: { at: 'top center', my: 'top center' },
-    //   });
-    //   return;
-    // }
-    this.invoiceFormData.DEPARTMENT_ID = this.selectedDepartmentId;
+    this.invoiceFormData.HOSPITAL_ID = this.selectedDepartmentId;
     const clonedData = { ...this.invoiceFormData };
     const invoiceEntries = clonedData.INVOICE_ENTRY || [];
     const entries = clonedData.INVOICE_ENTRY || [];
@@ -1331,7 +1388,7 @@ export class InvoiceAddComponent {
   }
 
   previewAndPrintInvoice(data: any) {
-    // console.log(data, 'DATA');
+    console.log(data, 'DATA');
     const modeId = data.PAYMENT_MODE_NAME;
     const title = modeId === 'Credit' ? 'CREDIT BILL' : 'CASH BILL';
     const amount = Number(data.NET_AMOUNT);
@@ -1412,7 +1469,7 @@ export class InvoiceAddComponent {
          <td><strong>${title}</strong></td>
 <td style="text-align: center;"><strong>BILLED BY:</strong> ${this.USER}</td>
           <td style="text-align: right;"><strong>COMPANY NAME:</strong>${
-            this.hospitalName
+            data.HOSPITAL_NAME
           }</td>
         </tr>
       </table>
@@ -1461,28 +1518,7 @@ export class InvoiceAddComponent {
       </table>
 
       <!-- Scheme Section -->
-     ${
-       data.SCHEMA_NAME
-         ? `
-          <table class="scheme-table">
-            <thead>
-              <tr>
-                <th>SCHEME:</th>
-                <th>scheme account no:</th>
-                <th>amount in scheme</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>${data.SCHEMA_NAME}</td>
-                <td>${data.SCHEMA_ACCOUNT_NO || ''}</td>
-                <td style="text-align: right;">${data.SCHEMA_AMOUNT}</td>
-              </tr>
-            </tbody>
-          </table>
-        `
-         : ''
-     }
+ 
 
 
  
